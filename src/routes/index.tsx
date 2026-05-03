@@ -135,10 +135,10 @@ function CTA() {
     <section className="border-t border-border bg-surface">
       <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
         <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          Go unlimited with Pro
+          Free up to 250 MB
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-          Batch processing, larger files, and zero ads. Cancel anytime.
+          Premium plans are coming later. For now, enjoy free files up to 250 MB.
         </p>
         <a
           href="/pricing"

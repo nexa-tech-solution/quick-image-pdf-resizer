@@ -5,11 +5,11 @@ import { PageShell } from "@/components/site/PageShell";
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Pricing — Free & Pro plans | ResizePro" },
+      { title: "Pricing — Free first, premium later | ResizePro" },
       {
         name: "description",
         content:
-          "ResizePro is free forever. Upgrade to Pro for batch processing, larger files, and zero ads.",
+          "ResizePro is free forever with files up to 250 MB. Premium plans are coming later.",
       },
       { property: "og:title", content: "Pricing | ResizePro" },
       { property: "og:description", content: "Simple plans. Cancel anytime." },
@@ -23,7 +23,7 @@ const plans = [
     name: "Free",
     price: "$0",
     cadence: "forever",
-    features: ["All image & PDF tools", "Files up to 25 MB", "10 files per day", "Ads supported"],
+    features: ["All image & PDF tools", "Files up to 250 MB", "10 files per day", "Ads supported"],
     cta: "Start free",
     highlight: false,
   },
@@ -59,10 +59,10 @@ function Pricing() {
         <div className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 lg:px-8">
           <div className="font-mono text-xs uppercase tracking-widest text-primary">Pricing</div>
           <h1 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-            Free to use. Pro when you need more.
+            Free to use. Premium later.
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Honest pricing. No tracking. Cancel anytime.
+            Honest pricing. No tracking. Free files up to 250 MB.
           </p>
         </div>
       </section>
@@ -76,7 +76,7 @@ function Pricing() {
                 p.highlight
                   ? "border-primary bg-surface-elevated shadow-elevated"
                   : "border-border bg-surface-elevated"
-              } ${p.name === "Pro" || p.name === "Lifetime" ? "select-none blur-xs" : ""}`}
+              } ${p.name === "Pro" || p.name === "Lifetime" ? "select-none blur-sm" : ""}`}
             >
               {p.highlight && (
                 <div className="absolute -top-3 right-6 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">

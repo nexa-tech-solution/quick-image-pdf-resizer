@@ -87,7 +87,7 @@ export function ResizeImageTool() {
         accept="image/jpeg,image/png,image/webp,image/avif"
         onFiles={(files) => setFile(files[0])}
         title="Drop an image to resize"
-        hint="JPG, PNG, WebP or AVIF — up to 25 MB"
+        hint="JPG, PNG, WebP or AVIF — up to 250 MB"
       />
     );
   }
