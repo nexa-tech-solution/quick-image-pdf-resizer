@@ -41,8 +41,12 @@ function ImageToPdf() {
         const bytes = new Uint8Array(await f.arrayBuffer());
         const isPng = f.type === "image/png";
         const img = isPng ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
-        const pageDims =
-          size === "A4" ? PageSizes.A4 : size === "Letter" ? PageSizes.Letter : [img.width, img.height];
+        const pageDims: [number, number] =
+          size === "A4"
+            ? PageSizes.A4
+            : size === "Letter"
+              ? PageSizes.Letter
+              : [img.width, img.height];
         const page = pdf.addPage(pageDims);
         const pw = page.getWidth();
         const ph = page.getHeight();
