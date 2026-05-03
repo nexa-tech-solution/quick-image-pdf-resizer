@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Maximize2 } from "lucide-react";
+import faviconUrl from "@/assets/favicon.svg?url";
 
 const tools = [
   { to: "/", label: "Resize Image" },
@@ -14,10 +14,8 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Maximize2 className="h-4 w-4" />
-          </div>
-          <span className="font-display text-lg font-bold tracking-tight">ResizePro</span>
+          <img src={faviconUrl} alt="Resize Image" className="h-8 w-8 shrink-0" />
+          <span className="font-display text-lg font-bold tracking-tight">Resize Image</span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {tools.map((t) => (

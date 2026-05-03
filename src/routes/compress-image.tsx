@@ -16,13 +16,13 @@ import {
 export const Route = createFileRoute("/compress-image")({
   head: () => ({
     meta: [
-      { title: "Compress Image — JPG, PNG, WebP, AVIF | ResizePro" },
+      { title: "Compress Image — JPG, PNG, WebP, AVIF | Resize Image" },
       {
         name: "description",
         content:
           "Compress JPG, PNG, WebP and AVIF images in your browser. Adjust quality with live preview and download instantly.",
       },
-      { property: "og:title", content: "Compress Image | ResizePro" },
+      { property: "og:title", content: "Compress Image | Resize Image" },
       { property: "og:description", content: "Reduce image size without losing quality." },
     ],
   }),

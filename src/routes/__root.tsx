@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
+import faviconUrl from "@/assets/favicon.svg?url";
 
 function NotFoundComponent() {
   return (
@@ -28,23 +29,33 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ResizePro — Free Image & PDF Resizer, Compressor, Converter" },
+      { title: "Resize Image — Free Image & PDF Tools" },
       {
         name: "description",
         content:
-          "Resize, compress and convert images (JPG, PNG, WebP) and PDF files online. 100% browser-based. No upload, no signup. Free forever.",
+          "Resize, compress and convert JPG, PNG, WebP and AVIF images, plus PDF tools, right in your browser. Free up to 250 MB. No upload, no signup.",
       },
-      { name: "author", content: "ResizePro" },
-      { property: "og:title", content: "ResizePro — Image & PDF Resizer" },
+      { name: "author", content: "Resize Image" },
+      { name: "robots", content: "index,follow" },
+      { name: "theme-color", content: "#111827" },
+      {
+        name: "keywords",
+        content: "image resizer, image compressor, image converter, pdf tools, avif, webp",
+      },
+      { property: "og:title", content: "Resize Image — Free Image & PDF Tools" },
       {
         property: "og:description",
-        content: "Fast, private, browser-based tools to resize and compress images and PDFs.",
+        content:
+          "Fast, private, browser-based tools to resize, compress and convert images and PDFs. Free up to 250 MB.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/svg+xml", href: faviconUrl },
+      { rel: "shortcut icon", href: faviconUrl },
+      { rel: "apple-touch-icon", href: faviconUrl },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Download, Loader2, RefreshCw, X } from "lucide-react";
+import { Download, Loader2, Lock, Unlock, RefreshCw, X } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
 import {
   downloadBlob,
@@ -151,19 +151,27 @@ export function ResizeImageTool() {
                 Dimensions
               </label>
               <button
+                type="button"
                 onClick={() => setLockRatio((v) => !v)}
+                aria-pressed={lockRatio}
                 className={cn(
-                  "text-xs font-mono",
-                  lockRatio ? "text-primary" : "text-muted-foreground",
+                  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
+                  lockRatio
+                    ? "border-primary bg-primary-soft text-primary"
+                    : "border-border bg-background text-muted-foreground hover:border-primary/60 hover:text-foreground",
                 )}
               >
-                {lockRatio ? "🔒 Lock ratio" : "🔓 Free"}
+                {lockRatio ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
+                {lockRatio ? "Khóa tỉ lệ" : "Mở khóa"}
               </button>
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               <NumberField label="W" value={width} onChange={onWidth} />
               <NumberField label="H" value={height} onChange={onHeight} />
             </div>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Khóa tỉ lệ sẽ giữ nguyên tỷ lệ khi bạn chỉnh W hoặc H.
+            </p>
           </div>
 
           <div>

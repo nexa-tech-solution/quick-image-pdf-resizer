@@ -7,13 +7,13 @@ import { ToolsGrid } from "@/components/site/ToolsGrid";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ResizePro — Free Image Resizer, Compressor & Converter" },
+      { title: "Resize Image — Free Image Resizer, Compressor & Converter" },
       {
         name: "description",
         content:
           "Resize, compress and convert JPG, PNG and WebP images right in your browser. No upload, no signup. 100% free.",
       },
-      { property: "og:title", content: "ResizePro — Image & PDF Resizer" },
+      { property: "og:title", content: "Resize Image — Image & PDF Resizer" },
       {
         property: "og:description",
         content: "Resize images and PDFs in seconds. Browser-based and private.",

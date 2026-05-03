@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="border-t border-border/60 bg-surface">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
         <div>
-          <div className="font-display text-base font-bold">ResizePro</div>
+          <div className="font-display text-base font-bold">Resize Image</div>
           <p className="mt-2 text-sm text-muted-foreground">
             Browser-based image & PDF tools. Private by design — files never leave your device.
           </p>
@@ -68,7 +68,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border/60 py-5 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} ResizePro. All rights reserved.
+        © {new Date().getFullYear()} Resize Image. All rights reserved.
       </div>
     </footer>
   );

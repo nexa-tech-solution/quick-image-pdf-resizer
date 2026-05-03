@@ -8,13 +8,13 @@ import { downloadBlob } from "@/lib/image";
 export const Route = createFileRoute("/pdf-to-image")({
   head: () => ({
     meta: [
-      { title: "PDF to Image — Export PDF pages as PNG | ResizePro" },
+      { title: "PDF to Image — Export PDF pages as PNG | Resize Image" },
       {
         name: "description",
         content:
           "Convert each page of a PDF to a high-resolution PNG. Browser-based, no upload required.",
       },
-      { property: "og:title", content: "PDF to Image | ResizePro" },
+      { property: "og:title", content: "PDF to Image | Resize Image" },
       { property: "og:description", content: "Export PDF pages as PNG instantly." },
     ],
   }),
@@ -48,9 +48,7 @@ function PdfToImage() {
         canvas.height = viewport.height;
         const ctx = canvas.getContext("2d")!;
         await page.render({ canvasContext: ctx, viewport, canvas }).promise;
-        const blob: Blob = await new Promise((res) =>
-          canvas.toBlob((b) => res(b!), "image/png"),
-        );
+        const blob: Blob = await new Promise((res) => canvas.toBlob((b) => res(b!), "image/png"));
         out.push({ url: URL.createObjectURL(blob), blob });
       }
       setPages(out);
@@ -125,7 +123,11 @@ function PdfToImage() {
                   key={i}
                   className="overflow-hidden rounded-xl border border-border bg-surface-elevated"
                 >
-                  <img src={p.url} alt={`Page ${i + 1}`} className="aspect-[3/4] w-full object-cover" />
+                  <img
+                    src={p.url}
+                    alt={`Page ${i + 1}`}
+                    className="aspect-[3/4] w-full object-cover"
+                  />
                   <div className="flex items-center justify-between border-t border-border px-3 py-2 text-xs">
                     <span className="font-mono">page-{i + 1}.png</span>
                     <button

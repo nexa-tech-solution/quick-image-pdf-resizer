@@ -8,13 +8,13 @@ import { downloadBlob, formatExt, processImage, replaceExt, type ImageFormat } f
 export const Route = createFileRoute("/convert-image")({
   head: () => ({
     meta: [
-      { title: "Convert Image — JPG ⇄ PNG ⇄ WebP ⇄ AVIF | ResizePro" },
+      { title: "Convert Image — JPG ⇄ PNG ⇄ WebP ⇄ AVIF | Resize Image" },
       {
         name: "description",
         content:
           "Convert images between JPG, PNG, WebP and AVIF in your browser. No upload, no signup, instant download.",
       },
-      { property: "og:title", content: "Convert Image | ResizePro" },
+      { property: "og:title", content: "Convert Image | Resize Image" },
       { property: "og:description", content: "Switch image formats with one click." },
     ],
   }),

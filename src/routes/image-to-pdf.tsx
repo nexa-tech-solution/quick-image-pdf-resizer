@@ -9,13 +9,13 @@ import { downloadBlob } from "@/lib/image";
 export const Route = createFileRoute("/image-to-pdf")({
   head: () => ({
     meta: [
-      { title: "Image to PDF — Convert JPG/PNG to PDF | ResizePro" },
+      { title: "Image to PDF — Convert JPG/PNG to PDF | Resize Image" },
       {
         name: "description",
         content:
           "Combine JPG and PNG images into a single PDF. Choose A4 or Letter, fit images, download instantly.",
       },
-      { property: "og:title", content: "Image to PDF | ResizePro" },
+      { property: "og:title", content: "Image to PDF | Resize Image" },
       { property: "og:description", content: "Turn images into a clean PDF in your browser." },
     ],
   }),
@@ -29,8 +29,7 @@ function ImageToPdf() {
   const [size, setSize] = useState<Size>("A4");
   const [busy, setBusy] = useState(false);
 
-  const remove = (i: number) =>
-    setFiles((arr) => arr.filter((_, idx) => idx !== i));
+  const remove = (i: number) => setFiles((arr) => arr.filter((_, idx) => idx !== i));
 
   const onGenerate = async () => {
     if (files.length === 0) return;
@@ -139,7 +138,11 @@ function ImageToPdf() {
               disabled={busy}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
             >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              {busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
               Build PDF
             </button>
           </div>

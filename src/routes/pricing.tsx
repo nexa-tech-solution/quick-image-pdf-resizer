@@ -5,13 +5,13 @@ import { PageShell } from "@/components/site/PageShell";
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Pricing — Free first, premium later | ResizePro" },
+      { title: "Pricing — Free first, premium later | Resize Image" },
       {
         name: "description",
         content:
-          "ResizePro is free forever with files up to 250 MB. Premium plans are coming later.",
+          "Resize Image is free forever with files up to 250 MB. Premium plans are coming later.",
       },
-      { property: "og:title", content: "Pricing | ResizePro" },
+      { property: "og:title", content: "Pricing | Resize Image" },
       { property: "og:description", content: "Simple plans. Cancel anytime." },
     ],
   }),
