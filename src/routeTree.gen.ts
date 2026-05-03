@@ -9,12 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PdfToImageRouteImport } from './routes/pdf-to-image'
 import { Route as ImageToPdfRouteImport } from './routes/image-to-pdf'
 import { Route as ConvertImageRouteImport } from './routes/convert-image'
 import { Route as CompressPdfRouteImport } from './routes/compress-pdf'
 import { Route as CompressImageRouteImport } from './routes/compress-image'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PdfToImageRoute = PdfToImageRouteImport.update({
+  id: '/pdf-to-image',
+  path: '/pdf-to-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ImageToPdfRoute = ImageToPdfRouteImport.update({
   id: '/image-to-pdf',
   path: '/image-to-pdf',
@@ -35,6 +48,11 @@ const CompressImageRoute = CompressImageRouteImport.update({
   path: '/compress-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,60 +61,95 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
   '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
+  '/pdf-to-image': typeof PdfToImageRoute
+  '/pricing': typeof PricingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
   '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
+  '/pdf-to-image': typeof PdfToImageRoute
+  '/pricing': typeof PricingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
   '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
+  '/pdf-to-image': typeof PdfToImageRoute
+  '/pricing': typeof PricingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/compress-image'
     | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
+    | '/pdf-to-image'
+    | '/pricing'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/compress-image'
     | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
+    | '/pdf-to-image'
+    | '/pricing'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/compress-image'
     | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
+    | '/pdf-to-image'
+    | '/pricing'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   CompressImageRoute: typeof CompressImageRoute
   CompressPdfRoute: typeof CompressPdfRoute
   ConvertImageRoute: typeof ConvertImageRoute
   ImageToPdfRoute: typeof ImageToPdfRoute
+  PdfToImageRoute: typeof PdfToImageRoute
+  PricingRoute: typeof PricingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pdf-to-image': {
+      id: '/pdf-to-image'
+      path: '/pdf-to-image'
+      fullPath: '/pdf-to-image'
+      preLoaderRoute: typeof PdfToImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/image-to-pdf': {
       id: '/image-to-pdf'
       path: '/image-to-pdf'
@@ -125,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompressImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -137,20 +197,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   CompressImageRoute: CompressImageRoute,
   CompressPdfRoute: CompressPdfRoute,
   ConvertImageRoute: ConvertImageRoute,
   ImageToPdfRoute: ImageToPdfRoute,
+  PdfToImageRoute: PdfToImageRoute,
+  PricingRoute: PricingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
