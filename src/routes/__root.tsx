@@ -1,4 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Analytics } from "@vercel/analytics/react";
 import appCss from "../styles.css?url";
 import faviconUrl from "@/assets/favicon.svg?url";
 import { LocaleProvider, getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
@@ -85,6 +86,7 @@ function HtmlDocument({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <Scripts />
+        <Analytics />
       </body>
     </html>
   );

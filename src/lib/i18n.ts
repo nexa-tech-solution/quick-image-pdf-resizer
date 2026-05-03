@@ -85,7 +85,7 @@ const messages = {
       titleSuffix: "in seconds.",
       description:
         "Six focused tools for images and PDFs. No uploads, no accounts — files are processed locally in your browser.",
-      startResizing: "Start resizing",
+      startResizing: "Compress now",
       browseAllTools: "Browse all tools",
       tools: "Tools",
       uploads: "Uploads",
@@ -375,7 +375,7 @@ const messages = {
       titleSuffix: "in seconds.",
       description:
         "Six focused tools for images and PDFs. No uploads, no accounts — files are processed locally in your browser.",
-      startResizing: "Start resizing",
+      startResizing: "Compress now",
       browseAllTools: "Browse all tools",
       tools: "Tools",
       uploads: "Uploads",
@@ -666,7 +666,7 @@ const messages = {
       titleSuffix: "em segundos.",
       description:
         "Seis ferramentas focadas para imagens e PDFs. Sem uploads, sem conta — tudo é processado localmente no navegador.",
-      startResizing: "Começar",
+      startResizing: "Comprimir agora",
       browseAllTools: "Ver todas as ferramentas",
       tools: "Ferramentas",
       uploads: "Uploads",
@@ -966,7 +966,7 @@ const messages = {
       titleSuffix: "nang mabilis.",
       description:
         "Anim na nakatutok na tools para sa images at PDFs. Walang uploads, walang account — processed locally sa browser.",
-      startResizing: "Simulan",
+      startResizing: "Mag-compress ngayon",
       browseAllTools: "Tingnan lahat ng tools",
       tools: "Tools",
       uploads: "Uploads",
@@ -1267,7 +1267,7 @@ const messages = {
       titleSuffix: "dalam hitungan detik.",
       description:
         "Enam alat fokus untuk gambar dan PDF. Tanpa upload, tanpa akun — file diproses lokal di browser.",
-      startResizing: "Mulai resize",
+      startResizing: "Kompres sekarang",
       browseAllTools: "Lihat semua alat",
       tools: "Alat",
       uploads: "Upload",
@@ -1563,7 +1563,7 @@ const messages = {
       titleSuffix: "trong vài giây.",
       description:
         "Sáu công cụ tập trung cho ảnh và PDF. Không upload, không tài khoản — file được xử lý ngay trong trình duyệt.",
-      startResizing: "Bắt đầu ngay",
+      startResizing: "Nén ảnh ngay",
       browseAllTools: "Khám phá công cụ",
       tools: "Công cụ",
       uploads: "Tải lên",
