@@ -99,6 +99,55 @@ const messages = {
       ctaTitle: "Free up to 250 MB",
       ctaDesc: "Premium plans are coming later. For now, enjoy free files up to 250 MB.",
       viewPricing: "View pricing",
+      seoBoost: {
+        eyebrow: "Why people use it",
+        title: "A fast browser-based image resizer, compressor, converter, and PDF tool",
+        intro:
+          "Resize Image helps you resize photos to exact dimensions, compress images for smaller file sizes, convert between JPG, PNG, WebP, and AVIF, create PDFs from images, and export PDF pages as images. Everything runs locally in the browser, so there is no upload step and no extra software to install.",
+        cards: [
+          {
+            title: "Free image resizer",
+            desc: "Resize JPG, PNG, WebP, and AVIF images to exact dimensions for social posts, product pages, thumbnails, and banners.",
+          },
+          {
+            title: "Image compressor",
+            desc: "Compress images locally in your browser to reduce file size while keeping quality under control.",
+          },
+          {
+            title: "Image and PDF converter",
+            desc: "Convert image formats, turn images into PDF, and export PDF pages as PNG without uploading files.",
+          },
+        ],
+        howItWorksTitle: "How it works",
+        howItWorksSteps: [
+          "Drop a file into the tool you need.",
+          "Choose resize, compress, convert, or PDF output settings.",
+          "Download the result instantly with no upload delay.",
+        ],
+        searchesTitle: "Common searches we help with",
+        searches: [
+          "image resizer",
+          "image compressor",
+          "JPG to PNG converter",
+          "image to PDF converter",
+          "PDF to image converter",
+        ],
+        faqTitle: "FAQ",
+        faqs: [
+          {
+            q: "Can I resize images without uploading them?",
+            a: "Yes. Resize Image works directly in your browser, so files stay on your device while you resize, compress, or convert them.",
+          },
+          {
+            q: "Which file types do you support?",
+            a: "The app supports JPG, PNG, WebP, AVIF, and PDF workflows depending on the tool you choose.",
+          },
+          {
+            q: "Is this good for SEO-friendly content and fast downloads?",
+            a: "Yes. The tools are fast, private, and built for common searches like image resizer, image compressor, JPG to PNG converter, image to PDF, and PDF to image.",
+          },
+        ],
+      },
     },
     toolsGrid: {
       toolset: "Toolset",
@@ -340,6 +389,55 @@ const messages = {
       ctaTitle: "Free up to 250 MB",
       ctaDesc: "Premium plans are coming later. For now, enjoy free files up to 250 MB.",
       viewPricing: "View pricing",
+      seoBoost: {
+        eyebrow: "Why people use it",
+        title: "A fast browser-based image resizer, compressor, converter, and PDF tool",
+        intro:
+          "Resize Image helps you resize photos to exact dimensions, compress images for smaller file sizes, convert between JPG, PNG, WebP, and AVIF, create PDFs from images, and export PDF pages as images. Everything runs locally in the browser, so there is no upload step and no extra software to install.",
+        cards: [
+          {
+            title: "Free image resizer",
+            desc: "Resize JPG, PNG, WebP, and AVIF images to exact dimensions for social posts, product pages, thumbnails, and banners.",
+          },
+          {
+            title: "Image compressor",
+            desc: "Compress images locally in your browser to reduce file size while keeping quality under control.",
+          },
+          {
+            title: "Image and PDF converter",
+            desc: "Convert image formats, turn images into PDF, and export PDF pages as PNG without uploading files.",
+          },
+        ],
+        howItWorksTitle: "How it works",
+        howItWorksSteps: [
+          "Drop a file into the tool you need.",
+          "Choose resize, compress, convert, or PDF output settings.",
+          "Download the result instantly with no upload delay.",
+        ],
+        searchesTitle: "Common searches we help with",
+        searches: [
+          "image resizer",
+          "image compressor",
+          "JPG to PNG converter",
+          "image to PDF converter",
+          "PDF to image converter",
+        ],
+        faqTitle: "FAQ",
+        faqs: [
+          {
+            q: "Can I resize images without uploading them?",
+            a: "Yes. Resize Image works directly in your browser, so files stay on your device while you resize, compress, or convert them.",
+          },
+          {
+            q: "Which file types do you support?",
+            a: "The app supports JPG, PNG, WebP, AVIF, and PDF workflows depending on the tool you choose.",
+          },
+          {
+            q: "Is this good for SEO-friendly content and fast downloads?",
+            a: "Yes. The tools are fast, private, and built for common searches like image resizer, image compressor, JPG to PNG converter, image to PDF, and PDF to image.",
+          },
+        ],
+      },
     },
     toolsGrid: {
       toolset: "Toolset",
@@ -582,6 +680,56 @@ const messages = {
       ctaTitle: "Grátis até 250 MB",
       ctaDesc: "Planos premium vêm depois. Por enquanto, aproveite arquivos grátis até 250 MB.",
       viewPricing: "Ver preços",
+      seoBoost: {
+        eyebrow: "Por que as pessoas usam",
+        title:
+          "Uma ferramenta rápida no navegador para redimensionar, comprimir, converter e criar PDFs",
+        intro:
+          "O Resize Image ajuda você a redimensionar fotos em dimensões exatas, comprimir imagens para reduzir o tamanho do arquivo, converter entre JPG, PNG, WebP e AVIF, criar PDFs a partir de imagens e exportar páginas de PDF como imagens. Tudo roda localmente no navegador, sem upload e sem instalar nada.",
+        cards: [
+          {
+            title: "Redimensionador grátis de imagens",
+            desc: "Redimensione JPG, PNG, WebP e AVIF para tamanhos exatos em posts, páginas de produto, thumbnails e banners.",
+          },
+          {
+            title: "Compressor de imagens",
+            desc: "Comprima imagens localmente no navegador para reduzir o tamanho do arquivo com controle de qualidade.",
+          },
+          {
+            title: "Conversor de imagens e PDF",
+            desc: "Converta formatos de imagem, transforme imagens em PDF e exporte páginas de PDF como PNG sem enviar arquivos.",
+          },
+        ],
+        howItWorksTitle: "Como funciona",
+        howItWorksSteps: [
+          "Solte um arquivo na ferramenta que você precisa.",
+          "Escolha as opções de redimensionar, comprimir, converter ou saída em PDF.",
+          "Baixe o resultado na hora, sem atraso de upload.",
+        ],
+        searchesTitle: "Buscas comuns que ajudamos",
+        searches: [
+          "image resizer",
+          "image compressor",
+          "JPG to PNG converter",
+          "image to PDF converter",
+          "PDF to image converter",
+        ],
+        faqTitle: "FAQ",
+        faqs: [
+          {
+            q: "Posso redimensionar imagens sem enviá-las?",
+            a: "Sim. O Resize Image funciona diretamente no navegador, então os arquivos ficam no seu dispositivo enquanto você redimensiona, comprime ou converte.",
+          },
+          {
+            q: "Quais tipos de arquivo vocês suportam?",
+            a: "O app suporta JPG, PNG, WebP, AVIF e fluxos de PDF, dependendo da ferramenta escolhida.",
+          },
+          {
+            q: "Isso é bom para SEO e downloads rápidos?",
+            a: "Sim. As ferramentas são rápidas, privadas e pensadas para buscas comuns como image resizer, image compressor, JPG to PNG converter, image to PDF e PDF to image.",
+          },
+        ],
+      },
     },
     toolsGrid: {
       toolset: "Kit",
@@ -832,6 +980,56 @@ const messages = {
       ctaTitle: "Libre hanggang 250 MB",
       ctaDesc: "Darating pa ang premium plans. Sa ngayon, libre ang files hanggang 250 MB.",
       viewPricing: "Tingnan ang presyo",
+      seoBoost: {
+        eyebrow: "Bakit ito ginagamit",
+        title:
+          "Mabilis na browser-based na tool para mag-resize, mag-compress, mag-convert, at gumawa ng PDF",
+        intro:
+          "Tinutulungan ka ng Resize Image na i-resize ang photos sa eksaktong dimensions, i-compress ang images para lumiit ang file size, mag-convert sa JPG, PNG, WebP, at AVIF, gumawa ng PDF mula sa images, at mag-export ng PDF pages bilang images. Lahat ay tumatakbo locally sa browser, kaya walang upload at walang kailangang i-install na extra software.",
+        cards: [
+          {
+            title: "Libreng image resizer",
+            desc: "I-resize ang JPG, PNG, WebP, at AVIF para sa social posts, product pages, thumbnails, at banners.",
+          },
+          {
+            title: "Image compressor",
+            desc: "I-compress ang images sa browser para bumaba ang file size habang kontrolado ang quality.",
+          },
+          {
+            title: "Image at PDF converter",
+            desc: "Mag-convert ng image formats, gawing PDF ang images, at mag-export ng PDF pages bilang PNG nang walang upload.",
+          },
+        ],
+        howItWorksTitle: "Paano ito gumagana",
+        howItWorksSteps: [
+          "I-drop ang file sa tool na kailangan mo.",
+          "Piliin ang resize, compress, convert, o PDF output settings.",
+          "I-download agad ang result nang walang upload delay.",
+        ],
+        searchesTitle: "Karaniwang hinahanap namin tinutulungan",
+        searches: [
+          "image resizer",
+          "image compressor",
+          "JPG to PNG converter",
+          "image to PDF converter",
+          "PDF to image converter",
+        ],
+        faqTitle: "FAQ",
+        faqs: [
+          {
+            q: "Pwede ba akong mag-resize ng image nang walang upload?",
+            a: "Oo. Gumagana ang Resize Image diretso sa browser, kaya nasa device mo lang ang files habang nagre-resize, nagco-compress, o nagco-convert ka.",
+          },
+          {
+            q: "Anong file types ang supported?",
+            a: "Sinusuportahan ng app ang JPG, PNG, WebP, AVIF, at mga PDF workflow depende sa tool na pipiliin mo.",
+          },
+          {
+            q: "Okay ba ito para sa SEO at mabilis na download?",
+            a: "Oo. Mabilis, private, at ginawa para sa mga common search tulad ng image resizer, image compressor, JPG to PNG converter, image to PDF, at PDF to image.",
+          },
+        ],
+      },
     },
     toolsGrid: {
       toolset: "Toolset",
@@ -1085,6 +1283,55 @@ const messages = {
       ctaDesc:
         "Rencana premium akan hadir nanti. Untuk sekarang, nikmati file gratis hingga 250 MB.",
       viewPricing: "Lihat harga",
+      seoBoost: {
+        eyebrow: "Mengapa orang memakainya",
+        title: "Tool berbasis browser yang cepat untuk resize, kompres, konversi, dan PDF",
+        intro:
+          "Resize Image membantu Anda resize foto ke dimensi tepat, kompres gambar agar ukuran file lebih kecil, konversi antara JPG, PNG, WebP, dan AVIF, membuat PDF dari gambar, dan mengekspor halaman PDF sebagai gambar. Semuanya berjalan lokal di browser, jadi tanpa upload dan tanpa perlu install software tambahan.",
+        cards: [
+          {
+            title: "Image resizer gratis",
+            desc: "Resize JPG, PNG, WebP, dan AVIF ke ukuran tepat untuk posting, halaman produk, thumbnail, dan banner.",
+          },
+          {
+            title: "Image compressor",
+            desc: "Kompres gambar langsung di browser untuk menurunkan ukuran file sambil menjaga kualitas.",
+          },
+          {
+            title: "Konverter image dan PDF",
+            desc: "Konversi format gambar, ubah gambar menjadi PDF, dan ekspor halaman PDF sebagai PNG tanpa upload.",
+          },
+        ],
+        howItWorksTitle: "Cara kerjanya",
+        howItWorksSteps: [
+          "Tarik file ke tool yang Anda butuhkan.",
+          "Pilih pengaturan resize, kompres, konversi, atau output PDF.",
+          "Unduh hasilnya langsung tanpa delay upload.",
+        ],
+        searchesTitle: "Pencarian umum yang kami bantu",
+        searches: [
+          "image resizer",
+          "image compressor",
+          "JPG to PNG converter",
+          "image to PDF converter",
+          "PDF to image converter",
+        ],
+        faqTitle: "FAQ",
+        faqs: [
+          {
+            q: "Apakah saya bisa resize image tanpa upload?",
+            a: "Ya. Resize Image berjalan langsung di browser, jadi file tetap ada di perangkat Anda saat resize, kompres, atau konversi.",
+          },
+          {
+            q: "Format file apa yang didukung?",
+            a: "Aplikasi mendukung JPG, PNG, WebP, AVIF, dan alur PDF tergantung tool yang Anda pilih.",
+          },
+          {
+            q: "Apakah ini bagus untuk SEO dan download cepat?",
+            a: "Ya. Tool-nya cepat, privat, dan dibuat untuk pencarian umum seperti image resizer, image compressor, JPG to PNG converter, image to PDF, dan PDF to image.",
+          },
+        ],
+      },
     },
     toolsGrid: {
       toolset: "Toolset",
@@ -1316,8 +1563,8 @@ const messages = {
       titleSuffix: "trong vài giây.",
       description:
         "Sáu công cụ tập trung cho ảnh và PDF. Không upload, không tài khoản — file được xử lý ngay trong trình duyệt.",
-      startResizing: "Bắt đầu resize",
-      browseAllTools: "Xem tất cả công cụ",
+      startResizing: "Bắt đầu ngay",
+      browseAllTools: "Khám phá công cụ",
       tools: "Công cụ",
       uploads: "Tải lên",
       filesPerDay: "File / ngày*",
@@ -1331,6 +1578,55 @@ const messages = {
       ctaTitle: "Miễn phí tới 250 MB",
       ctaDesc: "Gói premium sẽ ra mắt sau. Hiện tại, bạn dùng miễn phí file tới 250 MB.",
       viewPricing: "Xem giá",
+      seoBoost: {
+        eyebrow: "Vì sao mọi người dùng",
+        title: "Một công cụ trên trình duyệt để resize, nén, chuyển đổi và tạo PDF thật nhanh",
+        intro:
+          "Resize Image giúp bạn resize ảnh về kích thước chính xác, nén ảnh để giảm dung lượng, chuyển đổi giữa JPG, PNG, WebP và AVIF, tạo PDF từ ảnh, và xuất từng trang PDF thành ảnh. Mọi thứ chạy cục bộ trong trình duyệt nên không cần upload và không phải cài thêm phần mềm.",
+        cards: [
+          {
+            title: "Resize ảnh miễn phí",
+            desc: "Resize JPG, PNG, WebP và AVIF cho bài đăng, trang sản phẩm, thumbnail và banner.",
+          },
+          {
+            title: "Nén ảnh",
+            desc: "Nén ảnh ngay trong trình duyệt để giảm dung lượng mà vẫn kiểm soát được chất lượng.",
+          },
+          {
+            title: "Chuyển đổi ảnh và PDF",
+            desc: "Chuyển định dạng ảnh, tạo PDF từ ảnh, và xuất trang PDF thành PNG mà không cần upload.",
+          },
+        ],
+        howItWorksTitle: "Cách hoạt động",
+        howItWorksSteps: [
+          "Thả file vào công cụ bạn cần.",
+          "Chọn tùy chọn resize, nén, chuyển đổi hoặc xuất PDF.",
+          "Tải kết quả ngay, không có độ trễ upload.",
+        ],
+        searchesTitle: "Các tìm kiếm phổ biến chúng tôi hỗ trợ",
+        searches: [
+          "image resizer",
+          "image compressor",
+          "JPG to PNG converter",
+          "image to PDF converter",
+          "PDF to image converter",
+        ],
+        faqTitle: "FAQ",
+        faqs: [
+          {
+            q: "Tôi có thể resize ảnh mà không upload không?",
+            a: "Có. Resize Image chạy trực tiếp trên trình duyệt, nên file luôn ở trên thiết bị của bạn khi resize, nén hoặc chuyển đổi.",
+          },
+          {
+            q: "Bạn hỗ trợ những định dạng nào?",
+            a: "Ứng dụng hỗ trợ JPG, PNG, WebP, AVIF và luồng PDF tùy theo công cụ bạn chọn.",
+          },
+          {
+            q: "Công cụ này có tốt cho SEO và tải xuống nhanh không?",
+            a: "Có. Công cụ nhanh, riêng tư, và được viết cho các tìm kiếm phổ biến như image resizer, image compressor, JPG to PNG converter, image to PDF, và PDF to image.",
+          },
+        ],
+      },
     },
     toolsGrid: {
       toolset: "Bộ công cụ",

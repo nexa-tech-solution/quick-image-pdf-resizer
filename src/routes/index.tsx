@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { ShieldCheck, Zap, Download, Sparkles } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
 import { ResizeImageTool } from "@/components/site/ResizeImageTool";
@@ -28,6 +28,7 @@ function Home() {
     <PageShell>
       <Hero />
       <Features />
+      <SeoBoost />
       <ToolsGrid />
       <CTA />
     </PageShell>
@@ -57,15 +58,15 @@ function Hero() {
             {t.home.description}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a
-              href="#tool"
+            <Link
+              to="/compress-image"
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-soft transition hover:opacity-90"
             >
               {t.home.startResizing}
               <Sparkles className="h-4 w-4" />
-            </a>
+            </Link>
             <a
-              href="#tools"
+              href="#tools-grid"
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-5 py-3 text-sm font-medium transition hover:border-primary/40"
             >
               {t.home.browseAllTools}
@@ -128,6 +129,72 @@ function Features() {
             </div>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function SeoBoost() {
+  const { t } = useLocale();
+  const seo = t.home.seoBoost;
+
+  return (
+    <section className="border-b border-border bg-surface">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="max-w-3xl">
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">
+            {seo.eyebrow}
+          </div>
+          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            {seo.title}
+          </h2>
+          <p className="mt-4 text-muted-foreground">{seo.intro}</p>
+        </div>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {seo.cards.map((item) => (
+            <div
+              key={item.title}
+              className="rounded-2xl border border-border bg-surface-elevated p-5"
+            >
+              <h3 className="font-display text-lg font-semibold">{item.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_1fr]">
+          <div className="rounded-2xl border border-border bg-surface-elevated p-5">
+            <h3 className="font-display text-lg font-semibold">{seo.howItWorksTitle}</h3>
+            <ol className="mt-4 space-y-3 text-sm text-muted-foreground">
+              {seo.howItWorksSteps.map((step, index) => (
+                <li key={step}>
+                  {index + 1}. {step}
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="rounded-2xl border border-border bg-surface-elevated p-5">
+            <h3 className="font-display text-lg font-semibold">{seo.searchesTitle}</h3>
+            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              {seo.searches.map((term) => (
+                <li key={term}>• {term}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-10 rounded-2xl border border-border bg-surface-elevated p-5">
+          <h3 className="font-display text-lg font-semibold">{seo.faqTitle}</h3>
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            {seo.faqs.map((faq) => (
+              <div key={faq.q}>
+                <div className="font-medium">{faq.q}</div>
+                <p className="mt-2 text-sm text-muted-foreground">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

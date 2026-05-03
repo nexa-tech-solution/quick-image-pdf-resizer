@@ -38,7 +38,7 @@ export function ToolsGrid() {
   ] as const;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="tools-grid" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div className="mb-10 flex items-end justify-between gap-4">
         <div>
           <div className="font-mono text-xs uppercase tracking-widest text-primary">
