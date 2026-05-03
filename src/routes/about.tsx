@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/site/PageShell";
+import { useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -18,34 +19,31 @@ export const Route = createFileRoute("/about")({
 });
 
 function About() {
+  const { t } = useLocale();
+  const page = t.routes.about;
+
   return (
     <PageShell>
       <section className="border-b border-border bg-[var(--gradient-hero)]">
         <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="font-mono text-xs uppercase tracking-widest text-primary">About</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">
+            {page.eyebrow}
+          </div>
           <h1 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-            Tools that respect your files.
+            {page.titleText}
           </h1>
-          <p className="mt-5 text-lg text-muted-foreground">
-            Most online resizers send your files to a server you don't know. Resize Image doesn't.
-            Every operation runs locally in your browser using modern Web APIs — Canvas,
-            WebAssembly, and pdf-lib. Nothing leaves your device.
-          </p>
+          <p className="mt-5 text-lg text-muted-foreground">{page.intro}</p>
         </div>
       </section>
       <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="prose prose-neutral max-w-none">
-          <h2 className="font-display text-2xl font-semibold">What's inside</h2>
-          <p className="text-muted-foreground">
-            Resize Image grew into a focused toolkit for images and PDFs. No bloat, no editor, no
-            signup.
-          </p>
-          <h2 className="mt-8 font-display text-2xl font-semibold">Roadmap</h2>
+          <h2 className="font-display text-2xl font-semibold">{page.insideTitle}</h2>
+          <p className="text-muted-foreground">{page.insideDesc}</p>
+          <h2 className="mt-8 font-display text-2xl font-semibold">{page.roadmapTitle}</h2>
           <ul className="mt-3 space-y-2 text-muted-foreground">
-            <li>· Mobile apps for iOS and Android</li>
-            <li>· Batch processing for Pro users</li>
-            <li>· Merge & split PDF</li>
-            <li>· OCR for scanned documents</li>
+            {page.roadmapItems.map((item) => (
+              <li key={item}>· {item}</li>
+            ))}
           </ul>
         </div>
       </section>

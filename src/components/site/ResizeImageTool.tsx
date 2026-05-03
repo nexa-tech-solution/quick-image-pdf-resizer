@@ -10,6 +10,7 @@ import {
   replaceExt,
   type ImageFormat,
 } from "@/lib/image";
+import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const presets = [
@@ -20,6 +21,7 @@ const presets = [
 ] as const;
 
 export function ResizeImageTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [width, setWidth] = useState<number>(1080);
   const [height, setHeight] = useState<number>(1080);
@@ -86,8 +88,8 @@ export function ResizeImageTool() {
       <FileDropzone
         accept="image/jpeg,image/png,image/webp,image/avif"
         onFiles={(files) => setFile(files[0])}
-        title="Drop an image to resize"
-        hint="JPG, PNG, WebP or AVIF — up to 250 MB"
+        title={t.resizeTool.dropTitle}
+        hint={t.resizeTool.dropHint}
       />
     );
   }
@@ -148,7 +150,7 @@ export function ResizeImageTool() {
           <div>
             <div className="flex items-center justify-between">
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                Dimensions
+                {t.resizeTool.dimensions}
               </label>
               <button
                 type="button"
@@ -162,21 +164,19 @@ export function ResizeImageTool() {
                 )}
               >
                 {lockRatio ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
-                {lockRatio ? "Khóa tỉ lệ" : "Mở khóa"}
+                {lockRatio ? t.resizeTool.lockRatio : t.resizeTool.unlockRatio}
               </button>
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               <NumberField label="W" value={width} onChange={onWidth} />
               <NumberField label="H" value={height} onChange={onHeight} />
             </div>
-            <p className="mt-2 text-[11px] text-muted-foreground">
-              Khóa tỉ lệ sẽ giữ nguyên tỷ lệ khi bạn chỉnh W hoặc H.
-            </p>
+            <p className="mt-2 text-[11px] text-muted-foreground">{t.resizeTool.lockHelp}</p>
           </div>
 
           <div>
             <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-              Fit
+              {t.resizeTool.fit}
             </label>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {(["contain", "cover", "stretch"] as const).map((f) => (
@@ -198,7 +198,7 @@ export function ResizeImageTool() {
 
           <div>
             <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-              Format
+              {t.resizeTool.format}
             </label>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
@@ -222,7 +222,7 @@ export function ResizeImageTool() {
             <div>
               <div className="flex items-center justify-between">
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  Quality
+                  {t.resizeTool.quality}
                 </label>
                 <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
               </div>
@@ -243,7 +243,7 @@ export function ResizeImageTool() {
               className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
             >
               <RefreshCw className="h-4 w-4" />
-              New
+              {t.resizeTool.new}
             </button>
             <button
               onClick={onDownload}
@@ -255,7 +255,7 @@ export function ResizeImageTool() {
               ) : (
                 <Download className="h-4 w-4" />
               )}
-              Download
+              {t.resizeTool.download}
             </button>
           </div>
         </div>

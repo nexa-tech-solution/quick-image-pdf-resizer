@@ -3,6 +3,7 @@ import { Download, Loader2 } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
+import { useLocale } from "@/lib/i18n";
 import {
   downloadBlob,
   formatBytes,
@@ -30,6 +31,8 @@ export const Route = createFileRoute("/compress-image")({
 });
 
 function CompressImage() {
+  const { t } = useLocale();
+  const page = t.routes.compressImage;
   const [file, setFile] = useState<File | null>(null);
   const [quality, setQuality] = useState(0.7);
   const [format, setFormat] = useState<ImageFormat>("jpeg");
@@ -104,16 +107,12 @@ function CompressImage() {
   }, [preview]);
 
   return (
-    <ToolPage
-      eyebrow="Image"
-      title="Compress images"
-      description="Slide to find the sweet spot between size and quality. Everything happens locally."
-    >
+    <ToolPage eyebrow={page.eyebrow} title={page.titleText} description={page.intro}>
       {!file ? (
         <FileDropzone
           accept="image/jpeg,image/png,image/webp,image/avif"
           onFiles={(f) => setFile(f[0])}
-          title="Drop an image to compress"
+          title={page.dropTitle}
         />
       ) : (
         <div className="grid gap-6 md:grid-cols-[1fr_280px]">
@@ -121,27 +120,27 @@ function CompressImage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <div className="mb-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  Original · {formatBytes(file.size)}
+                  {page.original} · {formatBytes(file.size)}
                 </div>
                 {original ? (
                   <img
                     src={original.url}
-                    alt="Original"
+                    alt={page.original}
                     className="aspect-square w-full rounded-lg object-cover"
                   />
                 ) : (
                   <div className="flex aspect-square items-center justify-center rounded-lg border border-border bg-background text-xs text-muted-foreground">
-                    Loading preview...
+                    {page.loadingPreview}
                   </div>
                 )}
                 <div className="mt-2 text-xs text-muted-foreground">
-                  {original ? `${original.width} × ${original.height}` : "Reading dimensions"}
+                  {original ? `${original.width} × ${original.height}` : page.readingDimensions}
                 </div>
               </div>
               <div>
                 <div className="mb-2 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-muted-foreground">
                   <span>
-                    Compressed
+                    {page.compressed}
                     {preview && ` · ${formatBytes(preview.blob.size)}`}
                   </span>
                   {busy && <Loader2 className="h-3 w-3 animate-spin" />}
@@ -149,12 +148,12 @@ function CompressImage() {
                 {preview && (
                   <img
                     src={preview.url}
-                    alt="Compressed"
+                    alt={page.compressed}
                     className="aspect-square w-full rounded-lg object-cover"
                   />
                 )}
                 <div className="mt-2 text-xs text-muted-foreground">
-                  {preview ? `${preview.width} × ${preview.height}` : "Waiting for output"}
+                  {preview ? `${preview.width} × ${preview.height}` : page.waitingOutput}
                 </div>
               </div>
             </div>
@@ -162,7 +161,7 @@ function CompressImage() {
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-lg border border-border bg-background px-3 py-2">
                   <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Size change
+                    {page.sizeChange}
                   </div>
                   <div className="mt-1 font-mono text-sm font-medium">
                     {preview.blob.size <= file.size ? (
@@ -177,18 +176,19 @@ function CompressImage() {
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
                     {formatBytes(Math.abs(file.size - preview.blob.size))}{" "}
-                    {preview.blob.size <= file.size ? "smaller" : "larger"} than original
+                    {preview.blob.size <= file.size ? page.smaller : page.larger}{" "}
+                    {page.original.toLowerCase()}
                   </div>
                 </div>
                 <div className="rounded-lg border border-border bg-background px-3 py-2">
                   <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Output
+                    {page.output}
                   </div>
                   <div className="mt-1 font-mono text-sm font-medium">
                     {preview.width} × {preview.height} · {formatExt[format].toUpperCase()}
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {formatBytes(preview.blob.size)} ready to download
+                    {formatBytes(preview.blob.size)} {page.readyToDownload}
                   </div>
                 </div>
               </div>
@@ -198,7 +198,7 @@ function CompressImage() {
           <div className="space-y-5 rounded-2xl border border-border bg-surface-elevated p-5">
             <div>
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                Format
+                {page.format}
               </label>
               <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {(["jpeg", "webp", "avif", "png"] as ImageFormat[]).map((f) => (
@@ -221,7 +221,7 @@ function CompressImage() {
               <div>
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                    Quality
+                    {page.quality}
                   </label>
                   <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
                 </div>
@@ -231,18 +231,15 @@ function CompressImage() {
                   max={100}
                   value={Math.round(quality * 100)}
                   onChange={(e) => setQuality(Number(e.target.value) / 100)}
-                  aria-label="Compression quality"
+                  aria-label={page.quality}
                   className="mt-2 w-full accent-[var(--color-primary)]"
                 />
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Lower quality usually means a smaller file, especially for photos.
-                </p>
+                <p className="mt-2 text-xs text-muted-foreground">{page.lowerQualityHint}</p>
               </div>
             )}
             {format === "png" && (
               <div className="rounded-lg border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
-                PNG does not use quality compression here. If you want a smaller file, try JPG or
-                WebP.
+                {page.pngHint}
               </div>
             )}
             <div className="flex gap-2 pt-2">
@@ -251,7 +248,7 @@ function CompressImage() {
                 onClick={() => setFile(null)}
                 className="flex-1 rounded-lg border border-border px-3 py-2.5 text-sm hover:bg-secondary"
               >
-                New
+                {page.newButton}
               </button>
               <button
                 type="button"
@@ -266,7 +263,7 @@ function CompressImage() {
                 ) : (
                   <Download className="h-4 w-4" />
                 )}
-                Download
+                {page.downloadButton}
               </button>
             </div>
           </div>

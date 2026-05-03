@@ -1,52 +1,54 @@
 import { Link } from "@tanstack/react-router";
 import { ImageIcon, Layers, FileImage, FileText, FileSearch } from "lucide-react";
-
-const items = [
-  {
-    to: "/",
-    title: "Resize Image",
-    desc: "JPG, PNG, WebP — exact dimensions or presets like 1080×1080.",
-    icon: ImageIcon,
-  },
-  {
-    to: "/compress-image",
-    title: "Compress Image",
-    desc: "Shrink file size with adjustable quality. Side-by-side preview.",
-    icon: Layers,
-  },
-  {
-    to: "/convert-image",
-    title: "Convert Format",
-    desc: "Swap between JPG, PNG and WebP in one click.",
-    icon: FileImage,
-  },
-  {
-    to: "/image-to-pdf",
-    title: "Image → PDF",
-    desc: "Combine images into a single PDF. Choose A4 or Letter.",
-    icon: FileText,
-  },
-  {
-    to: "/pdf-to-image",
-    title: "PDF → Image",
-    desc: "Export every page of a PDF as a high-resolution image.",
-    icon: FileSearch,
-  },
-] as const;
+import { useLocale } from "@/lib/i18n";
 
 export function ToolsGrid() {
+  const { t } = useLocale();
+  const items = [
+    {
+      to: "/",
+      title: t.toolsGrid.resizeImage.title,
+      desc: t.toolsGrid.resizeImage.desc,
+      icon: ImageIcon,
+    },
+    {
+      to: "/compress-image",
+      title: t.toolsGrid.compressImage.title,
+      desc: t.toolsGrid.compressImage.desc,
+      icon: Layers,
+    },
+    {
+      to: "/convert-image",
+      title: t.toolsGrid.convertFormat.title,
+      desc: t.toolsGrid.convertFormat.desc,
+      icon: FileImage,
+    },
+    {
+      to: "/image-to-pdf",
+      title: t.toolsGrid.imageToPdf.title,
+      desc: t.toolsGrid.imageToPdf.desc,
+      icon: FileText,
+    },
+    {
+      to: "/pdf-to-image",
+      title: t.toolsGrid.pdfToImage.title,
+      desc: t.toolsGrid.pdfToImage.desc,
+      icon: FileSearch,
+    },
+  ] as const;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div className="mb-10 flex items-end justify-between gap-4">
         <div>
-          <div className="font-mono text-xs uppercase tracking-widest text-primary">Toolset</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">
+            {t.toolsGrid.toolset}
+          </div>
           <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Every tool you need
+            {t.toolsGrid.title}
           </h2>
         </div>
-        <p className="hidden max-w-sm text-sm text-muted-foreground sm:block">
-          Five focused tools instead of one bloated editor. Pick a job, get it done.
-        </p>
+        <p className="hidden max-w-sm text-sm text-muted-foreground sm:block">{t.toolsGrid.desc}</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map(({ to, title, desc, icon: Icon }) => (
@@ -61,7 +63,7 @@ export function ToolsGrid() {
             <div className="font-display text-base font-semibold">{title}</div>
             <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
             <div className="mt-4 text-xs font-mono uppercase tracking-wider text-primary opacity-0 transition group-hover:opacity-100">
-              Open →
+              {t.toolsGrid.open} →
             </div>
           </Link>
         ))}

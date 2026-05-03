@@ -3,6 +3,7 @@ import { ShieldCheck, Zap, Download, Sparkles } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
 import { ResizeImageTool } from "@/components/site/ResizeImageTool";
 import { ToolsGrid } from "@/components/site/ToolsGrid";
+import { useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,6 +36,8 @@ function Home() {
 }
 
 function Hero() {
+  const { t } = useLocale();
+
   return (
     <section className="relative overflow-hidden border-b border-border bg-[var(--gradient-hero)]">
       <div className="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,white,transparent_70%)]">
@@ -44,36 +47,36 @@ function Hero() {
         <div className="flex flex-col justify-center">
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface-elevated px-3 py-1 text-xs font-mono uppercase tracking-wider text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-success" />
-            100% browser-based
+            {t.home.badge}
           </div>
           <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-            Resize, compress &<br />
-            <span className="text-primary">convert</span> in seconds.
+            {t.home.titlePrefix}
+            <br />
+            <span className="text-primary">{t.home.titleAccent}</span> {t.home.titleSuffix}
           </h1>
           <p className="mt-5 max-w-lg text-base text-muted-foreground sm:text-lg">
-            Six focused tools for images and PDFs. No uploads, no accounts — files are processed
-            locally in your browser.
+            {t.home.description}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href="#tool"
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-soft transition hover:opacity-90"
             >
-              Start resizing
+              {t.home.startResizing}
               <Sparkles className="h-4 w-4" />
             </a>
             <a
               href="#tools"
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-5 py-3 text-sm font-medium transition hover:border-primary/40"
             >
-              Browse all tools
+              {t.home.browseAllTools}
             </a>
           </div>
           <dl className="mt-10 grid max-w-md grid-cols-3 gap-6">
             {[
-              ["6", "Tools"],
-              ["0", "Uploads"],
-              ["∞", "Files / day*"],
+              ["6", t.home.tools],
+              ["0", t.home.uploads],
+              ["∞", t.home.filesPerDay],
             ].map(([n, l]) => (
               <div key={l}>
                 <dt className="font-display text-2xl font-bold text-primary">{n}</dt>
@@ -91,21 +94,22 @@ function Hero() {
 }
 
 function Features() {
+  const { t } = useLocale();
   const items = [
     {
       icon: ShieldCheck,
-      title: "Private by design",
-      desc: "Files never leave your device. Everything runs in your browser.",
+      title: t.home.featurePrivateTitle,
+      desc: t.home.featurePrivateDesc,
     },
     {
       icon: Zap,
-      title: "Instant results",
-      desc: "No round-trip to a server. Resize and download in milliseconds.",
+      title: t.home.featureInstantTitle,
+      desc: t.home.featureInstantDesc,
     },
     {
       icon: Download,
-      title: "Any format",
-      desc: "JPG, PNG, WebP and PDF. Convert and compress with one click.",
+      title: t.home.featureAnyFormatTitle,
+      desc: t.home.featureAnyFormatDesc,
     },
   ];
   return (
@@ -131,20 +135,20 @@ function Features() {
 }
 
 function CTA() {
+  const { t } = useLocale();
+
   return (
     <section className="border-t border-border bg-surface">
       <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
         <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          Free up to 250 MB
+          {t.home.ctaTitle}
         </h2>
-        <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-          Premium plans are coming later. For now, enjoy free files up to 250 MB.
-        </p>
+        <p className="mx-auto mt-4 max-w-xl text-muted-foreground">{t.home.ctaDesc}</p>
         <a
           href="/pricing"
           className="mt-8 inline-flex items-center gap-2 rounded-lg bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:opacity-90"
         >
-          View pricing
+          {t.home.viewPricing}
         </a>
       </div>
     </section>

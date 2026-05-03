@@ -1,74 +1,75 @@
 import { Link } from "@tanstack/react-router";
+import { useLocale } from "@/lib/i18n";
 
 export function Footer() {
+  const { t } = useLocale();
+
   return (
     <footer className="border-t border-border/60 bg-surface">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
         <div>
-          <div className="font-display text-base font-bold">Resize Image</div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Browser-based image & PDF tools. Private by design — files never leave your device.
-          </p>
+          <div className="font-display text-base font-bold">{t.footer.brand}</div>
+          <p className="mt-2 text-sm text-muted-foreground">{t.footer.blurb}</p>
         </div>
         <div>
           <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Image
+            {t.footer.image}
           </div>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link to="/" className="hover:text-primary">
-                Resize Image
+                {t.footer.resizeImage}
               </Link>
             </li>
             <li>
               <Link to="/compress-image" className="hover:text-primary">
-                Compress Image
+                {t.footer.compressImage}
               </Link>
             </li>
             <li>
               <Link to="/convert-image" className="hover:text-primary">
-                Convert Format
+                {t.footer.convertFormat}
               </Link>
             </li>
           </ul>
         </div>
         <div>
           <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            PDF
+            {t.footer.pdf}
           </div>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link to="/image-to-pdf" className="hover:text-primary">
-                Image to PDF
+                {t.footer.imageToPdf}
               </Link>
             </li>
             <li>
               <Link to="/pdf-to-image" className="hover:text-primary">
-                PDF to Image
+                {t.footer.pdfToImage}
               </Link>
             </li>
           </ul>
         </div>
         <div>
           <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Company
+            {t.footer.company}
           </div>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link to="/pricing" className="hover:text-primary">
-                Pricing
+                {t.footer.pricing}
               </Link>
             </li>
             <li>
               <Link to="/about" className="hover:text-primary">
-                About
+                {t.footer.about}
               </Link>
             </li>
           </ul>
         </div>
       </div>
       <div className="border-t border-border/60 py-5 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Resize Image. All rights reserved.
+        © {new Date().getFullYear()} {t.footer.brand}. {t.footer.copyright}
       </div>
     </footer>
   );

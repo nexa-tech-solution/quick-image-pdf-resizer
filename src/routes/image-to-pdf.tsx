@@ -5,6 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
 import { downloadBlob } from "@/lib/image";
+import { useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/image-to-pdf")({
   head: () => ({
@@ -25,6 +26,8 @@ export const Route = createFileRoute("/image-to-pdf")({
 type Size = "A4" | "Letter" | "Fit";
 
 function ImageToPdf() {
+  const { t } = useLocale();
+  const page = t.routes.imageToPdf;
   const [files, setFiles] = useState<File[]>([]);
   const [size, setSize] = useState<Size>("A4");
   const [busy, setBusy] = useState(false);
@@ -74,17 +77,13 @@ function ImageToPdf() {
   };
 
   return (
-    <ToolPage
-      eyebrow="PDF"
-      title="Image → PDF"
-      description="Drop images, pick a page size, and get a single PDF. JPG and PNG supported."
-    >
+    <ToolPage eyebrow={page.eyebrow} title={page.titleText} description={page.intro}>
       <FileDropzone
         accept="image/jpeg,image/png"
         multiple
         onFiles={(f) => setFiles((prev) => [...prev, ...f])}
-        title={files.length === 0 ? "Drop images to combine" : "Add more images"}
-        hint="JPG or PNG"
+        title={files.length === 0 ? page.dropTitleEmpty : page.dropTitleFilled}
+        hint={page.hint}
       />
 
       {files.length > 0 && (
@@ -115,7 +114,7 @@ function ImageToPdf() {
           <div className="space-y-5 rounded-2xl border border-border bg-surface-elevated p-5">
             <div>
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                Page size
+                {page.pageSize}
               </label>
               <div className="mt-2 grid grid-cols-3 gap-2">
                 {(["A4", "Letter", "Fit"] as Size[]).map((s) => (
@@ -143,7 +142,7 @@ function ImageToPdf() {
               ) : (
                 <Download className="h-4 w-4" />
               )}
-              Build PDF
+              {page.buildButton}
             </button>
           </div>
         </div>

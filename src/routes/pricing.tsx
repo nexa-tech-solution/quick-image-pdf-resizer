@@ -1,6 +1,7 @@
 import { Check, Sparkles } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/site/PageShell";
+import { useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -18,52 +19,38 @@ export const Route = createFileRoute("/pricing")({
   component: Pricing,
 });
 
-const plans = [
-  {
-    name: "Free",
-    price: "$0",
-    cadence: "forever",
-    features: ["All image & PDF tools", "Files up to 250 MB", "10 files per day", "Ads supported"],
-    cta: "Start free",
-    highlight: false,
-  },
-  {
-    name: "Pro",
-    price: "$4.99",
-    cadence: "per month",
-    features: [
-      "Everything in Free",
-      "Files up to 250 MB",
-      "Unlimited daily files",
-      "Batch processing",
-      "Zero ads",
-      "Priority queue",
-    ],
-    cta: "Upgrade to Pro",
-    highlight: true,
-  },
-  {
-    name: "Lifetime",
-    price: "$29",
-    cadence: "one-time",
-    features: ["All Pro features", "Forever — no subscription", "Future tools included"],
-    cta: "Buy lifetime",
-    highlight: false,
-  },
-];
-
 function Pricing() {
+  const { t } = useLocale();
+  const page = t.routes.pricing;
+  const plans = [
+    {
+      ...page.free,
+      price: "$0",
+      highlight: false,
+    },
+    {
+      ...page.pro,
+      price: "$4.99",
+      highlight: true,
+    },
+    {
+      ...page.lifetime,
+      price: "$29",
+      highlight: false,
+    },
+  ];
+
   return (
     <PageShell>
       <section className="border-b border-border bg-[var(--gradient-hero)]">
         <div className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 lg:px-8">
-          <div className="font-mono text-xs uppercase tracking-widest text-primary">Pricing</div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">
+            {page.eyebrow}
+          </div>
           <h1 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-            Free to use. Premium later.
+            {page.titleText}
           </h1>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Honest pricing. No tracking. Free files up to 250 MB.
-          </p>
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">{page.intro}</p>
         </div>
       </section>
 
@@ -81,7 +68,7 @@ function Pricing() {
               {p.highlight && (
                 <div className="absolute -top-3 right-6 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
                   <Sparkles className="h-3 w-3" />
-                  Most popular
+                  {page.popular}
                 </div>
               )}
               <div className="font-display text-sm uppercase tracking-wider text-muted-foreground">
