@@ -60,6 +60,16 @@ export const Route = createRootRoute({
           href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap",
         },
       ],
+      scripts: [
+        {
+          tag: "script",
+          attrs: {
+            async: true,
+            src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3012411444875177",
+            crossOrigin: "anonymous",
+          },
+        },
+      ],
     };
   },
   shellComponent: RootShell,
