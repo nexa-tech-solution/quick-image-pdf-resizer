@@ -75,7 +75,7 @@ function Pricing() {
               <div className="font-display text-sm uppercase tracking-wider text-muted-foreground">
                 {p.name}
               </div>
-              <div className="mt-3 flex items-baseline gap-2">
+              <div className="mt-3 flex items-baseline gap-2 ">
                 <div className="font-display text-4xl font-bold">{p.price}</div>
                 <div className="text-sm text-muted-foreground">{p.cadence}</div>
               </div>
