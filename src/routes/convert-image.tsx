@@ -3,22 +3,16 @@ import { Download, Loader2 } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
-import {
-  downloadBlob,
-  formatExt,
-  processImage,
-  replaceExt,
-  type ImageFormat,
-} from "@/lib/image";
+import { downloadBlob, formatExt, processImage, replaceExt, type ImageFormat } from "@/lib/image";
 
 export const Route = createFileRoute("/convert-image")({
   head: () => ({
     meta: [
-      { title: "Convert Image — JPG ⇄ PNG ⇄ WebP | ResizePro" },
+      { title: "Convert Image — JPG ⇄ PNG ⇄ WebP ⇄ AVIF | ResizePro" },
       {
         name: "description",
         content:
-          "Convert images between JPG, PNG and WebP in your browser. No upload, no signup, instant download.",
+          "Convert images between JPG, PNG, WebP and AVIF in your browser. No upload, no signup, instant download.",
       },
       { property: "og:title", content: "Convert Image | ResizePro" },
       { property: "og:description", content: "Switch image formats with one click." },
@@ -51,7 +45,7 @@ function ConvertImage() {
     >
       {!file ? (
         <FileDropzone
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/jpeg,image/png,image/webp,image/avif"
           onFiles={(f) => setFile(f[0])}
           title="Drop an image to convert"
         />
@@ -62,8 +56,8 @@ function ConvertImage() {
             <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
               Convert to
             </label>
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {(["jpeg", "png", "webp"] as ImageFormat[]).map((f) => (
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFormat(f)}
@@ -73,7 +67,7 @@ function ConvertImage() {
                       : "border-border hover:border-primary/60"
                   }`}
                 >
-                  {f === "jpeg" ? "JPG" : f}
+                  {f === "jpeg" ? "JPG" : f.toUpperCase()}
                 </button>
               ))}
             </div>
@@ -90,7 +84,11 @@ function ConvertImage() {
               disabled={busy}
               className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
             >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              {busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
               Convert & Download
             </button>
           </div>

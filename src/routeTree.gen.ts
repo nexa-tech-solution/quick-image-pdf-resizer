@@ -13,7 +13,6 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PdfToImageRouteImport } from './routes/pdf-to-image'
 import { Route as ImageToPdfRouteImport } from './routes/image-to-pdf'
 import { Route as ConvertImageRouteImport } from './routes/convert-image'
-import { Route as CompressPdfRouteImport } from './routes/compress-pdf'
 import { Route as CompressImageRouteImport } from './routes/compress-image'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -38,11 +37,6 @@ const ConvertImageRoute = ConvertImageRouteImport.update({
   path: '/convert-image',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CompressPdfRoute = CompressPdfRouteImport.update({
-  id: '/compress-pdf',
-  path: '/compress-pdf',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CompressImageRoute = CompressImageRouteImport.update({
   id: '/compress-image',
   path: '/compress-image',
@@ -63,7 +57,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
-  '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
@@ -73,7 +66,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
-  '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
@@ -84,7 +76,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
-  '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
@@ -96,7 +87,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/compress-image'
-    | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
     | '/pdf-to-image'
@@ -106,7 +96,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/compress-image'
-    | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
     | '/pdf-to-image'
@@ -116,7 +105,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/compress-image'
-    | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
     | '/pdf-to-image'
@@ -127,7 +115,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   CompressImageRoute: typeof CompressImageRoute
-  CompressPdfRoute: typeof CompressPdfRoute
   ConvertImageRoute: typeof ConvertImageRoute
   ImageToPdfRoute: typeof ImageToPdfRoute
   PdfToImageRoute: typeof PdfToImageRoute
@@ -164,13 +151,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConvertImageRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/compress-pdf': {
-      id: '/compress-pdf'
-      path: '/compress-pdf'
-      fullPath: '/compress-pdf'
-      preLoaderRoute: typeof CompressPdfRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/compress-image': {
       id: '/compress-image'
       path: '/compress-image'
@@ -199,7 +179,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   CompressImageRoute: CompressImageRoute,
-  CompressPdfRoute: CompressPdfRoute,
   ConvertImageRoute: ConvertImageRoute,
   ImageToPdfRoute: ImageToPdfRoute,
   PdfToImageRoute: PdfToImageRoute,
@@ -208,3 +187,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

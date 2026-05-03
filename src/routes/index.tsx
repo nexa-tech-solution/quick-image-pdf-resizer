@@ -40,7 +40,7 @@ function Hero() {
       <div className="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,white,transparent_70%)]">
         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       </div>
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1fr_minmax(0,520px)] md:gap-10 md:py-24 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1fr_minmax(0,700px)] md:gap-10 md:py-24 lg:px-8">
         <div className="flex flex-col justify-center">
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface-elevated px-3 py-1 text-xs font-mono uppercase tracking-wider text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-success" />
@@ -51,8 +51,8 @@ function Hero() {
             <span className="text-primary">convert</span> in seconds.
           </h1>
           <p className="mt-5 max-w-lg text-base text-muted-foreground sm:text-lg">
-            Six focused tools for images and PDFs. No uploads, no accounts —
-            files are processed locally in your browser.
+            Six focused tools for images and PDFs. No uploads, no accounts — files are processed
+            locally in your browser.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
@@ -77,9 +77,7 @@ function Hero() {
             ].map(([n, l]) => (
               <div key={l}>
                 <dt className="font-display text-2xl font-bold text-primary">{n}</dt>
-                <dd className="text-xs uppercase tracking-wider text-muted-foreground">
-                  {l}
-                </dd>
+                <dd className="text-xs uppercase tracking-wider text-muted-foreground">{l}</dd>
               </div>
             ))}
           </dl>

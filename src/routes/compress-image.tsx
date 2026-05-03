@@ -7,6 +7,7 @@ import {
   downloadBlob,
   formatBytes,
   formatExt,
+  loadImage,
   processImage,
   replaceExt,
   type ImageFormat,
@@ -15,11 +16,11 @@ import {
 export const Route = createFileRoute("/compress-image")({
   head: () => ({
     meta: [
-      { title: "Compress Image — JPG, PNG, WebP | ResizePro" },
+      { title: "Compress Image — JPG, PNG, WebP, AVIF | ResizePro" },
       {
         name: "description",
         content:
-          "Compress JPG, PNG and WebP images in your browser. Adjust quality with live preview and download instantly.",
+          "Compress JPG, PNG, WebP and AVIF images in your browser. Adjust quality with live preview and download instantly.",
       },
       { property: "og:title", content: "Compress Image | ResizePro" },
       { property: "og:description", content: "Reduce image size without losing quality." },
@@ -32,8 +33,45 @@ function CompressImage() {
   const [file, setFile] = useState<File | null>(null);
   const [quality, setQuality] = useState(0.7);
   const [format, setFormat] = useState<ImageFormat>("jpeg");
-  const [preview, setPreview] = useState<{ blob: Blob; url: string } | null>(null);
+  const [original, setOriginal] = useState<{ url: string; width: number; height: number } | null>(
+    null,
+  );
+  const [preview, setPreview] = useState<{
+    blob: Blob;
+    url: string;
+    width: number;
+    height: number;
+  } | null>(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!file) {
+      setOriginal(null);
+      setPreview(null);
+      setBusy(false);
+      return;
+    }
+
+    let cancelled = false;
+    const url = URL.createObjectURL(file);
+    setOriginal(null);
+    setPreview(null);
+
+    loadImage(file)
+      .then((img) => {
+        if (cancelled) return;
+        setOriginal({ url, width: img.naturalWidth, height: img.naturalHeight });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        URL.revokeObjectURL(url);
+      });
+
+    return () => {
+      cancelled = true;
+      URL.revokeObjectURL(url);
+    };
+  }, [file]);
 
   useEffect(() => {
     if (!file) return;
@@ -41,11 +79,13 @@ function CompressImage() {
     setBusy(true);
     const t = setTimeout(async () => {
       try {
-        const { blob } = await processImage(file, { format, quality });
+        const { blob, width, height } = await processImage(file, { format, quality });
         if (cancelled) return;
-        setPreview((prev) => {
-          if (prev) URL.revokeObjectURL(prev.url);
-          return { blob, url: URL.createObjectURL(blob) };
+        setPreview({
+          blob,
+          url: URL.createObjectURL(blob),
+          width,
+          height,
         });
       } finally {
         if (!cancelled) setBusy(false);
@@ -57,6 +97,12 @@ function CompressImage() {
     };
   }, [file, quality, format]);
 
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview.url);
+    };
+  }, [preview]);
+
   return (
     <ToolPage
       eyebrow="Image"
@@ -65,7 +111,7 @@ function CompressImage() {
     >
       {!file ? (
         <FileDropzone
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/jpeg,image/png,image/webp,image/avif"
           onFiles={(f) => setFile(f[0])}
           title="Drop an image to compress"
         />
@@ -77,11 +123,20 @@ function CompressImage() {
                 <div className="mb-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">
                   Original · {formatBytes(file.size)}
                 </div>
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt="Original"
-                  className="aspect-square w-full rounded-lg object-cover"
-                />
+                {original ? (
+                  <img
+                    src={original.url}
+                    alt="Original"
+                    className="aspect-square w-full rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="flex aspect-square items-center justify-center rounded-lg border border-border bg-background text-xs text-muted-foreground">
+                    Loading preview...
+                  </div>
+                )}
+                <div className="mt-2 text-xs text-muted-foreground">
+                  {original ? `${original.width} × ${original.height}` : "Reading dimensions"}
+                </div>
               </div>
               <div>
                 <div className="mb-2 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-muted-foreground">
@@ -98,14 +153,44 @@ function CompressImage() {
                     className="aspect-square w-full rounded-lg object-cover"
                   />
                 )}
+                <div className="mt-2 text-xs text-muted-foreground">
+                  {preview ? `${preview.width} × ${preview.height}` : "Waiting for output"}
+                </div>
               </div>
             </div>
             {preview && (
-              <div className="mt-4 rounded-lg bg-success/10 px-3 py-2 text-xs text-success-foreground">
-                <span className="font-mono text-success">
-                  -{Math.max(0, Math.round((1 - preview.blob.size / file.size) * 100))}%
-                </span>
-                <span className="ml-2 text-muted-foreground">smaller than original</span>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg border border-border bg-background px-3 py-2">
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                    Size change
+                  </div>
+                  <div className="mt-1 font-mono text-sm font-medium">
+                    {preview.blob.size <= file.size ? (
+                      <span className="text-success">
+                        -{Math.max(0, Math.round((1 - preview.blob.size / file.size) * 100))}%
+                      </span>
+                    ) : (
+                      <span className="text-amber-600">
+                        +{Math.max(0, Math.round((preview.blob.size / file.size - 1) * 100))}%
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {formatBytes(Math.abs(file.size - preview.blob.size))}{" "}
+                    {preview.blob.size <= file.size ? "smaller" : "larger"} than original
+                  </div>
+                </div>
+                <div className="rounded-lg border border-border bg-background px-3 py-2">
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                    Output
+                  </div>
+                  <div className="mt-1 font-mono text-sm font-medium">
+                    {preview.width} × {preview.height} · {formatExt[format].toUpperCase()}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {formatBytes(preview.blob.size)} ready to download
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -115,10 +200,11 @@ function CompressImage() {
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 Format
               </label>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {(["jpeg", "webp", "png"] as ImageFormat[]).map((f) => (
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {(["jpeg", "webp", "avif", "png"] as ImageFormat[]).map((f) => (
                   <button
                     key={f}
+                    type="button"
                     onClick={() => setFormat(f)}
                     className={`rounded-lg border px-2 py-2 text-xs font-mono uppercase transition ${
                       format === f
@@ -126,7 +212,7 @@ function CompressImage() {
                         : "border-border hover:border-primary/60"
                     }`}
                   >
-                    {f === "jpeg" ? "JPG" : f}
+                    {f === "jpeg" ? "JPG" : f.toUpperCase()}
                   </button>
                 ))}
               </div>
@@ -145,25 +231,41 @@ function CompressImage() {
                   max={100}
                   value={Math.round(quality * 100)}
                   onChange={(e) => setQuality(Number(e.target.value) / 100)}
+                  aria-label="Compression quality"
                   className="mt-2 w-full accent-[var(--color-primary)]"
                 />
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Lower quality usually means a smaller file, especially for photos.
+                </p>
+              </div>
+            )}
+            {format === "png" && (
+              <div className="rounded-lg border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
+                PNG does not use quality compression here. If you want a smaller file, try JPG or
+                WebP.
               </div>
             )}
             <div className="flex gap-2 pt-2">
               <button
+                type="button"
                 onClick={() => setFile(null)}
                 className="flex-1 rounded-lg border border-border px-3 py-2.5 text-sm hover:bg-secondary"
               >
                 New
               </button>
               <button
+                type="button"
                 disabled={!preview}
                 onClick={() =>
                   preview && downloadBlob(preview.blob, replaceExt(file.name, formatExt[format]))
                 }
                 className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
               >
-                <Download className="h-4 w-4" />
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
                 Download
               </button>
             </div>

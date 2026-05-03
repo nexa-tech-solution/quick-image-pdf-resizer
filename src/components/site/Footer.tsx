@@ -15,9 +15,21 @@ export function Footer() {
             Image
           </div>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link to="/" className="hover:text-primary">Resize Image</Link></li>
-            <li><Link to="/compress-image" className="hover:text-primary">Compress Image</Link></li>
-            <li><Link to="/convert-image" className="hover:text-primary">Convert Format</Link></li>
+            <li>
+              <Link to="/" className="hover:text-primary">
+                Resize Image
+              </Link>
+            </li>
+            <li>
+              <Link to="/compress-image" className="hover:text-primary">
+                Compress Image
+              </Link>
+            </li>
+            <li>
+              <Link to="/convert-image" className="hover:text-primary">
+                Convert Format
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
@@ -25,9 +37,16 @@ export function Footer() {
             PDF
           </div>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link to="/compress-pdf" className="hover:text-primary">Compress PDF</Link></li>
-            <li><Link to="/image-to-pdf" className="hover:text-primary">Image to PDF</Link></li>
-            <li><Link to="/pdf-to-image" className="hover:text-primary">PDF to Image</Link></li>
+            <li>
+              <Link to="/image-to-pdf" className="hover:text-primary">
+                Image to PDF
+              </Link>
+            </li>
+            <li>
+              <Link to="/pdf-to-image" className="hover:text-primary">
+                PDF to Image
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
@@ -35,8 +54,16 @@ export function Footer() {
             Company
           </div>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link to="/pricing" className="hover:text-primary">Pricing</Link></li>
-            <li><Link to="/about" className="hover:text-primary">About</Link></li>
+            <li>
+              <Link to="/pricing" className="hover:text-primary">
+                Pricing
+              </Link>
+            </li>
+            <li>
+              <Link to="/about" className="hover:text-primary">
+                About
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

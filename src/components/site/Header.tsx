@@ -5,7 +5,7 @@ const tools = [
   { to: "/", label: "Resize Image" },
   { to: "/compress-image", label: "Compress" },
   { to: "/convert-image", label: "Convert" },
-  { to: "/compress-pdf", label: "PDF Tools" },
+  { to: "/image-to-pdf", label: "Image → PDF" },
   { to: "/pricing", label: "Pricing" },
 ] as const;
 
@@ -25,7 +25,9 @@ export function Header() {
               key={t.to}
               to={t.to}
               className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-              activeProps={{ className: "rounded-md px-3 py-2 text-sm font-medium text-foreground bg-secondary" }}
+              activeProps={{
+                className: "rounded-md px-3 py-2 text-sm font-medium text-foreground bg-secondary",
+              }}
               activeOptions={{ exact: true }}
             >
               {t.label}

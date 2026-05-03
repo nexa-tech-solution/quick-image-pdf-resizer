@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ImageIcon, Layers, FileImage, FileText, Scissors, FileSearch } from "lucide-react";
+import { ImageIcon, Layers, FileImage, FileText, FileSearch } from "lucide-react";
 
 const items = [
   {
@@ -21,12 +21,6 @@ const items = [
     icon: FileImage,
   },
   {
-    to: "/compress-pdf",
-    title: "Compress PDF",
-    desc: "Reduce PDF size while keeping text crisp and readable.",
-    icon: Scissors,
-  },
-  {
     to: "/image-to-pdf",
     title: "Image → PDF",
     desc: "Combine images into a single PDF. Choose A4 or Letter.",
@@ -45,15 +39,13 @@ export function ToolsGrid() {
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div className="mb-10 flex items-end justify-between gap-4">
         <div>
-          <div className="font-mono text-xs uppercase tracking-widest text-primary">
-            Toolset
-          </div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">Toolset</div>
           <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
             Every tool you need
           </h2>
         </div>
         <p className="hidden max-w-sm text-sm text-muted-foreground sm:block">
-          Six focused tools instead of one bloated editor. Pick a job, get it done.
+          Five focused tools instead of one bloated editor. Pick a job, get it done.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

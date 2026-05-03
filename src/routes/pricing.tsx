@@ -23,12 +23,7 @@ const plans = [
     name: "Free",
     price: "$0",
     cadence: "forever",
-    features: [
-      "All image & PDF tools",
-      "Files up to 25 MB",
-      "10 files per day",
-      "Ads supported",
-    ],
+    features: ["All image & PDF tools", "Files up to 25 MB", "10 files per day", "Ads supported"],
     cta: "Start free",
     highlight: false,
   },
@@ -62,9 +57,7 @@ function Pricing() {
     <PageShell>
       <section className="border-b border-border bg-[var(--gradient-hero)]">
         <div className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 lg:px-8">
-          <div className="font-mono text-xs uppercase tracking-widest text-primary">
-            Pricing
-          </div>
+          <div className="font-mono text-xs uppercase tracking-widest text-primary">Pricing</div>
           <h1 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
             Free to use. Pro when you need more.
           </h1>
@@ -83,7 +76,7 @@ function Pricing() {
                 p.highlight
                   ? "border-primary bg-surface-elevated shadow-elevated"
                   : "border-border bg-surface-elevated"
-              }`}
+              } ${p.name === "Pro" || p.name === "Lifetime" ? "select-none blur-xs" : ""}`}
             >
               {p.highlight && (
                 <div className="absolute -top-3 right-6 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">

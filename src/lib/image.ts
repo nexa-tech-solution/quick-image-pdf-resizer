@@ -1,15 +1,17 @@
-export type ImageFormat = "jpeg" | "png" | "webp";
+export type ImageFormat = "jpeg" | "png" | "webp" | "avif";
 
 export const formatMime: Record<ImageFormat, string> = {
   jpeg: "image/jpeg",
   png: "image/png",
   webp: "image/webp",
+  avif: "image/avif",
 };
 
 export const formatExt: Record<ImageFormat, string> = {
   jpeg: "jpg",
   png: "png",
   webp: "webp",
+  avif: "avif",
 };
 
 export interface ProcessOptions {
@@ -83,7 +85,10 @@ export async function processImage(
       ctx.drawImage(img, dx, dy, dw, dh);
     } else {
       // cover
-      let sx = 0, sy = 0, sw = srcW, sh = srcH;
+      let sx = 0;
+      let sy = 0;
+      let sw = srcW;
+      let sh = srcH;
       if (srcRatio > dstRatio) {
         sw = srcH * dstRatio;
         sx = (srcW - sw) / 2;
