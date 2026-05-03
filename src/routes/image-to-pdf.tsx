@@ -5,21 +5,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
 import { downloadBlob } from "@/lib/image";
-import { useLocale } from "@/lib/i18n";
+import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/image-to-pdf")({
-  head: () => ({
-    meta: [
-      { title: "Image to PDF — Convert JPG/PNG to PDF | Resize Image" },
-      {
-        name: "description",
-        content:
-          "Combine JPG and PNG images into a single PDF. Choose A4 or Letter, fit images, download instantly.",
-      },
-      { property: "og:title", content: "Image to PDF | Resize Image" },
-      { property: "og:description", content: "Turn images into a clean PDF in your browser." },
-    ],
-  }),
+  head: () => {
+    const page = getTranslationSet(getBrowserLocale()).routes.imageToPdf;
+
+    return {
+      meta: [
+        { title: page.title },
+        { name: "description", content: page.description },
+        { property: "og:title", content: page.ogTitle },
+        { property: "og:description", content: page.ogDescription },
+      ],
+      links: [{ rel: "canonical", href: "/image-to-pdf" }],
+    };
+  },
   component: ImageToPdf,
 });
 

@@ -1,20 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/site/PageShell";
-import { useLocale } from "@/lib/i18n";
+import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About — Resize Image" },
-      {
-        name: "description",
-        content:
-          "Resize Image builds fast, private, browser-based image and PDF tools. No uploads, no tracking.",
-      },
-      { property: "og:title", content: "About | Resize Image" },
-      { property: "og:description", content: "Why we built Resize Image." },
-    ],
-  }),
+  head: () => {
+    const page = getTranslationSet(getBrowserLocale()).routes.about;
+
+    return {
+      meta: [
+        { title: page.title },
+        { name: "description", content: page.description },
+        { property: "og:title", content: page.ogTitle },
+        { property: "og:description", content: page.ogDescription },
+      ],
+      links: [{ rel: "canonical", href: "/about" }],
+    };
+  },
   component: About,
 });
 

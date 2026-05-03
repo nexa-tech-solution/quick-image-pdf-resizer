@@ -1,21 +1,22 @@
 import { Check, Sparkles } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/site/PageShell";
-import { useLocale } from "@/lib/i18n";
+import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pricing")({
-  head: () => ({
-    meta: [
-      { title: "Pricing — Free first, premium later | Resize Image" },
-      {
-        name: "description",
-        content:
-          "Resize Image is free forever with files up to 250 MB. Premium plans are coming later.",
-      },
-      { property: "og:title", content: "Pricing | Resize Image" },
-      { property: "og:description", content: "Simple plans. Cancel anytime." },
-    ],
-  }),
+  head: () => {
+    const page = getTranslationSet(getBrowserLocale()).routes.pricing;
+
+    return {
+      meta: [
+        { title: page.title },
+        { name: "description", content: page.description },
+        { property: "og:title", content: page.ogTitle },
+        { property: "og:description", content: page.ogDescription },
+      ],
+      links: [{ rel: "canonical", href: "/pricing" }],
+    };
+  },
   component: Pricing,
 });
 

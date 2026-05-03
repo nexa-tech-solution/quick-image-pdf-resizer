@@ -3,24 +3,23 @@ import { ShieldCheck, Zap, Download, Sparkles } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
 import { ResizeImageTool } from "@/components/site/ResizeImageTool";
 import { ToolsGrid } from "@/components/site/ToolsGrid";
-import { useLocale } from "@/lib/i18n";
+import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Resize Image — Free Image Resizer, Compressor & Converter" },
-      {
-        name: "description",
-        content:
-          "Resize, compress and convert JPG, PNG and WebP images right in your browser. No upload, no signup. 100% free.",
-      },
-      { property: "og:title", content: "Resize Image — Image & PDF Resizer" },
-      {
-        property: "og:description",
-        content: "Resize images and PDFs in seconds. Browser-based and private.",
-      },
-    ],
-  }),
+  head: () => {
+    const t = getTranslationSet(getBrowserLocale());
+    const title = `Resize Image — ${t.home.titlePrefix} ${t.home.titleAccent} ${t.home.titleSuffix}`;
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: t.home.description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: t.home.description },
+      ],
+      links: [{ rel: "canonical", href: "/" }],
+    };
+  },
   component: Home,
 });
 

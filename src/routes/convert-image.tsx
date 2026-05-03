@@ -4,21 +4,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
 import { downloadBlob, formatExt, processImage, replaceExt, type ImageFormat } from "@/lib/image";
-import { useLocale } from "@/lib/i18n";
+import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/convert-image")({
-  head: () => ({
-    meta: [
-      { title: "Convert Image — JPG ⇄ PNG ⇄ WebP ⇄ AVIF | Resize Image" },
-      {
-        name: "description",
-        content:
-          "Convert images between JPG, PNG, WebP and AVIF in your browser. No upload, no signup, instant download.",
-      },
-      { property: "og:title", content: "Convert Image | Resize Image" },
-      { property: "og:description", content: "Switch image formats with one click." },
-    ],
-  }),
+  head: () => {
+    const page = getTranslationSet(getBrowserLocale()).routes.convertImage;
+
+    return {
+      meta: [
+        { title: page.title },
+        { name: "description", content: page.description },
+        { property: "og:title", content: page.ogTitle },
+        { property: "og:description", content: page.ogDescription },
+      ],
+      links: [{ rel: "canonical", href: "/convert-image" }],
+    };
+  },
   component: ConvertImage,
 });
 

@@ -40,6 +40,16 @@ export function detectLocale(value: string | null | undefined): Locale {
   return "en-US";
 }
 
+export function getBrowserLocale(): Locale {
+  if (typeof window !== "undefined") {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored) return detectLocale(stored);
+    return detectLocale(window.navigator.language);
+  }
+
+  return "en-US";
+}
+
 const STORAGE_KEY = "resize-image-locale";
 
 const messages = {
@@ -1522,6 +1532,10 @@ const messages = {
     },
   },
 } as const;
+
+export function getTranslationSet(locale: Locale = getBrowserLocale()) {
+  return messages[locale];
+}
 
 export type TranslationSet = (typeof messages)["en-US"];
 

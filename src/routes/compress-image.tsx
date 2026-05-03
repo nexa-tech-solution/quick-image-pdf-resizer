@@ -3,7 +3,7 @@ import { Download, Loader2 } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
-import { useLocale } from "@/lib/i18n";
+import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 import {
   downloadBlob,
   formatBytes,
@@ -15,18 +15,19 @@ import {
 } from "@/lib/image";
 
 export const Route = createFileRoute("/compress-image")({
-  head: () => ({
-    meta: [
-      { title: "Compress Image — JPG, PNG, WebP, AVIF | Resize Image" },
-      {
-        name: "description",
-        content:
-          "Compress JPG, PNG, WebP and AVIF images in your browser. Adjust quality with live preview and download instantly.",
-      },
-      { property: "og:title", content: "Compress Image | Resize Image" },
-      { property: "og:description", content: "Reduce image size without losing quality." },
-    ],
-  }),
+  head: () => {
+    const page = getTranslationSet(getBrowserLocale()).routes.compressImage;
+
+    return {
+      meta: [
+        { title: page.title },
+        { name: "description", content: page.description },
+        { property: "og:title", content: page.ogTitle },
+        { property: "og:description", content: page.ogDescription },
+      ],
+      links: [{ rel: "canonical", href: "/compress-image" }],
+    };
+  },
   component: CompressImage,
 });
 

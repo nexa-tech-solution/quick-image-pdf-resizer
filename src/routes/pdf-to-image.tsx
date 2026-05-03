@@ -4,21 +4,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
 import { downloadBlob } from "@/lib/image";
-import { useLocale } from "@/lib/i18n";
+import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pdf-to-image")({
-  head: () => ({
-    meta: [
-      { title: "PDF to Image — Export PDF pages as PNG | Resize Image" },
-      {
-        name: "description",
-        content:
-          "Convert each page of a PDF to a high-resolution PNG. Browser-based, no upload required.",
-      },
-      { property: "og:title", content: "PDF to Image | Resize Image" },
-      { property: "og:description", content: "Export PDF pages as PNG instantly." },
-    ],
-  }),
+  head: () => {
+    const page = getTranslationSet(getBrowserLocale()).routes.pdfToImage;
+
+    return {
+      meta: [
+        { title: page.title },
+        { name: "description", content: page.description },
+        { property: "og:title", content: page.ogTitle },
+        { property: "og:description", content: page.ogDescription },
+      ],
+      links: [{ rel: "canonical", href: "/pdf-to-image" }],
+    };
+  },
   component: PdfToImage,
 });
 
