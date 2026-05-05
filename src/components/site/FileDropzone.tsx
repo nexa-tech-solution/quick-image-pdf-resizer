@@ -22,16 +22,22 @@ export function FileDropzone({
   const [drag, setDrag] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFiles = (list: FileList | null) => {
-    if (!list || list.length === 0) return;
-    onFiles(Array.from(list));
-  };
+  const handleFiles = useCallback(
+    (list: FileList | null) => {
+      if (!list || list.length === 0) return;
+      onFiles(Array.from(list));
+    },
+    [onFiles],
+  );
 
-  const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDrag(false);
-    handleFiles(e.dataTransfer.files);
-  }, []);
+  const onDrop = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setDrag(false);
+      handleFiles(e.dataTransfer.files);
+    },
+    [handleFiles],
+  );
 
   return (
     <div

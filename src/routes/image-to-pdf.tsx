@@ -72,8 +72,19 @@ function ImageToPdf() {
   const [orientation, setOrientation] = useState<Orientation>("portrait");
   const [margin, setMargin] = useState<Margin>("medium");
   const [busy, setBusy] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   const remove = (i: number) => setFiles((arr) => arr.filter((_, idx) => idx !== i));
+
+  const moveFile = (from: number, to: number) => {
+    if (from === to) return;
+    setFiles((arr) => {
+      const next = [...arr];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+  };
 
   const onGenerate = async () => {
     if (files.length === 0) return;
@@ -130,8 +141,29 @@ function ImageToPdf() {
           <div className="space-y-2 rounded-2xl border border-border bg-surface-elevated p-3">
             {files.map((f, i) => (
               <div
-                key={i}
-                className="flex items-center gap-3 rounded-lg border border-border bg-background p-2"
+                key={`${f.name}-${f.lastModified}-${i}`}
+                draggable
+                onDragStart={(event) => {
+                  setDragIndex(i);
+                  event.dataTransfer.effectAllowed = "move";
+                  event.dataTransfer.setData("text/plain", String(i));
+                }}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  event.dataTransfer.dropEffect = "move";
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  const from = Number(event.dataTransfer.getData("text/plain"));
+                  if (Number.isInteger(from)) moveFile(from, i);
+                  setDragIndex(null);
+                }}
+                onDragEnd={() => setDragIndex(null)}
+                className={`flex cursor-grab items-center gap-3 rounded-lg border bg-background p-2 transition active:cursor-grabbing ${
+                  dragIndex === i
+                    ? "border-primary bg-primary-soft opacity-70"
+                    : "border-border hover:border-primary/50"
+                }`}
               >
                 <GripVertical className="h-4 w-4 text-muted-foreground" />
                 <img
@@ -142,6 +174,7 @@ function ImageToPdf() {
                 <div className="flex-1 truncate text-sm">{f.name}</div>
                 <button
                   onClick={() => remove(i)}
+                  draggable={false}
                   className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
                 >
                   <X className="h-4 w-4" />
