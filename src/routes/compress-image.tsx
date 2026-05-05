@@ -15,9 +15,9 @@ import {
 } from "@/lib/image";
 
 const qualityPresets = [
-  { label: "High", value: 0.85 },
-  { label: "Balanced", value: 0.7 },
-  { label: "Smallest", value: 0.45 },
+  { labelKey: "high", value: 0.85 },
+  { labelKey: "balanced", value: 0.7 },
+  { labelKey: "smallest", value: 0.45 },
 ] as const;
 
 export const Route = createFileRoute("/compress-image")({
@@ -229,7 +229,7 @@ function CompressImage() {
                 <div className="mb-3 grid grid-cols-3 gap-2">
                   {qualityPresets.map((preset) => (
                     <button
-                      key={preset.label}
+                      key={preset.labelKey}
                       type="button"
                       onClick={() => setQuality(preset.value)}
                       className={`rounded-lg border px-2 py-2 text-xs font-medium transition ${
@@ -238,7 +238,7 @@ function CompressImage() {
                           : "border-border hover:border-primary/60"
                       }`}
                     >
-                      {preset.label}
+                      {page.qualityPresets[preset.labelKey]}
                     </button>
                   ))}
                 </div>

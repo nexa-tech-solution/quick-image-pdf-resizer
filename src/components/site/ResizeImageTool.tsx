@@ -14,12 +14,12 @@ import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const presets = [
-  { label: "Social square", size: "1080×1080", w: 1080, h: 1080 },
-  { label: "Story / Reel", size: "1080×1920", w: 1080, h: 1920 },
-  { label: "YouTube thumb", size: "1280×720", w: 1280, h: 720 },
-  { label: "Full HD", size: "1920×1080", w: 1920, h: 1080 },
-  { label: "Wide banner", size: "1600×900", w: 1600, h: 900 },
-  { label: "Profile", size: "800×800", w: 800, h: 800 },
+  { labelKey: "socialSquare", size: "1080×1080", w: 1080, h: 1080 },
+  { labelKey: "storyReel", size: "1080×1920", w: 1080, h: 1920 },
+  { labelKey: "youtubeThumb", size: "1280×720", w: 1280, h: 720 },
+  { labelKey: "fullHd", size: "1920×1080", w: 1920, h: 1080 },
+  { labelKey: "wideBanner", size: "1600×900", w: 1600, h: 900 },
+  { labelKey: "profile", size: "800×800", w: 800, h: 800 },
 ] as const;
 
 export function ResizeImageTool() {
@@ -161,7 +161,7 @@ export function ResizeImageTool() {
         <button
           onClick={() => setFile(null)}
           className="rounded-md p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-          aria-label="Remove"
+          aria-label={t.resizeTool.remove}
         >
           <X className="h-4 w-4" />
         </button>
@@ -173,13 +173,13 @@ export function ResizeImageTool() {
             {(processedPreviewUrl || previewUrl) && (
               <img
                 src={processedPreviewUrl ?? previewUrl ?? undefined}
-                alt="Preview"
+                alt={t.resizeTool.preview}
                 className="max-h-[420px] w-auto rounded-md object-contain shadow-elevated"
               />
             )}
             {previewBusy && (
               <div className="absolute right-2 top-2 rounded-full border border-border bg-background/85 px-2 py-1 text-[11px] font-medium text-muted-foreground shadow-sm backdrop-blur">
-                Updating
+                {t.resizeTool.updating}
               </div>
             )}
           </div>
@@ -188,7 +188,7 @@ export function ResizeImageTool() {
         <div className="space-y-4">
           <div>
             <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-              Presets
+              {t.resizeTool.presets}
             </label>
             <div className="-mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1 md:grid md:grid-cols-2 md:overflow-visible md:pb-0">
               {presets.map((p) => (
@@ -202,7 +202,9 @@ export function ResizeImageTool() {
                       : "",
                   )}
                 >
-                  <span className="block text-xs font-medium">{p.label}</span>
+                  <span className="block text-xs font-medium">
+                    {t.resizeTool.presetLabels[p.labelKey]}
+                  </span>
                   <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
                     {p.size}
                   </span>
@@ -263,7 +265,7 @@ export function ResizeImageTool() {
                         : "hover:border-primary/60",
                     )}
                   >
-                    {f}
+                    {t.resizeTool.fitOptions[f]}
                   </button>
                 ))}
               </div>
@@ -295,23 +297,25 @@ export function ResizeImageTool() {
             <div>
               <div className="flex items-center justify-between">
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  Background
+                  {t.resizeTool.background}
                 </label>
-                <span className="text-[11px] text-muted-foreground">Contain / JPG</span>
+                <span className="text-[11px] text-muted-foreground">
+                  {t.resizeTool.backgroundHint}
+                </span>
               </div>
               <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1.5">
                 <input
                   type="color"
                   value={backgroundColor}
                   onChange={(e) => setBackgroundColor(e.target.value)}
-                  aria-label="Background color"
+                  aria-label={t.resizeTool.backgroundColor}
                   className="h-8 w-9 cursor-pointer rounded border-0 bg-transparent p-0"
                 />
                 <input
                   type="text"
                   value={backgroundColor}
                   onChange={(e) => setBackgroundColor(e.target.value)}
-                  aria-label="Background hex color"
+                  aria-label={t.resizeTool.backgroundHexColor}
                   className="min-w-0 flex-1 bg-transparent font-mono text-sm uppercase outline-none"
                 />
               </div>

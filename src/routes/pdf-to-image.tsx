@@ -109,7 +109,7 @@ function PdfToImage() {
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  Format
+                  {page.format}
                 </label>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   {(["png", "jpeg"] as OutputFormat[]).map((item) => (
@@ -131,7 +131,7 @@ function PdfToImage() {
                 <div>
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                      JPG Quality
+                      {page.jpgQuality}
                     </label>
                     <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
                   </div>
@@ -141,7 +141,7 @@ function PdfToImage() {
                     max={100}
                     value={Math.round(quality * 100)}
                     onChange={(e) => setQuality(Number(e.target.value) / 100)}
-                    aria-label="JPG quality"
+                    aria-label={page.jpgQuality}
                     className="mt-2 w-full accent-[var(--color-primary)]"
                   />
                 </div>
@@ -177,7 +177,7 @@ function PdfToImage() {
                 >
                   <img
                     src={p.url}
-                    alt={`Page ${i + 1}`}
+                    alt={`${page.pageAlt} ${i + 1}`}
                     className="aspect-[3/4] w-full object-cover"
                   />
                   <div className="flex items-center justify-between border-t border-border px-3 py-2 text-xs">

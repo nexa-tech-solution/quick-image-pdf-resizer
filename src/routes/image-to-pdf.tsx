@@ -207,7 +207,7 @@ function ImageToPdf() {
             {size !== "Fit" && (
               <div>
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  Orientation
+                  {page.orientation}
                 </label>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   {(["portrait", "landscape"] as Orientation[]).map((item) => (
@@ -220,7 +220,7 @@ function ImageToPdf() {
                           : "border-border hover:border-primary/60"
                       }`}
                     >
-                      {item}
+                      {page.orientationOptions[item]}
                     </button>
                   ))}
                 </div>
@@ -229,7 +229,7 @@ function ImageToPdf() {
             {size !== "Fit" && (
               <div>
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  Margin
+                  {page.margin}
                 </label>
                 <div className="mt-2 grid grid-cols-3 gap-2">
                   {(["none", "small", "medium"] as Margin[]).map((item) => (
@@ -242,7 +242,7 @@ function ImageToPdf() {
                           : "border-border hover:border-primary/60"
                       }`}
                     >
-                      {item}
+                      {page.marginOptions[item]}
                     </button>
                   ))}
                 </div>

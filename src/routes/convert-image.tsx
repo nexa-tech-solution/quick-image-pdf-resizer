@@ -54,11 +54,11 @@ function ConvertImage() {
         <div className="rounded-2xl border border-border bg-surface-elevated p-6">
           <div className="truncate font-medium">{file.name}</div>
           <div className="mt-1 text-sm text-muted-foreground">
-            Output:{" "}
+            {page.outputLabel}{" "}
             <span className="font-mono uppercase text-foreground">
               {format === "jpeg" ? "JPG" : formatExt[format]}
             </span>{" "}
-            as{" "}
+            {page.outputAs}{" "}
             <span className="font-mono text-foreground">
               {replaceExt(file.name, formatExt[format])}
             </span>
@@ -87,7 +87,7 @@ function ConvertImage() {
             <div className="mt-6">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  Quality
+                  {page.quality}
                 </label>
                 <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
               </div>
@@ -97,12 +97,10 @@ function ConvertImage() {
                 max={100}
                 value={Math.round(quality * 100)}
                 onChange={(e) => setQuality(Number(e.target.value) / 100)}
-                aria-label="Output quality"
+                aria-label={page.outputQuality}
                 className="mt-2 w-full accent-[var(--color-primary)]"
               />
-              <p className="mt-2 text-xs text-muted-foreground">
-                Applies to JPG, WebP, and AVIF output. PNG keeps lossless output.
-              </p>
+              <p className="mt-2 text-xs text-muted-foreground">{page.qualityHint}</p>
             </div>
           )}
           <div className="mt-6 flex gap-2">
