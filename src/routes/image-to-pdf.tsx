@@ -4,7 +4,7 @@ import { PDFDocument, PageSizes } from "pdf-lib";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
-import { downloadBlob } from "@/lib/image";
+import { downloadBlob, loadImage } from "@/lib/image";
 import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 
 export const Route = createFileRoute("/image-to-pdf")({
@@ -25,12 +25,52 @@ export const Route = createFileRoute("/image-to-pdf")({
 });
 
 type Size = "A4" | "Letter" | "Fit";
+type Orientation = "portrait" | "landscape";
+type Margin = "none" | "small" | "medium";
+
+const marginSize: Record<Margin, number> = {
+  none: 0,
+  small: 12,
+  medium: 24,
+};
+
+async function embedImage(pdf: PDFDocument, file: File) {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (file.type === "image/png") return pdf.embedPng(bytes);
+  if (file.type === "image/jpeg") return pdf.embedJpg(bytes);
+
+  const img = await loadImage(file);
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+  const blob: Blob = await new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (value) => (value ? resolve(value) : reject(new Error("Image conversion failed"))),
+      "image/jpeg",
+      0.92,
+    );
+  });
+  return pdf.embedJpg(new Uint8Array(await blob.arrayBuffer()));
+}
+
+function orientPageDims(pageDims: [number, number], orientation: Orientation): [number, number] {
+  const [w, h] = pageDims;
+  if (orientation === "landscape" && h > w) return [h, w];
+  if (orientation === "portrait" && w > h) return [h, w];
+  return pageDims;
+}
 
 function ImageToPdf() {
   const { t } = useLocale();
   const page = t.routes.imageToPdf;
   const [files, setFiles] = useState<File[]>([]);
   const [size, setSize] = useState<Size>("A4");
+  const [orientation, setOrientation] = useState<Orientation>("portrait");
+  const [margin, setMargin] = useState<Margin>("medium");
   const [busy, setBusy] = useState(false);
 
   const remove = (i: number) => setFiles((arr) => arr.filter((_, idx) => idx !== i));
@@ -41,14 +81,12 @@ function ImageToPdf() {
     try {
       const pdf = await PDFDocument.create();
       for (const f of files) {
-        const bytes = new Uint8Array(await f.arrayBuffer());
-        const isPng = f.type === "image/png";
-        const img = isPng ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
+        const img = await embedImage(pdf, f);
         const pageDims: [number, number] =
           size === "A4"
-            ? PageSizes.A4
+            ? orientPageDims(PageSizes.A4, orientation)
             : size === "Letter"
-              ? PageSizes.Letter
+              ? orientPageDims(PageSizes.Letter, orientation)
               : [img.width, img.height];
         const page = pdf.addPage(pageDims);
         const pw = page.getWidth();
@@ -56,9 +94,9 @@ function ImageToPdf() {
         if (size === "Fit") {
           page.drawImage(img, { x: 0, y: 0, width: pw, height: ph });
         } else {
-          const margin = 24;
-          const maxW = pw - margin * 2;
-          const maxH = ph - margin * 2;
+          const pageMargin = marginSize[margin];
+          const maxW = pw - pageMargin * 2;
+          const maxH = ph - pageMargin * 2;
           const r = Math.min(maxW / img.width, maxH / img.height);
           const w = img.width * r;
           const h = img.height * r;
@@ -80,7 +118,7 @@ function ImageToPdf() {
   return (
     <ToolPage eyebrow={page.eyebrow} title={page.titleText} description={page.intro}>
       <FileDropzone
-        accept="image/jpeg,image/png"
+        accept="image/jpeg,image/png,image/webp,image/avif"
         multiple
         onFiles={(f) => setFiles((prev) => [...prev, ...f])}
         title={files.length === 0 ? page.dropTitleEmpty : page.dropTitleFilled}
@@ -133,6 +171,50 @@ function ImageToPdf() {
                 ))}
               </div>
             </div>
+            {size !== "Fit" && (
+              <div>
+                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  Orientation
+                </label>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {(["portrait", "landscape"] as Orientation[]).map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => setOrientation(item)}
+                      className={`rounded-lg border px-2 py-2 text-xs font-mono uppercase transition ${
+                        orientation === item
+                          ? "border-primary bg-primary-soft text-primary"
+                          : "border-border hover:border-primary/60"
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {size !== "Fit" && (
+              <div>
+                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  Margin
+                </label>
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {(["none", "small", "medium"] as Margin[]).map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => setMargin(item)}
+                      className={`rounded-lg border px-2 py-2 text-xs font-mono uppercase transition ${
+                        margin === item
+                          ? "border-primary bg-primary-soft text-primary"
+                          : "border-border hover:border-primary/60"
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <button
               onClick={onGenerate}
               disabled={busy}

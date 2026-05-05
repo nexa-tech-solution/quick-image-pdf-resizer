@@ -14,10 +14,12 @@ import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const presets = [
-  { label: "1080×1080", w: 1080, h: 1080 },
-  { label: "1920×1080", w: 1920, h: 1080 },
-  { label: "1280×720", w: 1280, h: 720 },
-  { label: "800×600", w: 800, h: 600 },
+  { label: "Social square", size: "1080×1080", w: 1080, h: 1080 },
+  { label: "Story / Reel", size: "1080×1920", w: 1080, h: 1920 },
+  { label: "YouTube thumb", size: "1280×720", w: 1280, h: 720 },
+  { label: "Full HD", size: "1920×1080", w: 1920, h: 1080 },
+  { label: "Wide banner", size: "1600×900", w: 1600, h: 900 },
+  { label: "Profile", size: "800×800", w: 800, h: 800 },
 ] as const;
 
 export function ResizeImageTool() {
@@ -29,13 +31,17 @@ export function ResizeImageTool() {
   const [fit, setFit] = useState<"contain" | "cover" | "stretch">("contain");
   const [format, setFormat] = useState<ImageFormat>("jpeg");
   const [quality, setQuality] = useState(0.85);
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [busy, setBusy] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [processedPreviewUrl, setProcessedPreviewUrl] = useState<string | null>(null);
+  const [previewBusy, setPreviewBusy] = useState(false);
   const [originalDims, setOriginalDims] = useState<{ w: number; h: number } | null>(null);
 
   useEffect(() => {
     if (!file) {
       setPreviewUrl(null);
+      setProcessedPreviewUrl(null);
       setOriginalDims(null);
       return;
     }
@@ -48,6 +54,46 @@ export function ResizeImageTool() {
     });
     return () => URL.revokeObjectURL(url);
   }, [file]);
+
+  useEffect(() => {
+    if (!file || !originalDims) return;
+
+    let cancelled = false;
+    setPreviewBusy(true);
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const { blob } = await processImage(file, {
+          width,
+          height,
+          fit,
+          format,
+          quality,
+          backgroundColor: fit === "contain" ? backgroundColor : undefined,
+        });
+        if (cancelled) return;
+
+        const url = URL.createObjectURL(blob);
+        setProcessedPreviewUrl((current) => {
+          if (current) URL.revokeObjectURL(current);
+          return url;
+        });
+      } finally {
+        if (!cancelled) setPreviewBusy(false);
+      }
+    }, 120);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [file, originalDims, width, height, fit, format, quality, backgroundColor]);
+
+  useEffect(() => {
+    return () => {
+      if (processedPreviewUrl) URL.revokeObjectURL(processedPreviewUrl);
+    };
+  }, [processedPreviewUrl]);
 
   const ratio = useMemo(() => (originalDims ? originalDims.w / originalDims.h : 1), [originalDims]);
 
@@ -76,11 +122,19 @@ export function ResizeImageTool() {
         fit,
         format,
         quality,
+        backgroundColor: fit === "contain" ? backgroundColor : undefined,
       });
       downloadBlob(blob, replaceExt(file.name, formatExt[format]));
     } finally {
       setBusy(false);
     }
+  };
+
+  const resetToOriginal = () => {
+    if (!originalDims) return;
+    setLockRatio(true);
+    setWidth(originalDims.w);
+    setHeight(originalDims.h);
   };
 
   if (!file) {
@@ -113,35 +167,45 @@ export function ResizeImageTool() {
         </button>
       </div>
 
-      <div className="grid gap-6 p-5 md:grid-cols-[1fr_280px]">
+      <div className="grid gap-5 p-5 md:grid-cols-[minmax(0,1fr)_300px]">
         <div className="flex items-center justify-center rounded-xl bg-[conic-gradient(at_50%_50%,_#f5f6f8_25%,_#eceef2_25%_50%,_#f5f6f8_50%_75%,_#eceef2_75%)] [background-size:20px_20px] p-4">
-          {previewUrl && (
-            <img
-              src={previewUrl}
-              alt="Preview"
-              className="max-h-[420px] w-auto rounded-md object-contain shadow-elevated"
-            />
-          )}
+          <div className="relative">
+            {(processedPreviewUrl || previewUrl) && (
+              <img
+                src={processedPreviewUrl ?? previewUrl ?? undefined}
+                alt="Preview"
+                className="max-h-[420px] w-auto rounded-md object-contain shadow-elevated"
+              />
+            )}
+            {previewBusy && (
+              <div className="absolute right-2 top-2 rounded-full border border-border bg-background/85 px-2 py-1 text-[11px] font-medium text-muted-foreground shadow-sm backdrop-blur">
+                Updating
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-4">
           <div>
             <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
               Presets
             </label>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="-mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1 md:grid md:grid-cols-2 md:overflow-visible md:pb-0">
               {presets.map((p) => (
                 <button
-                  key={p.label}
+                  key={p.size}
                   onClick={() => applyPreset(p.w, p.h)}
                   className={cn(
-                    "rounded-lg border border-border px-3 py-2 text-xs font-mono transition hover:border-primary/60 hover:bg-primary-soft",
+                    "min-w-[132px] rounded-lg border border-border px-3 py-2 text-left transition hover:border-primary/60 hover:bg-primary-soft md:min-w-0",
                     width === p.w && height === p.h
                       ? "border-primary bg-primary-soft text-primary"
                       : "",
                   )}
                 >
-                  {p.label}
+                  <span className="block text-xs font-medium">{p.label}</span>
+                  <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
+                    {p.size}
+                  </span>
                 </button>
               ))}
             </div>
@@ -167,56 +231,92 @@ export function ResizeImageTool() {
                 {lockRatio ? t.resizeTool.lockRatio : t.resizeTool.unlockRatio}
               </button>
             </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="mt-2 grid grid-cols-[1fr_1fr_auto] gap-2">
               <NumberField label="W" value={width} onChange={onWidth} />
               <NumberField label="H" value={height} onChange={onHeight} />
+              <button
+                type="button"
+                onClick={resetToOriginal}
+                disabled={!originalDims}
+                className="rounded-lg border border-border px-3 text-xs font-medium transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                1:1
+              </button>
             </div>
             <p className="mt-2 text-[11px] text-muted-foreground">{t.resizeTool.lockHelp}</p>
           </div>
 
-          <div>
-            <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-              {t.resizeTool.fit}
-            </label>
-            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {(["contain", "cover", "stretch"] as const).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFit(f)}
-                  className={cn(
-                    "rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
-                    fit === f
-                      ? "border-primary bg-primary-soft text-primary"
-                      : "hover:border-primary/60",
-                  )}
-                >
-                  {f}
-                </button>
-              ))}
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
+            <div>
+              <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                {t.resizeTool.fit}
+              </label>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {(["contain", "cover", "stretch"] as const).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFit(f)}
+                    className={cn(
+                      "rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
+                      fit === f
+                        ? "border-primary bg-primary-soft text-primary"
+                        : "hover:border-primary/60",
+                    )}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                {t.resizeTool.format}
+              </label>
+              <div className="mt-2 grid grid-cols-4 gap-1.5">
+                {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFormat(f)}
+                    className={cn(
+                      "min-w-0 rounded-lg border border-border px-1.5 py-2 text-[11px] uppercase font-mono transition",
+                      format === f
+                        ? "border-primary bg-primary-soft text-primary"
+                        : "hover:border-primary/60",
+                    )}
+                  >
+                    {f === "jpeg" ? "JPG" : f.toUpperCase()}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-              {t.resizeTool.format}
-            </label>
-            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFormat(f)}
-                  className={cn(
-                    "rounded-lg border border-border px-2 py-2 text-xs uppercase font-mono transition",
-                    format === f
-                      ? "border-primary bg-primary-soft text-primary"
-                      : "hover:border-primary/60",
-                  )}
-                >
-                  {f === "jpeg" ? "JPG" : f.toUpperCase()}
-                </button>
-              ))}
+          {fit === "contain" && (
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  Background
+                </label>
+                <span className="text-[11px] text-muted-foreground">Contain / JPG</span>
+              </div>
+              <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1.5">
+                <input
+                  type="color"
+                  value={backgroundColor}
+                  onChange={(e) => setBackgroundColor(e.target.value)}
+                  aria-label="Background color"
+                  className="h-8 w-9 cursor-pointer rounded border-0 bg-transparent p-0"
+                />
+                <input
+                  type="text"
+                  value={backgroundColor}
+                  onChange={(e) => setBackgroundColor(e.target.value)}
+                  aria-label="Background hex color"
+                  className="min-w-0 flex-1 bg-transparent font-mono text-sm uppercase outline-none"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {format !== "png" && (
             <div>

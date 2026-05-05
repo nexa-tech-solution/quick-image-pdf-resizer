@@ -20,6 +20,7 @@ export interface ProcessOptions {
   fit?: "contain" | "cover" | "stretch";
   format: ImageFormat;
   quality: number; // 0..1
+  backgroundColor?: string;
 }
 
 export async function loadImage(file: File): Promise<HTMLImageElement> {
@@ -60,8 +61,8 @@ export async function processImage(
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
 
-  if (opts.format === "jpeg") {
-    ctx.fillStyle = "#ffffff";
+  if (opts.backgroundColor || opts.format === "jpeg") {
+    ctx.fillStyle = opts.backgroundColor ?? "#ffffff";
     ctx.fillRect(0, 0, outW, outH);
   }
 

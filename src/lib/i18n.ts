@@ -84,7 +84,7 @@ const messages = {
       titleAccent: "convert",
       titleSuffix: "in seconds.",
       description:
-        "Six focused tools for images and PDFs. No uploads, no accounts — files are processed locally in your browser.",
+        "Five focused tools for images and PDFs. No uploads, no accounts — files are processed locally in your browser.",
       startResizing: "Compress now",
       browseAllTools: "Browse all tools",
       tools: "Tools",
@@ -199,7 +199,7 @@ const messages = {
       larger: "larger than original",
       lowerQualityHint: "Lower quality usually means a smaller file, especially for photos.",
       pngHint:
-        "PNG does not use quality compression here. If you want a smaller file, try JPG or WebP.",
+        "PNG is lossless here and can make files larger. For smaller downloads, choose JPG, WebP, or AVIF.",
     },
     routes: {
       about: {
@@ -289,7 +289,7 @@ const messages = {
         intro: "Drop images, pick a page size, and get a single PDF. JPG and PNG supported.",
         dropTitleEmpty: "Drop images to combine",
         dropTitleFilled: "Add more images",
-        hint: "JPG or PNG",
+        hint: "JPG, PNG, WebP or AVIF",
         pageSize: "Page size",
         buildButton: "Build PDF",
       },
@@ -334,7 +334,7 @@ const messages = {
         downloadButton: "Download",
         lowerQualityHint: "Lower quality usually means a smaller file, especially for photos.",
         pngHint:
-          "PNG does not use quality compression here. If you want a smaller file, try JPG or WebP.",
+          "PNG is lossless here and can make files larger. For smaller downloads, choose JPG, WebP, or AVIF.",
       },
       notFound: {
         title: "Page not found",
@@ -374,7 +374,7 @@ const messages = {
       titleAccent: "convert",
       titleSuffix: "in seconds.",
       description:
-        "Six focused tools for images and PDFs. No uploads, no accounts — files are processed locally in your browser.",
+        "Five focused tools for images and PDFs. No uploads, no accounts — files are processed locally in your browser.",
       startResizing: "Compress now",
       browseAllTools: "Browse all tools",
       tools: "Tools",
@@ -489,7 +489,7 @@ const messages = {
       larger: "larger than original",
       lowerQualityHint: "Lower quality usually means a smaller file, especially for photos.",
       pngHint:
-        "PNG does not use quality compression here. If you want a smaller file, try JPG or WebP.",
+        "PNG is lossless here and can make files larger. For smaller downloads, choose JPG, WebP, or AVIF.",
     },
     routes: {
       about: {
@@ -579,7 +579,7 @@ const messages = {
         intro: "Drop images, pick a page size, and get a single PDF. JPG and PNG supported.",
         dropTitleEmpty: "Drop images to combine",
         dropTitleFilled: "Add more images",
-        hint: "JPG or PNG",
+        hint: "JPG, PNG, WebP or AVIF",
         pageSize: "Page size",
         buildButton: "Build PDF",
       },
@@ -624,7 +624,7 @@ const messages = {
         downloadButton: "Download",
         lowerQualityHint: "Lower quality usually means a smaller file, especially for photos.",
         pngHint:
-          "PNG does not use quality compression here. If you want a smaller file, try JPG or WebP.",
+          "PNG is lossless here and can make files larger. For smaller downloads, choose JPG, WebP, or AVIF.",
       },
       notFound: {
         title: "Page not found",
@@ -665,7 +665,7 @@ const messages = {
       titleAccent: "converta",
       titleSuffix: "em segundos.",
       description:
-        "Seis ferramentas focadas para imagens e PDFs. Sem uploads, sem conta — tudo é processado localmente no navegador.",
+        "Cinco ferramentas focadas para imagens e PDFs. Sem uploads, sem conta — tudo é processado localmente no navegador.",
       startResizing: "Comprimir agora",
       browseAllTools: "Ver todas as ferramentas",
       tools: "Ferramentas",
@@ -877,7 +877,7 @@ const messages = {
           "Envie imagens, escolha o tamanho da página e gere um PDF único. Compatível com JPG e PNG.",
         dropTitleEmpty: "Solte imagens para combinar",
         dropTitleFilled: "Adicionar mais imagens",
-        hint: "JPG ou PNG",
+        hint: "JPG, PNG, WebP ou AVIF",
         pageSize: "Tamanho da página",
         buildButton: "Gerar PDF",
       },
@@ -965,7 +965,7 @@ const messages = {
       titleAccent: "i-convert",
       titleSuffix: "nang mabilis.",
       description:
-        "Anim na nakatutok na tools para sa images at PDFs. Walang uploads, walang account — processed locally sa browser.",
+        "Limang nakatutok na tools para sa images at PDFs. Walang uploads, walang account — processed locally sa browser.",
       startResizing: "Mag-compress ngayon",
       browseAllTools: "Tingnan lahat ng tools",
       tools: "Tools",
@@ -1177,7 +1177,7 @@ const messages = {
           "Mag-drop ng images, pumili ng page size, at gumawa ng isang PDF. Suportado ang JPG at PNG.",
         dropTitleEmpty: "I-drop ang images para pagsamahin",
         dropTitleFilled: "Magdagdag pa ng images",
-        hint: "JPG o PNG",
+        hint: "JPG, PNG, WebP o AVIF",
         pageSize: "Laki ng page",
         buildButton: "Bumuo ng PDF",
       },
@@ -1266,7 +1266,7 @@ const messages = {
       titleAccent: "konversi",
       titleSuffix: "dalam hitungan detik.",
       description:
-        "Enam alat fokus untuk gambar dan PDF. Tanpa upload, tanpa akun — file diproses lokal di browser.",
+        "Lima alat fokus untuk gambar dan PDF. Tanpa upload, tanpa akun — file diproses lokal di browser.",
       startResizing: "Kompres sekarang",
       browseAllTools: "Lihat semua alat",
       tools: "Alat",
@@ -1474,7 +1474,7 @@ const messages = {
         intro: "Tarik gambar, pilih ukuran halaman, dan buat satu PDF. Mendukung JPG dan PNG.",
         dropTitleEmpty: "Tarik gambar untuk digabung",
         dropTitleFilled: "Tambah gambar lagi",
-        hint: "JPG atau PNG",
+        hint: "JPG, PNG, WebP atau AVIF",
         pageSize: "Ukuran halaman",
         buildButton: "Buat PDF",
       },
@@ -1562,7 +1562,7 @@ const messages = {
       titleAccent: "chuyển đổi",
       titleSuffix: "trong vài giây.",
       description:
-        "Sáu công cụ tập trung cho ảnh và PDF. Không upload, không tài khoản — file được xử lý ngay trong trình duyệt.",
+        "Năm công cụ tập trung cho ảnh và PDF. Không upload, không tài khoản — file được xử lý ngay trong trình duyệt.",
       startResizing: "Nén ảnh ngay",
       browseAllTools: "Khám phá công cụ",
       tools: "Công cụ",
@@ -1772,7 +1772,7 @@ const messages = {
         intro: "Thả ảnh, chọn kích thước trang và tạo một PDF duy nhất. Hỗ trợ JPG và PNG.",
         dropTitleEmpty: "Thả ảnh để gộp",
         dropTitleFilled: "Thêm ảnh nữa",
-        hint: "JPG hoặc PNG",
+        hint: "JPG, PNG, WebP hoặc AVIF",
         pageSize: "Kích thước trang",
         buildButton: "Tạo PDF",
       },

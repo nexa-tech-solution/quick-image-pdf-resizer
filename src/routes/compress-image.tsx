@@ -14,6 +14,12 @@ import {
   type ImageFormat,
 } from "@/lib/image";
 
+const qualityPresets = [
+  { label: "High", value: 0.85 },
+  { label: "Balanced", value: 0.7 },
+  { label: "Smallest", value: 0.45 },
+] as const;
+
 export const Route = createFileRoute("/compress-image")({
   head: () => {
     const page = getTranslationSet(getBrowserLocale()).routes.compressImage;
@@ -220,6 +226,22 @@ function CompressImage() {
             </div>
             {format !== "png" && (
               <div>
+                <div className="mb-3 grid grid-cols-3 gap-2">
+                  {qualityPresets.map((preset) => (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => setQuality(preset.value)}
+                      className={`rounded-lg border px-2 py-2 text-xs font-medium transition ${
+                        Math.abs(quality - preset.value) < 0.01
+                          ? "border-primary bg-primary-soft text-primary"
+                          : "border-border hover:border-primary/60"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                     {page.quality}
@@ -239,7 +261,7 @@ function CompressImage() {
               </div>
             )}
             {format === "png" && (
-              <div className="rounded-lg border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
+              <div className="rounded-lg border border-amber-300/70 bg-amber-50 px-3 py-2 text-xs text-amber-800">
                 {page.pngHint}
               </div>
             )}

@@ -6,6 +6,8 @@ import { FileDropzone } from "@/components/site/FileDropzone";
 import { downloadBlob } from "@/lib/image";
 import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 
+type OutputFormat = "png" | "jpeg";
+
 export const Route = createFileRoute("/pdf-to-image")({
   head: () => {
     const page = getTranslationSet(getBrowserLocale()).routes.pdfToImage;
@@ -28,8 +30,10 @@ function PdfToImage() {
   const page = t.routes.pdfToImage;
   const [file, setFile] = useState<File | null>(null);
   const [scale, setScale] = useState(2);
+  const [format, setFormat] = useState<OutputFormat>("png");
+  const [quality, setQuality] = useState(0.9);
   const [busy, setBusy] = useState(false);
-  const [pages, setPages] = useState<{ url: string; blob: Blob }[]>([]);
+  const [pages, setPages] = useState<{ url: string; blob: Blob; filename: string }[]>([]);
 
   const onRender = async () => {
     if (!file) return;
@@ -43,7 +47,7 @@ function PdfToImage() {
 
       const buf = await file.arrayBuffer();
       const doc = await pdfjs.getDocument({ data: buf }).promise;
-      const out: { url: string; blob: Blob }[] = [];
+      const out: { url: string; blob: Blob; filename: string }[] = [];
       for (let i = 1; i <= doc.numPages; i++) {
         const page = await doc.getPage(i);
         const viewport = page.getViewport({ scale });
@@ -51,9 +55,16 @@ function PdfToImage() {
         canvas.width = viewport.width;
         canvas.height = viewport.height;
         const ctx = canvas.getContext("2d")!;
+        if (format === "jpeg") {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
         await page.render({ canvasContext: ctx, viewport, canvas }).promise;
-        const blob: Blob = await new Promise((res) => canvas.toBlob((b) => res(b!), "image/png"));
-        out.push({ url: URL.createObjectURL(blob), blob });
+        const blob: Blob = await new Promise((res) =>
+          canvas.toBlob((b) => res(b!), `image/${format}`, quality),
+        );
+        const ext = format === "jpeg" ? "jpg" : "png";
+        out.push({ url: URL.createObjectURL(blob), blob, filename: `page-${i}.${ext}` });
       }
       setPages(out);
     } finally {
@@ -95,6 +106,47 @@ function PdfToImage() {
                 ))}
               </div>
             </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  Format
+                </label>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {(["png", "jpeg"] as OutputFormat[]).map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => setFormat(item)}
+                      className={`rounded-md border px-3 py-2 text-xs font-mono uppercase ${
+                        format === item
+                          ? "border-primary bg-primary-soft text-primary"
+                          : "border-border hover:border-primary/60"
+                      }`}
+                    >
+                      {item === "jpeg" ? "JPG" : "PNG"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {format === "jpeg" && (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                      JPG Quality
+                    </label>
+                    <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={10}
+                    max={100}
+                    value={Math.round(quality * 100)}
+                    onChange={(e) => setQuality(Number(e.target.value) / 100)}
+                    aria-label="JPG quality"
+                    className="mt-2 w-full accent-[var(--color-primary)]"
+                  />
+                </div>
+              )}
+            </div>
             <div className="mt-4 flex gap-2">
               <button
                 onClick={() => {
@@ -129,9 +181,9 @@ function PdfToImage() {
                     className="aspect-[3/4] w-full object-cover"
                   />
                   <div className="flex items-center justify-between border-t border-border px-3 py-2 text-xs">
-                    <span className="font-mono">page-{i + 1}.png</span>
+                    <span className="font-mono">{p.filename}</span>
                     <button
-                      onClick={() => downloadBlob(p.blob, `page-${i + 1}.png`)}
+                      onClick={() => downloadBlob(p.blob, p.filename)}
                       className="inline-flex items-center gap-1 text-primary hover:opacity-80"
                     >
                       <Download className="h-3.5 w-3.5" />

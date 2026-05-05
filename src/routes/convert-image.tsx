@@ -28,13 +28,14 @@ function ConvertImage() {
   const page = t.routes.convertImage;
   const [file, setFile] = useState<File | null>(null);
   const [format, setFormat] = useState<ImageFormat>("webp");
+  const [quality, setQuality] = useState(0.92);
   const [busy, setBusy] = useState(false);
 
   const onConvert = async () => {
     if (!file) return;
     setBusy(true);
     try {
-      const { blob } = await processImage(file, { format, quality: 0.92 });
+      const { blob } = await processImage(file, { format, quality });
       downloadBlob(blob, replaceExt(file.name, formatExt[format]));
     } finally {
       setBusy(false);
@@ -52,6 +53,16 @@ function ConvertImage() {
       ) : (
         <div className="rounded-2xl border border-border bg-surface-elevated p-6">
           <div className="truncate font-medium">{file.name}</div>
+          <div className="mt-1 text-sm text-muted-foreground">
+            Output:{" "}
+            <span className="font-mono uppercase text-foreground">
+              {format === "jpeg" ? "JPG" : formatExt[format]}
+            </span>{" "}
+            as{" "}
+            <span className="font-mono text-foreground">
+              {replaceExt(file.name, formatExt[format])}
+            </span>
+          </div>
           <div className="mt-6">
             <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
               {page.convertTo}
@@ -72,6 +83,28 @@ function ConvertImage() {
               ))}
             </div>
           </div>
+          {format !== "png" && (
+            <div className="mt-6">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  Quality
+                </label>
+                <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
+              </div>
+              <input
+                type="range"
+                min={10}
+                max={100}
+                value={Math.round(quality * 100)}
+                onChange={(e) => setQuality(Number(e.target.value) / 100)}
+                aria-label="Output quality"
+                className="mt-2 w-full accent-[var(--color-primary)]"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                Applies to JPG, WebP, and AVIF output. PNG keeps lossless output.
+              </p>
+            </div>
+          )}
           <div className="mt-6 flex gap-2">
             <button
               onClick={() => setFile(null)}
