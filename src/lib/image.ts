@@ -54,10 +54,15 @@ export async function processImage(
   if (opts.width && !opts.height) outH = Math.round((srcH / srcW) * opts.width);
   if (opts.height && !opts.width) outW = Math.round((srcW / srcH) * opts.height);
 
+  if (!Number.isFinite(outW) || !Number.isFinite(outH) || outW < 1 || outH < 1) {
+    throw new Error("Invalid output dimensions");
+  }
+
   const canvas = document.createElement("canvas");
   canvas.width = outW;
   canvas.height = outH;
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas is not available");
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
 
@@ -103,7 +108,13 @@ export async function processImage(
 
   const blob: Blob = await new Promise((resolve, reject) => {
     canvas.toBlob(
-      (b) => (b ? resolve(b) : reject(new Error("Encode failed"))),
+      (b) => {
+        if (!b || b.size === 0) {
+          reject(new Error(`Could not encode ${opts.format.toUpperCase()} output`));
+          return;
+        }
+        resolve(b);
+      },
       formatMime[opts.format],
       opts.quality,
     );

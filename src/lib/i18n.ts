@@ -59,6 +59,7 @@ const messages = {
       compress: "Compress",
       convert: "Convert",
       imageToPdf: "Image → PDF",
+      pdfToImage: "PDF → Image",
       pricing: "Pricing",
       language: "Language",
       getPro: "Get Pro",
@@ -155,7 +156,7 @@ const messages = {
       desc: "Five focused tools instead of one bloated editor. Pick a job, get it done.",
       resizeImage: {
         title: "Resize Image",
-        desc: "JPG, PNG, WebP — exact dimensions or presets like 1080×1080.",
+        desc: "JPG, PNG, WebP, AVIF — exact dimensions or presets like 1080×1080.",
       },
       compressImage: {
         title: "Compress Image",
@@ -163,7 +164,7 @@ const messages = {
       },
       convertFormat: {
         title: "Convert Format",
-        desc: "Swap between JPG, PNG and WebP in one click.",
+        desc: "Swap between JPG, PNG, WebP and AVIF in one click.",
       },
       imageToPdf: {
         title: "Image → PDF",
@@ -394,6 +395,7 @@ const messages = {
       compress: "Compress",
       convert: "Convert",
       imageToPdf: "Image → PDF",
+      pdfToImage: "PDF → Image",
       pricing: "Pricing",
       language: "Language",
       getPro: "Get Pro",
@@ -490,7 +492,7 @@ const messages = {
       desc: "Five focused tools instead of one bloated editor. Pick a job, get it done.",
       resizeImage: {
         title: "Resize Image",
-        desc: "JPG, PNG, WebP — exact dimensions or presets like 1080×1080.",
+        desc: "JPG, PNG, WebP, AVIF — exact dimensions or presets like 1080×1080.",
       },
       compressImage: {
         title: "Compress Image",
@@ -498,7 +500,7 @@ const messages = {
       },
       convertFormat: {
         title: "Convert Format",
-        desc: "Swap between JPG, PNG and WebP in one click.",
+        desc: "Swap between JPG, PNG, WebP and AVIF in one click.",
       },
       imageToPdf: {
         title: "Image → PDF",
@@ -729,6 +731,7 @@ const messages = {
       compress: "Comprimir",
       convert: "Converter",
       imageToPdf: "Imagem → PDF",
+      pdfToImage: "PDF → Imagem",
       pricing: "Planos",
       language: "Idioma",
       getPro: "Assine Pro",
@@ -827,7 +830,7 @@ const messages = {
       desc: "Cinco ferramentas focadas em vez de um editor pesado. Escolha e resolva.",
       resizeImage: {
         title: "Redimensionar Imagem",
-        desc: "JPG, PNG, WebP — dimensões exatas ou predefinições como 1080×1080.",
+        desc: "JPG, PNG, WebP, AVIF — dimensões exatas ou predefinições como 1080×1080.",
       },
       compressImage: {
         title: "Comprimir Imagem",
@@ -835,7 +838,7 @@ const messages = {
       },
       convertFormat: {
         title: "Converter Formato",
-        desc: "Troque entre JPG, PNG e WebP com um clique.",
+        desc: "Troque entre JPG, PNG, WebP e AVIF com um clique.",
       },
       imageToPdf: {
         title: "Imagem → PDF",
@@ -1074,6 +1077,7 @@ const messages = {
       compress: "I-compress",
       convert: "I-convert",
       imageToPdf: "Larawan → PDF",
+      pdfToImage: "PDF → Larawan",
       pricing: "Presyo",
       language: "Wika",
       getPro: "Kunin ang Pro",
@@ -1172,7 +1176,7 @@ const messages = {
       desc: "Limang nakatutok na tools kaysa isang sobrang editor. Pumili at tapos agad.",
       resizeImage: {
         title: "Resize Image",
-        desc: "JPG, PNG, WebP — eksaktong sukat o presets tulad ng 1080×1080.",
+        desc: "JPG, PNG, WebP, AVIF — eksaktong sukat o presets tulad ng 1080×1080.",
       },
       compressImage: {
         title: "I-compress ang Larawan",
@@ -1180,7 +1184,7 @@ const messages = {
       },
       convertFormat: {
         title: "I-convert ang Format",
-        desc: "Palit sa JPG, PNG at WebP sa isang click.",
+        desc: "Palit sa JPG, PNG, WebP at AVIF sa isang click.",
       },
       imageToPdf: {
         title: "Larawan → PDF",
@@ -1420,6 +1424,7 @@ const messages = {
       compress: "Kompres",
       convert: "Konversi",
       imageToPdf: "Gambar → PDF",
+      pdfToImage: "PDF → Gambar",
       pricing: "Harga",
       language: "Bahasa",
       getPro: "Dapatkan Pro",
@@ -1519,7 +1524,7 @@ const messages = {
       desc: "Lima alat fokus, bukan editor yang berat. Pilih pekerjaan, bereskan.",
       resizeImage: {
         title: "Resize Image",
-        desc: "JPG, PNG, WebP — ukuran tepat atau preset seperti 1080×1080.",
+        desc: "JPG, PNG, WebP, AVIF — ukuran tepat atau preset seperti 1080×1080.",
       },
       compressImage: {
         title: "Kompres Gambar",
@@ -1527,7 +1532,7 @@ const messages = {
       },
       convertFormat: {
         title: "Ubah Format",
-        desc: "Pindah antara JPG, PNG, dan WebP dalam satu klik.",
+        desc: "Pindah antara JPG, PNG, WebP, dan AVIF dalam satu klik.",
       },
       imageToPdf: {
         title: "Gambar → PDF",
@@ -1761,6 +1766,7 @@ const messages = {
       compress: "Nén",
       convert: "Chuyển đổi",
       imageToPdf: "Ảnh → PDF",
+      pdfToImage: "PDF → Ảnh",
       pricing: "Bảng giá",
       language: "Ngôn ngữ",
       getPro: "Nâng cấp Pro",
@@ -1859,7 +1865,7 @@ const messages = {
       desc: "Năm công cụ tập trung thay vì một editor cồng kềnh. Chọn việc, làm xong ngay.",
       resizeImage: {
         title: "Resize Image",
-        desc: "JPG, PNG, WebP — kích thước chính xác hoặc preset như 1080×1080.",
+        desc: "JPG, PNG, WebP, AVIF — kích thước chính xác hoặc preset như 1080×1080.",
       },
       compressImage: {
         title: "Nén ảnh",
@@ -1867,7 +1873,7 @@ const messages = {
       },
       convertFormat: {
         title: "Chuyển đổi định dạng",
-        desc: "Đổi giữa JPG, PNG và WebP chỉ với một cú nhấp.",
+        desc: "Đổi giữa JPG, PNG, WebP và AVIF chỉ với một cú nhấp.",
       },
       imageToPdf: {
         title: "Ảnh → PDF",
@@ -2098,6 +2104,334 @@ const messages = {
     },
   },
 } as const;
+
+export const toolEnhancementCopy: Record<
+  Locale,
+  {
+    shared: {
+      invalidDimensions: string;
+      processingError: string;
+      original: string;
+      output: string;
+      sizeChange: string;
+      outputLarger: string;
+      downloadAll: string;
+      removeAll: string;
+      total: string;
+      selected: string;
+      ready: string;
+      error: string;
+      unsupportedOutput: string;
+    };
+    resize: {
+      social: string;
+      video: string;
+      web: string;
+      custom: string;
+      outputEstimate: string;
+      choosePreset: string;
+      containTip: string;
+      coverTip: string;
+      stretchTip: string;
+    };
+    batch: {
+      addMore: string;
+      processing: string;
+      outputLargerHint: string;
+      reencodeWarning: string;
+      dimensionsPending: string;
+    };
+    imageToPdf: {
+      moveUp: string;
+      moveDown: string;
+      files: string;
+    };
+    pdfToImage: {
+      pages: string;
+      readingPdf: string;
+      renderingPage: string;
+      pdfError: string;
+    };
+  }
+> = {
+  "en-US": {
+    shared: {
+      invalidDimensions: "Use dimensions between 1 and 10,000 px.",
+      processingError: "Could not process this file. Try another format or a smaller file.",
+      original: "Original",
+      output: "Output",
+      sizeChange: "Size change",
+      outputLarger: "Output is larger than the original.",
+      downloadAll: "Download all",
+      removeAll: "Remove all",
+      total: "Total",
+      selected: "Selected",
+      ready: "Ready",
+      error: "Error",
+      unsupportedOutput: "Your browser cannot export this format.",
+    },
+    resize: {
+      social: "Social",
+      video: "Video",
+      web: "Web",
+      custom: "Custom",
+      outputEstimate: "Output estimate",
+      choosePreset: "Choose preset",
+      containTip: "Keep the full image visible with padding if needed.",
+      coverTip: "Fill the canvas and crop from the center.",
+      stretchTip: "Force the image into the exact size.",
+    },
+    batch: {
+      addMore: "Add more files",
+      processing: "Processing",
+      outputLargerHint: "Try a lower quality or WebP/JPG for a smaller result.",
+      reencodeWarning: "Same format selected. The file will be re-encoded.",
+      dimensionsPending: "Reading dimensions",
+    },
+    imageToPdf: {
+      moveUp: "Move up",
+      moveDown: "Move down",
+      files: "files",
+    },
+    pdfToImage: {
+      pages: "pages",
+      readingPdf: "Reading PDF",
+      renderingPage: "Rendering page",
+      pdfError: "Could not read this PDF. It may be corrupted or password-protected.",
+    },
+  },
+  "en-IN": {
+    shared: {
+      invalidDimensions: "Use dimensions between 1 and 10,000 px.",
+      processingError: "Could not process this file. Try another format or a smaller file.",
+      original: "Original",
+      output: "Output",
+      sizeChange: "Size change",
+      outputLarger: "Output is larger than the original.",
+      downloadAll: "Download all",
+      removeAll: "Remove all",
+      total: "Total",
+      selected: "Selected",
+      ready: "Ready",
+      error: "Error",
+      unsupportedOutput: "Your browser cannot export this format.",
+    },
+    resize: {
+      social: "Social",
+      video: "Video",
+      web: "Web",
+      custom: "Custom",
+      outputEstimate: "Output estimate",
+      choosePreset: "Choose preset",
+      containTip: "Keep the full image visible with padding if needed.",
+      coverTip: "Fill the canvas and crop from the centre.",
+      stretchTip: "Force the image into the exact size.",
+    },
+    batch: {
+      addMore: "Add more files",
+      processing: "Processing",
+      outputLargerHint: "Try a lower quality or WebP/JPG for a smaller result.",
+      reencodeWarning: "Same format selected. The file will be re-encoded.",
+      dimensionsPending: "Reading dimensions",
+    },
+    imageToPdf: {
+      moveUp: "Move up",
+      moveDown: "Move down",
+      files: "files",
+    },
+    pdfToImage: {
+      pages: "pages",
+      readingPdf: "Reading PDF",
+      renderingPage: "Rendering page",
+      pdfError: "Could not read this PDF. It may be corrupted or password-protected.",
+    },
+  },
+  "pt-BR": {
+    shared: {
+      invalidDimensions: "Use dimensões entre 1 e 10.000 px.",
+      processingError:
+        "Não foi possível processar este arquivo. Tente outro formato ou um arquivo menor.",
+      original: "Original",
+      output: "Saída",
+      sizeChange: "Mudança de tamanho",
+      outputLarger: "A saída ficou maior que o original.",
+      downloadAll: "Baixar tudo",
+      removeAll: "Remover tudo",
+      total: "Total",
+      selected: "Selecionado",
+      ready: "Pronto",
+      error: "Erro",
+      unsupportedOutput: "Seu navegador não consegue exportar este formato.",
+    },
+    resize: {
+      social: "Social",
+      video: "Vídeo",
+      web: "Web",
+      custom: "Personalizado",
+      outputEstimate: "Estimativa de saída",
+      choosePreset: "Escolha preset",
+      containTip: "Mantém a imagem inteira visível com margem quando necessário.",
+      coverTip: "Preenche a tela e corta pelo centro.",
+      stretchTip: "Força a imagem ao tamanho exato.",
+    },
+    batch: {
+      addMore: "Adicionar arquivos",
+      processing: "Processando",
+      outputLargerHint: "Tente qualidade menor ou WebP/JPG para reduzir.",
+      reencodeWarning: "Mesmo formato selecionado. O arquivo será recodificado.",
+      dimensionsPending: "Lendo dimensões",
+    },
+    imageToPdf: {
+      moveUp: "Mover para cima",
+      moveDown: "Mover para baixo",
+      files: "arquivos",
+    },
+    pdfToImage: {
+      pages: "páginas",
+      readingPdf: "Lendo PDF",
+      renderingPage: "Renderizando página",
+      pdfError: "Não foi possível ler este PDF. Ele pode estar corrompido ou protegido por senha.",
+    },
+  },
+  "fil-PH": {
+    shared: {
+      invalidDimensions: "Gumamit ng dimensions mula 1 hanggang 10,000 px.",
+      processingError: "Hindi ma-process ang file. Subukan ang ibang format o mas maliit na file.",
+      original: "Original",
+      output: "Output",
+      sizeChange: "Size change",
+      outputLarger: "Mas malaki ang output kaysa original.",
+      downloadAll: "Download all",
+      removeAll: "Remove all",
+      total: "Total",
+      selected: "Selected",
+      ready: "Ready",
+      error: "Error",
+      unsupportedOutput: "Hindi ma-export ng browser mo ang format na ito.",
+    },
+    resize: {
+      social: "Social",
+      video: "Video",
+      web: "Web",
+      custom: "Custom",
+      outputEstimate: "Output estimate",
+      choosePreset: "Choose preset",
+      containTip: "Panatilihing kita ang buong image kahit may padding.",
+      coverTip: "Punuin ang canvas at i-crop mula sa gitna.",
+      stretchTip: "I-stretch ang image sa eksaktong size.",
+    },
+    batch: {
+      addMore: "Add more files",
+      processing: "Processing",
+      outputLargerHint: "Subukan ang lower quality o WebP/JPG para mas maliit.",
+      reencodeWarning: "Parehong format ang napili. Ire-re-encode ang file.",
+      dimensionsPending: "Reading dimensions",
+    },
+    imageToPdf: {
+      moveUp: "Move up",
+      moveDown: "Move down",
+      files: "files",
+    },
+    pdfToImage: {
+      pages: "pages",
+      readingPdf: "Reading PDF",
+      renderingPage: "Rendering page",
+      pdfError: "Hindi mabasa ang PDF. Baka corrupted o password-protected.",
+    },
+  },
+  "id-ID": {
+    shared: {
+      invalidDimensions: "Gunakan dimensi antara 1 dan 10.000 px.",
+      processingError: "File tidak dapat diproses. Coba format lain atau file yang lebih kecil.",
+      original: "Asli",
+      output: "Output",
+      sizeChange: "Perubahan ukuran",
+      outputLarger: "Output lebih besar dari file asli.",
+      downloadAll: "Unduh semua",
+      removeAll: "Hapus semua",
+      total: "Total",
+      selected: "Dipilih",
+      ready: "Siap",
+      error: "Error",
+      unsupportedOutput: "Browser Anda tidak dapat mengekspor format ini.",
+    },
+    resize: {
+      social: "Sosial",
+      video: "Video",
+      web: "Web",
+      custom: "Kustom",
+      outputEstimate: "Estimasi output",
+      choosePreset: "Pilih preset",
+      containTip: "Menjaga seluruh gambar tetap terlihat dengan padding bila perlu.",
+      coverTip: "Memenuhi kanvas dan crop dari tengah.",
+      stretchTip: "Paksa gambar ke ukuran tepat.",
+    },
+    batch: {
+      addMore: "Tambah file",
+      processing: "Memproses",
+      outputLargerHint: "Coba kualitas lebih rendah atau WebP/JPG agar lebih kecil.",
+      reencodeWarning: "Format yang sama dipilih. File akan di-encode ulang.",
+      dimensionsPending: "Membaca dimensi",
+    },
+    imageToPdf: {
+      moveUp: "Naik",
+      moveDown: "Turun",
+      files: "file",
+    },
+    pdfToImage: {
+      pages: "halaman",
+      readingPdf: "Membaca PDF",
+      renderingPage: "Merender halaman",
+      pdfError: "PDF tidak dapat dibaca. File mungkin rusak atau dilindungi sandi.",
+    },
+  },
+  "vi-VN": {
+    shared: {
+      invalidDimensions: "Dùng kích thước từ 1 đến 10.000 px.",
+      processingError: "Không xử lý được file này. Thử định dạng khác hoặc file nhỏ hơn.",
+      original: "Gốc",
+      output: "Kết quả",
+      sizeChange: "Thay đổi dung lượng",
+      outputLarger: "Kết quả lớn hơn file gốc.",
+      downloadAll: "Tải tất cả",
+      removeAll: "Xóa tất cả",
+      total: "Tổng",
+      selected: "Đã chọn",
+      ready: "Sẵn sàng",
+      error: "Lỗi",
+      unsupportedOutput: "Trình duyệt của bạn không xuất được định dạng này.",
+    },
+    resize: {
+      social: "Social",
+      video: "Video",
+      web: "Web",
+      custom: "Tùy chỉnh",
+      outputEstimate: "Ước tính kết quả",
+      choosePreset: "Chọn preset",
+      containTip: "Giữ toàn bộ ảnh hiển thị, thêm nền nếu cần.",
+      coverTip: "Phủ kín khung và crop từ trung tâm.",
+      stretchTip: "Ép ảnh đúng kích thước đã chọn.",
+    },
+    batch: {
+      addMore: "Thêm file",
+      processing: "Đang xử lý",
+      outputLargerHint: "Thử giảm chất lượng hoặc dùng WebP/JPG để file nhỏ hơn.",
+      reencodeWarning: "Bạn chọn cùng định dạng. File sẽ được encode lại.",
+      dimensionsPending: "Đang đọc kích thước",
+    },
+    imageToPdf: {
+      moveUp: "Đưa lên",
+      moveDown: "Đưa xuống",
+      files: "file",
+    },
+    pdfToImage: {
+      pages: "trang",
+      readingPdf: "Đang đọc PDF",
+      renderingPage: "Đang render trang",
+      pdfError: "Không đọc được PDF này. File có thể bị lỗi hoặc có mật khẩu.",
+    },
+  },
+};
 
 export function getTranslationSet(locale: Locale = getBrowserLocale()) {
   return messages[locale];

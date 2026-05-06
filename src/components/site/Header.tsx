@@ -8,6 +8,7 @@ const tools = [
   { to: "/compress-image", key: "compress" },
   { to: "/convert-image", key: "convert" },
   { to: "/image-to-pdf", key: "imageToPdf" },
+  { to: "/pdf-to-image", key: "pdfToImage" },
   { to: "/pricing", key: "pricing" },
 ] as const;
 

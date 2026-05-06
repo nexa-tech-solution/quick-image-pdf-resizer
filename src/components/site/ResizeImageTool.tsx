@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Download, Loader2, Lock, Unlock, RefreshCw, X } from "lucide-react";
+import { Crop, Download, Loader2, Lock, Maximize2, Move, RefreshCw, Unlock, X } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   downloadBlob,
   formatBytes,
@@ -10,20 +11,33 @@ import {
   replaceExt,
   type ImageFormat,
 } from "@/lib/image";
-import { useLocale } from "@/lib/i18n";
+import { toolEnhancementCopy, useLocale } from "@/lib/i18n";
+import {
+  canEncodeImageFormat,
+  imageAccept,
+  savingPercent,
+  supportedImageTypes,
+} from "@/lib/tool-files";
 import { cn } from "@/lib/utils";
 
 const presets = [
-  { labelKey: "socialSquare", size: "1080×1080", w: 1080, h: 1080 },
-  { labelKey: "storyReel", size: "1080×1920", w: 1080, h: 1920 },
-  { labelKey: "youtubeThumb", size: "1280×720", w: 1280, h: 720 },
-  { labelKey: "fullHd", size: "1920×1080", w: 1920, h: 1080 },
-  { labelKey: "wideBanner", size: "1600×900", w: 1600, h: 900 },
-  { labelKey: "profile", size: "800×800", w: 800, h: 800 },
+  { group: "social", labelKey: "socialSquare", size: "1080×1080", w: 1080, h: 1080 },
+  { group: "social", labelKey: "storyReel", size: "1080×1920", w: 1080, h: 1920 },
+  { group: "social", labelKey: "profile", size: "800×800", w: 800, h: 800 },
+  { group: "video", labelKey: "youtubeThumb", size: "1280×720", w: 1280, h: 720 },
+  { group: "video", labelKey: "fullHd", size: "1920×1080", w: 1920, h: 1080 },
+  { group: "web", labelKey: "wideBanner", size: "1600×900", w: 1600, h: 900 },
 ] as const;
 
+const fitIcons = {
+  contain: Maximize2,
+  cover: Crop,
+  stretch: Move,
+} as const;
+
 export function ResizeImageTool() {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
+  const copy = toolEnhancementCopy[locale];
   const [file, setFile] = useState<File | null>(null);
   const [width, setWidth] = useState<number>(1080);
   const [height, setHeight] = useState<number>(1080);
@@ -35,34 +49,45 @@ export function ResizeImageTool() {
   const [busy, setBusy] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [processedPreviewUrl, setProcessedPreviewUrl] = useState<string | null>(null);
+  const [outputSize, setOutputSize] = useState<number | null>(null);
   const [previewBusy, setPreviewBusy] = useState(false);
   const [originalDims, setOriginalDims] = useState<{ w: number; h: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!file) {
       setPreviewUrl(null);
       setProcessedPreviewUrl(null);
+      setOutputSize(null);
       setOriginalDims(null);
+      setError(null);
       return;
     }
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
-    loadImage(file).then((img) => {
-      setOriginalDims({ w: img.naturalWidth, h: img.naturalHeight });
-      setWidth(img.naturalWidth);
-      setHeight(img.naturalHeight);
-    });
+    loadImage(file)
+      .then((img) => {
+        setOriginalDims({ w: img.naturalWidth, h: img.naturalHeight });
+        setWidth(img.naturalWidth);
+        setHeight(img.naturalHeight);
+      })
+      .catch(() => setError(copy.shared.processingError));
     return () => URL.revokeObjectURL(url);
-  }, [file]);
+  }, [copy.shared.processingError, file]);
 
   useEffect(() => {
-    if (!file || !originalDims) return;
+    if (!file || !originalDims || width < 1 || height < 1 || width > 10000 || height > 10000) {
+      return;
+    }
 
     let cancelled = false;
     setPreviewBusy(true);
+    setError(null);
 
     const timer = window.setTimeout(async () => {
       try {
+        const supported = await canEncodeImageFormat(format);
+        if (!supported) throw new Error("Unsupported output format");
         const { blob } = await processImage(file, {
           width,
           height,
@@ -74,10 +99,19 @@ export function ResizeImageTool() {
         if (cancelled) return;
 
         const url = URL.createObjectURL(blob);
+        setOutputSize(blob.size);
         setProcessedPreviewUrl((current) => {
           if (current) URL.revokeObjectURL(current);
           return url;
         });
+      } catch (err) {
+        if (cancelled) return;
+        setOutputSize(null);
+        setError(
+          err instanceof Error && err.message.includes("Unsupported")
+            ? copy.shared.unsupportedOutput
+            : copy.shared.processingError,
+        );
       } finally {
         if (!cancelled) setPreviewBusy(false);
       }
@@ -87,7 +121,18 @@ export function ResizeImageTool() {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [file, originalDims, width, height, fit, format, quality, backgroundColor]);
+  }, [
+    backgroundColor,
+    copy.shared.processingError,
+    copy.shared.unsupportedOutput,
+    file,
+    fit,
+    format,
+    height,
+    originalDims,
+    quality,
+    width,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -96,6 +141,13 @@ export function ResizeImageTool() {
   }, [processedPreviewUrl]);
 
   const ratio = useMemo(() => (originalDims ? originalDims.w / originalDims.h : 1), [originalDims]);
+  const validDimensions = width >= 1 && height >= 1 && width <= 10000 && height <= 10000;
+  const outputDelta = file && outputSize ? savingPercent(file.size, outputSize) : null;
+  const presetGroups = [
+    { id: "social", label: copy.resize.social },
+    { id: "video", label: copy.resize.video },
+    { id: "web", label: copy.resize.web },
+  ] as const;
 
   const onWidth = (v: number) => {
     setWidth(v);
@@ -113,9 +165,12 @@ export function ResizeImageTool() {
   };
 
   const onDownload = async () => {
-    if (!file) return;
+    if (!file || !validDimensions) return;
     setBusy(true);
+    setError(null);
     try {
+      const supported = await canEncodeImageFormat(format);
+      if (!supported) throw new Error("Unsupported output format");
       const { blob } = await processImage(file, {
         width,
         height,
@@ -125,6 +180,12 @@ export function ResizeImageTool() {
         backgroundColor: fit === "contain" ? backgroundColor : undefined,
       });
       downloadBlob(blob, replaceExt(file.name, formatExt[format]));
+    } catch (err) {
+      setError(
+        err instanceof Error && err.message.includes("Unsupported")
+          ? copy.shared.unsupportedOutput
+          : copy.shared.processingError,
+      );
     } finally {
       setBusy(false);
     }
@@ -140,7 +201,10 @@ export function ResizeImageTool() {
   if (!file) {
     return (
       <FileDropzone
-        accept="image/jpeg,image/png,image/webp,image/avif"
+        accept={imageAccept}
+        validateFile={(item) =>
+          supportedImageTypes.has(item.type) ? null : "This image format is not supported."
+        }
         onFiles={(files) => setFile(files[0])}
         title={t.resizeTool.dropTitle}
         hint={t.resizeTool.dropHint}
@@ -157,6 +221,7 @@ export function ResizeImageTool() {
             {originalDims ? `${originalDims.w}×${originalDims.h} · ` : ""}
             {formatBytes(file.size)}
           </div>
+          {error && <div className="mt-2 text-xs text-destructive">{error}</div>}
         </div>
         <button
           onClick={() => setFile(null)}
@@ -190,25 +255,36 @@ export function ResizeImageTool() {
             <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
               {t.resizeTool.presets}
             </label>
-            <div className="-mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1 md:grid md:grid-cols-2 md:overflow-visible md:pb-0">
-              {presets.map((p) => (
-                <button
-                  key={p.size}
-                  onClick={() => applyPreset(p.w, p.h)}
-                  className={cn(
-                    "min-w-[132px] rounded-lg border border-border px-3 py-2 text-left transition hover:border-primary/60 hover:bg-primary-soft md:min-w-0",
-                    width === p.w && height === p.h
-                      ? "border-primary bg-primary-soft text-primary"
-                      : "",
-                  )}
-                >
-                  <span className="block text-xs font-medium">
-                    {t.resizeTool.presetLabels[p.labelKey]}
-                  </span>
-                  <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
-                    {p.size}
-                  </span>
-                </button>
+            <div className="mt-2 space-y-3">
+              {presetGroups.map((group) => (
+                <div key={group.id}>
+                  <div className="mb-1 text-[11px] font-medium text-muted-foreground">
+                    {group.label}
+                  </div>
+                  <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:grid md:grid-cols-2 md:overflow-visible md:pb-0">
+                    {presets
+                      .filter((p) => p.group === group.id)
+                      .map((p) => (
+                        <button
+                          key={p.size}
+                          onClick={() => applyPreset(p.w, p.h)}
+                          className={cn(
+                            "min-w-[132px] rounded-lg border border-border px-3 py-2 text-left transition hover:border-primary/60 hover:bg-primary-soft md:min-w-0",
+                            width === p.w && height === p.h
+                              ? "border-primary bg-primary-soft text-primary"
+                              : "",
+                          )}
+                        >
+                          <span className="block text-xs font-medium">
+                            {t.resizeTool.presetLabels[p.labelKey]}
+                          </span>
+                          <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
+                            {p.size}
+                          </span>
+                        </button>
+                      ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -245,7 +321,14 @@ export function ResizeImageTool() {
                 1:1
               </button>
             </div>
-            <p className="mt-2 text-[11px] text-muted-foreground">{t.resizeTool.lockHelp}</p>
+            <p
+              className={cn(
+                "mt-2 text-[11px]",
+                validDimensions ? "text-muted-foreground" : "text-destructive",
+              )}
+            >
+              {validDimensions ? t.resizeTool.lockHelp : copy.shared.invalidDimensions}
+            </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
@@ -253,22 +336,39 @@ export function ResizeImageTool() {
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 {t.resizeTool.fit}
               </label>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {(["contain", "cover", "stretch"] as const).map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setFit(f)}
-                    className={cn(
-                      "rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
-                      fit === f
-                        ? "border-primary bg-primary-soft text-primary"
-                        : "hover:border-primary/60",
-                    )}
-                  >
-                    {t.resizeTool.fitOptions[f]}
-                  </button>
-                ))}
-              </div>
+              <TooltipProvider>
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {(["contain", "cover", "stretch"] as const).map((f) => {
+                    const Icon = fitIcons[f];
+                    const tip =
+                      f === "contain"
+                        ? copy.resize.containTip
+                        : f === "cover"
+                          ? copy.resize.coverTip
+                          : copy.resize.stretchTip;
+
+                    return (
+                      <Tooltip key={f}>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => setFit(f)}
+                            className={cn(
+                              "flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
+                              fit === f
+                                ? "border-primary bg-primary-soft text-primary"
+                                : "hover:border-primary/60",
+                            )}
+                          >
+                            <Icon className="h-3.5 w-3.5" />
+                            <span>{t.resizeTool.fitOptions[f]}</span>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>{tip}</TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              </TooltipProvider>
             </div>
             <div>
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
@@ -341,6 +441,44 @@ export function ResizeImageTool() {
             </div>
           )}
 
+          <div className="grid gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                {copy.shared.output}
+              </div>
+              <div className="mt-1 font-mono text-sm font-medium">
+                {width}×{height} · {formatExt[format].toUpperCase()}
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                {outputSize ? formatBytes(outputSize) : copy.resize.outputEstimate}
+              </div>
+            </div>
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                {copy.shared.sizeChange}
+              </div>
+              <div
+                className={cn(
+                  "mt-1 font-mono text-sm font-medium",
+                  outputDelta === null
+                    ? "text-muted-foreground"
+                    : outputDelta >= 0
+                      ? "text-success"
+                      : "text-amber-600",
+                )}
+              >
+                {outputDelta === null
+                  ? "..."
+                  : `${outputDelta > 0 ? "-" : "+"}${Math.abs(outputDelta)}%`}
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                {outputDelta !== null && outputDelta < 0
+                  ? copy.shared.outputLarger
+                  : `${copy.shared.original}: ${formatBytes(file.size)}`}
+              </div>
+            </div>
+          </div>
+
           <div className="flex gap-2 pt-2">
             <button
               onClick={() => setFile(null)}
@@ -351,7 +489,7 @@ export function ResizeImageTool() {
             </button>
             <button
               onClick={onDownload}
-              disabled={busy}
+              disabled={busy || !validDimensions || Boolean(error)}
               className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
             >
               {busy ? (
@@ -385,7 +523,7 @@ function NumberField({
         min={1}
         max={10000}
         value={value}
-        onChange={(e) => onChange(Math.max(1, Number(e.target.value) || 0))}
+        onChange={(e) => onChange(Math.min(10000, Math.max(1, Number(e.target.value) || 0)))}
         className="w-full bg-transparent py-2 pr-3 text-sm outline-none"
       />
     </div>

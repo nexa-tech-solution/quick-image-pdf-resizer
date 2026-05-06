@@ -74,7 +74,7 @@ function Hero() {
           </div>
           <dl className="mt-10 grid max-w-md grid-cols-3 gap-6">
             {[
-              ["6", t.home.tools],
+              ["5", t.home.tools],
               ["0", t.home.uploads],
               ["∞", t.home.filesPerDay],
             ].map(([n, l]) => (

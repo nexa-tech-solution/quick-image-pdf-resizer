@@ -1,11 +1,19 @@
-import { useState } from "react";
-import { Download, Loader2, X, GripVertical } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowUp, Download, GripVertical, Loader2, X } from "lucide-react";
 import { PDFDocument, PageSizes } from "pdf-lib";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
-import { downloadBlob, loadImage } from "@/lib/image";
-import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
+import { downloadBlob, formatBytes, loadImage, replaceExt } from "@/lib/image";
+import { getBrowserLocale, getTranslationSet, toolEnhancementCopy, useLocale } from "@/lib/i18n";
+import {
+  cleanupToolFileItem,
+  cleanupToolFileItems,
+  createToolFileItem,
+  imageAccept,
+  supportedImageTypes,
+  type ToolFileItem,
+} from "@/lib/tool-files";
 
 export const Route = createFileRoute("/image-to-pdf")({
   head: () => {
@@ -65,29 +73,53 @@ function orientPageDims(pageDims: [number, number], orientation: Orientation): [
 }
 
 function ImageToPdf() {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
+  const copy = toolEnhancementCopy[locale];
   const page = t.routes.imageToPdf;
-  const [files, setFiles] = useState<File[]>([]);
+  const [items, setItems] = useState<ToolFileItem[]>([]);
   const [size, setSize] = useState<Size>("A4");
   const [orientation, setOrientation] = useState<Orientation>("portrait");
   const [margin, setMargin] = useState<Margin>("medium");
   const [busy, setBusy] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const itemsRef = useRef<ToolFileItem[]>([]);
 
-  const remove = (i: number) => setFiles((arr) => arr.filter((_, idx) => idx !== i));
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
+  useEffect(() => () => cleanupToolFileItems(itemsRef.current), []);
+
+  const files = items.map((item) => item.file);
+  const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+
+  const remove = (i: number) =>
+    setItems((arr) => {
+      const target = arr[i];
+      if (target) cleanupToolFileItem(target);
+      return arr.filter((_, idx) => idx !== i);
+    });
+
+  const removeAll = () => {
+    cleanupToolFileItems(itemsRef.current);
+    setItems([]);
+    setBusy(false);
+  };
 
   const moveFile = (from: number, to: number) => {
     if (from === to) return;
-    setFiles((arr) => {
+    setItems((arr) => {
+      if (to < 0 || to >= arr.length) return arr;
       const next = [...arr];
       const [item] = next.splice(from, 1);
+      if (!item) return arr;
       next.splice(to, 0, item);
       return next;
     });
   };
 
   const onGenerate = async () => {
-    if (files.length === 0) return;
+    if (items.length === 0) return;
     setBusy(true);
     try {
       const pdf = await PDFDocument.create();
@@ -120,7 +152,9 @@ function ImageToPdf() {
         }
       }
       const out = await pdf.save();
-      downloadBlob(new Blob([out as BlobPart], { type: "application/pdf" }), "images.pdf");
+      const filename =
+        files.length === 1 ? replaceExt(files[0]?.name ?? "image", "pdf") : "images.pdf";
+      downloadBlob(new Blob([out as BlobPart], { type: "application/pdf" }), filename);
     } finally {
       setBusy(false);
     }
@@ -129,9 +163,12 @@ function ImageToPdf() {
   return (
     <ToolPage eyebrow={page.eyebrow} title={page.titleText} description={page.intro}>
       <FileDropzone
-        accept="image/jpeg,image/png,image/webp,image/avif"
+        accept={imageAccept}
         multiple
-        onFiles={(f) => setFiles((prev) => [...prev, ...f])}
+        validateFile={(file) =>
+          supportedImageTypes.has(file.type) ? null : "This image format is not supported."
+        }
+        onFiles={(f) => setItems((prev) => [...prev, ...f.map((file) => createToolFileItem(file))])}
         title={files.length === 0 ? page.dropTitleEmpty : page.dropTitleFilled}
         hint={page.hint}
       />
@@ -139,9 +176,21 @@ function ImageToPdf() {
       {files.length > 0 && (
         <div className="mt-6 grid gap-6 md:grid-cols-[1fr_280px]">
           <div className="space-y-2 rounded-2xl border border-border bg-surface-elevated p-3">
-            {files.map((f, i) => (
+            <div className="flex items-center justify-between gap-3 px-1 pb-2 text-sm text-muted-foreground">
+              <div>
+                {files.length} {copy.imageToPdf.files} · {formatBytes(totalSize)}
+              </div>
+              <button
+                type="button"
+                onClick={removeAll}
+                className="text-xs font-medium hover:text-destructive"
+              >
+                {copy.shared.removeAll}
+              </button>
+            </div>
+            {items.map((item, i) => (
               <div
-                key={`${f.name}-${f.lastModified}-${i}`}
+                key={item.id}
                 draggable
                 onDragStart={(event) => {
                   setDragIndex(i);
@@ -167,11 +216,34 @@ function ImageToPdf() {
               >
                 <GripVertical className="h-4 w-4 text-muted-foreground" />
                 <img
-                  src={URL.createObjectURL(f)}
-                  alt={f.name}
+                  src={item.previewUrl}
+                  alt={item.file.name}
                   className="h-12 w-12 rounded object-cover"
                 />
-                <div className="flex-1 truncate text-sm">{f.name}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm">{item.file.name}</div>
+                  <div className="text-xs text-muted-foreground">{formatBytes(item.file.size)}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => moveFile(i, i - 1)}
+                  disabled={i === 0}
+                  draggable={false}
+                  aria-label={copy.imageToPdf.moveUp}
+                  className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveFile(i, i + 1)}
+                  disabled={i === items.length - 1}
+                  draggable={false}
+                  aria-label={copy.imageToPdf.moveDown}
+                  className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </button>
                 <button
                   onClick={() => remove(i)}
                   draggable={false}
