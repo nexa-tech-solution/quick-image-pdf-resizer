@@ -43,7 +43,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <img src={faviconUrl} alt="Resize Image" className="h-8 w-8 shrink-0" />
+          <img src={faviconUrl} alt={t.header.resizeImage} className="h-8 w-8 shrink-0" />
           <span className="font-display text-lg font-bold tracking-tight">
             {t.header.resizeImage}
           </span>

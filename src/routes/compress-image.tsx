@@ -3,6 +3,8 @@ import { Download, Loader2, X } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { ToolSeoContent } from "@/components/site/ToolSeoContent";
 import { getBrowserLocale, getTranslationSet, toolEnhancementCopy, useLocale } from "@/lib/i18n";
 import {
   downloadBlob,
@@ -23,6 +25,7 @@ import {
   supportedImageTypes,
   type ToolFileItem,
 } from "@/lib/tool-files";
+import { createRouteHead } from "@/lib/seo";
 
 const qualityPresets = [
   { labelKey: "high", value: 0.85 },
@@ -32,17 +35,14 @@ const qualityPresets = [
 
 export const Route = createFileRoute("/compress-image")({
   head: () => {
-    const page = getTranslationSet(getBrowserLocale()).routes.compressImage;
+    const locale = getBrowserLocale();
+    const t = getTranslationSet(locale);
 
-    return {
-      meta: [
-        { title: page.title },
-        { name: "description", content: page.description },
-        { property: "og:title", content: page.ogTitle },
-        { property: "og:description", content: page.ogDescription },
-      ],
-      links: [{ rel: "canonical", href: "/compress-image" }],
-    };
+    return createRouteHead({
+      t,
+      locale,
+      routeKey: "compressImage",
+    });
   },
   component: CompressImage,
 });
@@ -187,12 +187,13 @@ function CompressImage() {
 
   return (
     <ToolPage eyebrow={page.eyebrow} title={page.titleText} description={page.intro}>
+      <SeoJsonLd routeKey="compressImage" tool="compress" />
       {items.length === 0 ? (
         <FileDropzone
           accept={imageAccept}
           multiple
           validateFile={(file) =>
-            supportedImageTypes.has(file.type) ? null : "This image format is not supported."
+            supportedImageTypes.has(file.type) ? null : copy.shared.unsupportedImageFormat
           }
           onFiles={addFiles}
           title={page.dropTitle}
@@ -204,7 +205,7 @@ function CompressImage() {
             accept={imageAccept}
             multiple
             validateFile={(file) =>
-              supportedImageTypes.has(file.type) ? null : "This image format is not supported."
+              supportedImageTypes.has(file.type) ? null : copy.shared.unsupportedImageFormat
             }
             onFiles={addFiles}
             title={copy.batch.addMore}
@@ -445,6 +446,7 @@ function CompressImage() {
           </div>
         </div>
       )}
+      <ToolSeoContent tool="compress" />
     </ToolPage>
   );
 }

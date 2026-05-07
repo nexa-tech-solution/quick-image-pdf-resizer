@@ -2,23 +2,22 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { ShieldCheck, Zap, Download, Sparkles } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
 import { ResizeImageTool } from "@/components/site/ResizeImageTool";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { ToolSeoContent } from "@/components/site/ToolSeoContent";
 import { ToolsGrid } from "@/components/site/ToolsGrid";
 import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
+import { createRouteHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => {
-    const t = getTranslationSet(getBrowserLocale());
-    const title = `Resize Image — ${t.home.titlePrefix} ${t.home.titleAccent} ${t.home.titleSuffix}`;
+    const locale = getBrowserLocale();
+    const t = getTranslationSet(locale);
 
-    return {
-      meta: [
-        { title },
-        { name: "description", content: t.home.description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: t.home.description },
-      ],
-      links: [{ rel: "canonical", href: "/" }],
-    };
+    return createRouteHead({
+      t,
+      locale,
+      routeKey: "home",
+    });
   },
   component: Home,
 });
@@ -26,8 +25,10 @@ export const Route = createFileRoute("/")({
 function Home() {
   return (
     <PageShell>
+      <SeoJsonLd routeKey="home" includeHomeSchemas />
       <Hero />
       <Features />
+      <ResizeSeoSection />
       <SeoBoost />
       <ToolsGrid />
       <CTA />
@@ -88,6 +89,16 @@ function Hero() {
         <div id="tool" className="md:pt-2">
           <ResizeImageTool />
         </div>
+      </div>
+    </section>
+  );
+}
+
+function ResizeSeoSection() {
+  return (
+    <section className="border-b border-border bg-background">
+      <div className="mx-auto max-w-4xl px-4 pb-12 sm:px-6 lg:px-8">
+        <ToolSeoContent tool="resize" />
       </div>
     </section>
   );

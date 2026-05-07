@@ -3,6 +3,8 @@ import { Download, Loader2, X } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { ToolSeoContent } from "@/components/site/ToolSeoContent";
 import { getBrowserLocale, getTranslationSet, toolEnhancementCopy, useLocale } from "@/lib/i18n";
 import {
   downloadBlob,
@@ -24,20 +26,18 @@ import {
   supportedImageTypes,
   type ToolFileItem,
 } from "@/lib/tool-files";
+import { createRouteHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/convert-image")({
   head: () => {
-    const page = getTranslationSet(getBrowserLocale()).routes.convertImage;
+    const locale = getBrowserLocale();
+    const t = getTranslationSet(locale);
 
-    return {
-      meta: [
-        { title: page.title },
-        { name: "description", content: page.description },
-        { property: "og:title", content: page.ogTitle },
-        { property: "og:description", content: page.ogDescription },
-      ],
-      links: [{ rel: "canonical", href: "/convert-image" }],
-    };
+    return createRouteHead({
+      t,
+      locale,
+      routeKey: "convertImage",
+    });
   },
   component: ConvertImage,
 });
@@ -191,12 +191,13 @@ function ConvertImage() {
 
   return (
     <ToolPage eyebrow={page.eyebrow} title={page.titleText} description={page.intro}>
+      <SeoJsonLd routeKey="convertImage" tool="convert" />
       {items.length === 0 ? (
         <FileDropzone
           accept={imageAccept}
           multiple
           validateFile={(file) =>
-            supportedImageTypes.has(file.type) ? null : "This image format is not supported."
+            supportedImageTypes.has(file.type) ? null : copy.shared.unsupportedImageFormat
           }
           onFiles={addFiles}
           title={page.dropTitle}
@@ -208,7 +209,7 @@ function ConvertImage() {
             accept={imageAccept}
             multiple
             validateFile={(file) =>
-              supportedImageTypes.has(file.type) ? null : "This image format is not supported."
+              supportedImageTypes.has(file.type) ? null : copy.shared.unsupportedImageFormat
             }
             onFiles={addFiles}
             title={copy.batch.addMore}
@@ -399,6 +400,7 @@ function ConvertImage() {
           </div>
         </div>
       )}
+      <ToolSeoContent tool="convert" />
     </ToolPage>
   );
 }

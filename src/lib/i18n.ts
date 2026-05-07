@@ -2105,6 +2105,14 @@ const messages = {
   },
 } as const;
 
+type WidenTranslation<T> = T extends string
+  ? string
+  : T extends readonly (infer Item)[]
+    ? readonly WidenTranslation<Item>[]
+    : T extends object
+      ? { readonly [Key in keyof T]: WidenTranslation<T[Key]> }
+      : T;
+
 export const toolEnhancementCopy: Record<
   Locale,
   {
@@ -2122,6 +2130,7 @@ export const toolEnhancementCopy: Record<
       ready: string;
       error: string;
       unsupportedOutput: string;
+      unsupportedImageFormat: string;
     };
     resize: {
       social: string;
@@ -2169,6 +2178,7 @@ export const toolEnhancementCopy: Record<
       ready: "Ready",
       error: "Error",
       unsupportedOutput: "Your browser cannot export this format.",
+      unsupportedImageFormat: "This image format is not supported.",
     },
     resize: {
       social: "Social",
@@ -2215,6 +2225,7 @@ export const toolEnhancementCopy: Record<
       ready: "Ready",
       error: "Error",
       unsupportedOutput: "Your browser cannot export this format.",
+      unsupportedImageFormat: "This image format is not supported.",
     },
     resize: {
       social: "Social",
@@ -2262,6 +2273,7 @@ export const toolEnhancementCopy: Record<
       ready: "Pronto",
       error: "Erro",
       unsupportedOutput: "Seu navegador não consegue exportar este formato.",
+      unsupportedImageFormat: "Este formato de imagem não é compatível.",
     },
     resize: {
       social: "Social",
@@ -2308,6 +2320,7 @@ export const toolEnhancementCopy: Record<
       ready: "Ready",
       error: "Error",
       unsupportedOutput: "Hindi ma-export ng browser mo ang format na ito.",
+      unsupportedImageFormat: "Hindi suportado ang format ng image na ito.",
     },
     resize: {
       social: "Social",
@@ -2354,6 +2367,7 @@ export const toolEnhancementCopy: Record<
       ready: "Siap",
       error: "Error",
       unsupportedOutput: "Browser Anda tidak dapat mengekspor format ini.",
+      unsupportedImageFormat: "Format gambar ini tidak didukung.",
     },
     resize: {
       social: "Sosial",
@@ -2400,6 +2414,7 @@ export const toolEnhancementCopy: Record<
       ready: "Sẵn sàng",
       error: "Lỗi",
       unsupportedOutput: "Trình duyệt của bạn không xuất được định dạng này.",
+      unsupportedImageFormat: "Định dạng ảnh này chưa được hỗ trợ.",
     },
     resize: {
       social: "Social",
@@ -2433,11 +2448,11 @@ export const toolEnhancementCopy: Record<
   },
 };
 
-export function getTranslationSet(locale: Locale = getBrowserLocale()) {
+export type TranslationSet = WidenTranslation<(typeof messages)["en-US"]>;
+
+export function getTranslationSet(locale: Locale = getBrowserLocale()): TranslationSet {
   return messages[locale];
 }
-
-export type TranslationSet = (typeof messages)["en-US"];
 
 type LocaleContextValue = {
   locale: Locale;

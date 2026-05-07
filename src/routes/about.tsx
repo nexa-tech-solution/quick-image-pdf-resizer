@@ -1,20 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/site/PageShell";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
+import { createRouteHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
   head: () => {
-    const page = getTranslationSet(getBrowserLocale()).routes.about;
+    const locale = getBrowserLocale();
+    const t = getTranslationSet(locale);
 
-    return {
-      meta: [
-        { title: page.title },
-        { name: "description", content: page.description },
-        { property: "og:title", content: page.ogTitle },
-        { property: "og:description", content: page.ogDescription },
-      ],
-      links: [{ rel: "canonical", href: "/about" }],
-    };
+    return createRouteHead({
+      t,
+      locale,
+      routeKey: "about",
+    });
   },
   component: About,
 });
@@ -25,6 +24,7 @@ function About() {
 
   return (
     <PageShell>
+      <SeoJsonLd routeKey="about" />
       <section className="border-b border-border bg-[var(--gradient-hero)]">
         <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="font-mono text-xs uppercase tracking-widest text-primary">

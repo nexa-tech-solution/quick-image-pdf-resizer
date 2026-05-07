@@ -4,6 +4,8 @@ import { PDFDocument, PageSizes } from "pdf-lib";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { ToolSeoContent } from "@/components/site/ToolSeoContent";
 import { downloadBlob, formatBytes, loadImage, replaceExt } from "@/lib/image";
 import { getBrowserLocale, getTranslationSet, toolEnhancementCopy, useLocale } from "@/lib/i18n";
 import {
@@ -14,20 +16,18 @@ import {
   supportedImageTypes,
   type ToolFileItem,
 } from "@/lib/tool-files";
+import { createRouteHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/image-to-pdf")({
   head: () => {
-    const page = getTranslationSet(getBrowserLocale()).routes.imageToPdf;
+    const locale = getBrowserLocale();
+    const t = getTranslationSet(locale);
 
-    return {
-      meta: [
-        { title: page.title },
-        { name: "description", content: page.description },
-        { property: "og:title", content: page.ogTitle },
-        { property: "og:description", content: page.ogDescription },
-      ],
-      links: [{ rel: "canonical", href: "/image-to-pdf" }],
-    };
+    return createRouteHead({
+      t,
+      locale,
+      routeKey: "imageToPdf",
+    });
   },
   component: ImageToPdf,
 });
@@ -162,11 +162,12 @@ function ImageToPdf() {
 
   return (
     <ToolPage eyebrow={page.eyebrow} title={page.titleText} description={page.intro}>
+      <SeoJsonLd routeKey="imageToPdf" tool="imageToPdf" />
       <FileDropzone
         accept={imageAccept}
         multiple
         validateFile={(file) =>
-          supportedImageTypes.has(file.type) ? null : "This image format is not supported."
+          supportedImageTypes.has(file.type) ? null : copy.shared.unsupportedImageFormat
         }
         onFiles={(f) => setItems((prev) => [...prev, ...f.map((file) => createToolFileItem(file))])}
         title={files.length === 0 ? page.dropTitleEmpty : page.dropTitleFilled}
@@ -335,6 +336,7 @@ function ImageToPdf() {
           </div>
         </div>
       )}
+      <ToolSeoContent tool="imageToPdf" />
     </ToolPage>
   );
 }

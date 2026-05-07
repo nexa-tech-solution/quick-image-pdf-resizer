@@ -3,25 +3,25 @@ import { Download, Loader2 } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
+import { SeoJsonLd } from "@/components/site/SeoJsonLd";
+import { ToolSeoContent } from "@/components/site/ToolSeoContent";
 import { downloadBlob } from "@/lib/image";
 import { getBrowserLocale, getTranslationSet, toolEnhancementCopy, useLocale } from "@/lib/i18n";
 import { pdfAccept, revokeUrl } from "@/lib/tool-files";
+import { createRouteHead } from "@/lib/seo";
 
 type OutputFormat = "png" | "jpeg";
 
 export const Route = createFileRoute("/pdf-to-image")({
   head: () => {
-    const page = getTranslationSet(getBrowserLocale()).routes.pdfToImage;
+    const locale = getBrowserLocale();
+    const t = getTranslationSet(locale);
 
-    return {
-      meta: [
-        { title: page.title },
-        { name: "description", content: page.description },
-        { property: "og:title", content: page.ogTitle },
-        { property: "og:description", content: page.ogDescription },
-      ],
-      links: [{ rel: "canonical", href: "/pdf-to-image" }],
-    };
+    return createRouteHead({
+      t,
+      locale,
+      routeKey: "pdfToImage",
+    });
   },
   component: PdfToImage,
 });
@@ -133,6 +133,7 @@ function PdfToImage() {
 
   return (
     <ToolPage eyebrow={page.eyebrow} title={page.titleText} description={page.intro}>
+      <SeoJsonLd routeKey="pdfToImage" tool="pdfToImage" />
       {!file ? (
         <FileDropzone
           accept={pdfAccept}
@@ -285,6 +286,7 @@ function PdfToImage() {
           )}
         </div>
       )}
+      <ToolSeoContent tool="pdfToImage" />
     </ToolPage>
   );
 }

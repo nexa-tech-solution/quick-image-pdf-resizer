@@ -2,7 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { Analytics } from "@vercel/analytics/react";
 import appCss from "../styles.css?url";
 import faviconUrl from "@/assets/favicon.svg?url";
-import { LocaleProvider, getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
+import { LocaleProvider, useLocale } from "@/lib/i18n";
 
 function NotFoundComponent() {
   const { t } = useLocale();
@@ -29,26 +29,15 @@ function NotFoundComponent() {
 
 export const Route = createRootRoute({
   head: () => {
-    const locale = getBrowserLocale();
-    const t = getTranslationSet(locale);
-    const title = `Resize Image — ${t.home.titlePrefix} ${t.home.titleAccent} ${t.home.titleSuffix}`;
-
     return {
       meta: [
         { charSet: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        { title },
-        { name: "description", content: t.home.description },
         { name: "author", content: "Resize Image" },
         { name: "robots", content: "index,follow" },
         { name: "theme-color", content: "#111827" },
-        { property: "og:title", content: title },
-        { property: "og:description", content: t.home.description },
-        { property: "og:type", content: "website" },
-        { name: "twitter:card", content: "summary_large_image" },
       ],
       links: [
-        { rel: "canonical", href: "/" },
         { rel: "stylesheet", href: appCss },
         { rel: "icon", type: "image/svg+xml", href: faviconUrl },
         { rel: "shortcut icon", href: faviconUrl },
@@ -62,12 +51,9 @@ export const Route = createRootRoute({
       ],
       scripts: [
         {
-          tag: "script",
-          attrs: {
-            async: true,
-            src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3012411444875177",
-            crossOrigin: "anonymous",
-          },
+          async: true,
+          src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3012411444875177",
+          crossOrigin: "anonymous",
         },
       ],
     };

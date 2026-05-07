@@ -203,7 +203,7 @@ export function ResizeImageTool() {
       <FileDropzone
         accept={imageAccept}
         validateFile={(item) =>
-          supportedImageTypes.has(item.type) ? null : "This image format is not supported."
+          supportedImageTypes.has(item.type) ? null : copy.shared.unsupportedImageFormat
         }
         onFiles={(files) => setFile(files[0])}
         title={t.resizeTool.dropTitle}
