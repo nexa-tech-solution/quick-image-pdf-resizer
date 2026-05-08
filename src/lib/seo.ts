@@ -6,10 +6,17 @@ export type SeoRouteKey =
   | "convertImage"
   | "imageToPdf"
   | "pdfToImage"
+  | "mergeSplitPdf"
   | "pricing"
   | "about";
 
-export type ToolSeoKey = "resize" | "compress" | "convert" | "imageToPdf" | "pdfToImage";
+export type ToolSeoKey =
+  | "resize"
+  | "compress"
+  | "convert"
+  | "imageToPdf"
+  | "pdfToImage"
+  | "mergeSplitPdf";
 
 export const siteName = "Resize Image";
 export const defaultSiteUrl = "http://localhost:8080";
@@ -49,6 +56,12 @@ export const seoRouteRegistry: Record<
     changefreq: "weekly",
     schemaType: "SoftwareApplication",
   },
+  mergeSplitPdf: {
+    path: "/merge-split-pdf",
+    priority: 0.85,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
   pricing: { path: "/pricing", priority: 0.45, changefreq: "monthly", schemaType: "WebPage" },
   about: { path: "/about", priority: 0.4, changefreq: "monthly", schemaType: "WebPage" },
 };
@@ -59,6 +72,7 @@ export const toolRouteBySeoKey: Record<ToolSeoKey, SeoRouteKey> = {
   convert: "convertImage",
   imageToPdf: "imageToPdf",
   pdfToImage: "pdfToImage",
+  mergeSplitPdf: "mergeSplitPdf",
 };
 
 export function getSiteUrl() {
@@ -81,6 +95,7 @@ export function getRouteTitle(t: TranslationSet, key: SeoRouteKey) {
   if (key === "convertImage") return t.routes.convertImage.title;
   if (key === "imageToPdf") return t.routes.imageToPdf.title;
   if (key === "pdfToImage") return t.routes.pdfToImage.title;
+  if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.title;
   if (key === "pricing") return t.routes.pricing.title;
   return t.routes.about.title;
 }
@@ -91,6 +106,7 @@ export function getRouteDescription(t: TranslationSet, key: SeoRouteKey) {
   if (key === "convertImage") return t.routes.convertImage.description;
   if (key === "imageToPdf") return t.routes.imageToPdf.description;
   if (key === "pdfToImage") return t.routes.pdfToImage.description;
+  if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.description;
   if (key === "pricing") return t.routes.pricing.description;
   return t.routes.about.description;
 }
@@ -392,6 +408,38 @@ export const englishToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  mergeSplitPdf: {
+    title: "Merge and split PDF pages in your browser",
+    intro:
+      "Organize PDF pages visually, combine multiple PDFs, remove pages you do not need, and export one clean PDF without uploading files.",
+    howTitle: "How to organize a PDF",
+    how: [
+      "Drop one or more PDF files.",
+      "Preview, reorder, or remove pages.",
+      "Export the visible page order as one PDF.",
+    ],
+    bestTitle: "Best for",
+    best: [
+      "Combining documents into one PDF",
+      "Removing unwanted PDF pages",
+      "Reordering scanned pages before sharing",
+    ],
+    faqTitle: "Merge and split PDF FAQ",
+    faqs: [
+      {
+        q: "Are PDFs uploaded to a server?",
+        a: "No. The PDF organizer runs in your browser, so files stay on your device.",
+      },
+      {
+        q: "Can I combine multiple PDFs?",
+        a: "Yes. Add multiple PDFs and the pages are shown together so you can reorder and export them.",
+      },
+      {
+        q: "Can password-protected PDFs be organized?",
+        a: "Password-protected or corrupted PDFs may not load. The tool shows an error when a file cannot be read.",
+      },
+    ],
+  },
 };
 
 const portugueseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
@@ -552,6 +600,38 @@ const portugueseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       {
         q: "Como obtenho imagens em maior resolução?",
         a: "Aumente a escala antes de renderizar as páginas do PDF.",
+      },
+    ],
+  },
+  mergeSplitPdf: {
+    title: "Mescle e divida páginas de PDF no navegador",
+    intro:
+      "Organize páginas de PDF visualmente, combine vários PDFs, remova páginas desnecessárias e exporte um PDF limpo sem upload.",
+    howTitle: "Como organizar um PDF",
+    how: [
+      "Solte um ou mais arquivos PDF.",
+      "Visualize, reordene ou remova páginas.",
+      "Exporte a ordem visível das páginas como um PDF.",
+    ],
+    bestTitle: "Ideal para",
+    best: [
+      "Combinar documentos em um PDF",
+      "Remover páginas indesejadas",
+      "Reordenar páginas digitalizadas antes de compartilhar",
+    ],
+    faqTitle: "FAQ sobre mesclar e dividir PDF",
+    faqs: [
+      {
+        q: "Os PDFs são enviados para um servidor?",
+        a: "Não. O organizador de PDF roda no navegador, então os arquivos ficam no seu dispositivo.",
+      },
+      {
+        q: "Posso combinar vários PDFs?",
+        a: "Sim. Adicione vários PDFs e as páginas aparecem juntas para você reordenar e exportar.",
+      },
+      {
+        q: "PDFs com senha podem ser organizados?",
+        a: "PDFs protegidos por senha ou corrompidos podem não carregar. A ferramenta mostra um erro quando não conseguir ler o arquivo.",
       },
     ],
   },
@@ -718,6 +798,38 @@ const filipinoToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  mergeSplitPdf: {
+    title: "I-merge at i-split ang PDF pages sa browser",
+    intro:
+      "Ayusin ang PDF pages visually, pagsamahin ang maraming PDF, alisin ang hindi kailangan, at mag-export ng malinis na PDF nang walang upload.",
+    howTitle: "Paano ayusin ang PDF",
+    how: [
+      "I-drop ang isa o higit pang PDF files.",
+      "I-preview, ayusin ang order, o alisin ang pages.",
+      "I-export ang nakikitang page order bilang isang PDF.",
+    ],
+    bestTitle: "Pinakamainam para sa",
+    best: [
+      "Pagsamahin ang documents sa isang PDF",
+      "Pag-alis ng hindi kailangang PDF pages",
+      "Pag-aayos ng scanned pages bago i-share",
+    ],
+    faqTitle: "FAQ sa merge at split PDF",
+    faqs: [
+      {
+        q: "Ina-upload ba ang PDFs sa server?",
+        a: "Hindi. Tumatakbo ang PDF organizer sa browser, kaya nananatili ang files sa device mo.",
+      },
+      {
+        q: "Puwede bang pagsamahin ang maraming PDF?",
+        a: "Oo. Magdagdag ng maraming PDF at ipapakita ang pages nang magkakasama para maayos at ma-export mo.",
+      },
+      {
+        q: "Puwede bang ayusin ang password-protected PDFs?",
+        a: "Maaaring hindi mag-load ang password-protected o corrupted PDFs. Magpapakita ng error ang tool kapag hindi mabasa ang file.",
+      },
+    ],
+  },
 };
 
 const indonesianToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
@@ -881,6 +993,38 @@ const indonesianToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  mergeSplitPdf: {
+    title: "Gabung dan pisahkan halaman PDF di browser",
+    intro:
+      "Atur halaman PDF secara visual, gabungkan beberapa PDF, hapus halaman yang tidak diperlukan, dan ekspor satu PDF rapi tanpa upload.",
+    howTitle: "Cara mengatur PDF",
+    how: [
+      "Drop satu atau beberapa file PDF.",
+      "Preview, urutkan, atau hapus halaman.",
+      "Ekspor urutan halaman yang terlihat sebagai satu PDF.",
+    ],
+    bestTitle: "Cocok untuk",
+    best: [
+      "Menggabungkan dokumen menjadi satu PDF",
+      "Menghapus halaman PDF yang tidak perlu",
+      "Mengurutkan halaman scan sebelum dibagikan",
+    ],
+    faqTitle: "FAQ gabung dan pisah PDF",
+    faqs: [
+      {
+        q: "Apakah PDF diupload ke server?",
+        a: "Tidak. PDF organizer berjalan di browser, jadi file tetap berada di perangkat Anda.",
+      },
+      {
+        q: "Bisakah menggabungkan beberapa PDF?",
+        a: "Bisa. Tambahkan beberapa PDF dan halaman akan tampil bersama untuk diurutkan dan diekspor.",
+      },
+      {
+        q: "Bisakah PDF berpassword diatur?",
+        a: "PDF berpassword atau rusak mungkin tidak dapat dimuat. Tool menampilkan error saat file tidak dapat dibaca.",
+      },
+    ],
+  },
 };
 
 const vietnameseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
@@ -985,17 +1129,9 @@ const vietnameseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
     intro:
       "Gộp JPG, PNG, WebP hoặc AVIF thành một file PDF với tùy chọn kích thước trang, hướng giấy, lề và thứ tự.",
     howTitle: "Cách tạo PDF từ ảnh",
-    how: [
-      "Thả ảnh vào công cụ.",
-      "Sắp xếp lại và chọn cài đặt trang.",
-      "Tạo và tải file PDF.",
-    ],
+    how: ["Thả ảnh vào công cụ.", "Sắp xếp lại và chọn cài đặt trang.", "Tạo và tải file PDF."],
     bestTitle: "Phù hợp cho",
-    best: [
-      "Nộp tài liệu scan",
-      "Gộp hóa đơn hoặc ghi chú",
-      "Tạo bộ ảnh có thể in",
-    ],
+    best: ["Nộp tài liệu scan", "Gộp hóa đơn hoặc ghi chú", "Tạo bộ ảnh có thể in"],
     faqTitle: "FAQ ảnh sang PDF",
     faqs: [
       {
@@ -1017,11 +1153,7 @@ const vietnameseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
     intro:
       "Render trang PDF thành ảnh PNG hoặc JPG trong trình duyệt. Chọn scale để đầu ra sắc nét hơn.",
     howTitle: "Cách chuyển trang PDF thành ảnh",
-    how: [
-      "Thả file PDF.",
-      "Chọn scale, định dạng và chất lượng JPG.",
-      "Render trang rồi tải ảnh.",
-    ],
+    how: ["Thả file PDF.", "Chọn scale, định dạng và chất lượng JPG.", "Render trang rồi tải ảnh."],
     bestTitle: "Phù hợp cho",
     best: [
       "Tạo preview từng trang",
@@ -1044,6 +1176,38 @@ const vietnameseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  mergeSplitPdf: {
+    title: "Ghép và tách trang PDF trong trình duyệt",
+    intro:
+      "Sắp xếp trang PDF trực quan, ghép nhiều PDF, xóa trang không cần thiết và xuất một PDF gọn gàng mà không cần upload.",
+    howTitle: "Cách sắp xếp PDF",
+    how: [
+      "Thả một hoặc nhiều file PDF.",
+      "Xem trước, sắp xếp lại hoặc xóa trang.",
+      "Xuất thứ tự trang đang hiển thị thành một PDF.",
+    ],
+    bestTitle: "Phù hợp cho",
+    best: [
+      "Ghép tài liệu thành một PDF",
+      "Xóa trang PDF không cần thiết",
+      "Sắp xếp trang scan trước khi chia sẻ",
+    ],
+    faqTitle: "FAQ ghép và tách PDF",
+    faqs: [
+      {
+        q: "PDF có bị upload lên server không?",
+        a: "Không. Công cụ sắp xếp PDF chạy trong trình duyệt, nên file luôn ở trên thiết bị của bạn.",
+      },
+      {
+        q: "Có ghép nhiều PDF được không?",
+        a: "Có. Thêm nhiều PDF và các trang sẽ hiển thị chung để bạn sắp xếp rồi xuất.",
+      },
+      {
+        q: "Có sắp xếp được PDF có mật khẩu không?",
+        a: "PDF có mật khẩu hoặc bị lỗi có thể không tải được. Công cụ sẽ báo lỗi khi không đọc được file.",
+      },
+    ],
+  },
 };
 
 export const toolSeoUiCopy: Record<
@@ -1058,6 +1222,7 @@ export const toolSeoUiCopy: Record<
       convert: "Convert Image",
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
+      mergeSplitPdf: "Merge & Split PDF",
     },
   },
   "en-IN": {
@@ -1068,6 +1233,7 @@ export const toolSeoUiCopy: Record<
       convert: "Convert Image",
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
+      mergeSplitPdf: "Merge & Split PDF",
     },
   },
   "pt-BR": {
@@ -1078,6 +1244,7 @@ export const toolSeoUiCopy: Record<
       convert: "Converter Imagem",
       imageToPdf: "Imagem para PDF",
       pdfToImage: "PDF para Imagem",
+      mergeSplitPdf: "Mesclar e Dividir PDF",
     },
   },
   "fil-PH": {
@@ -1088,6 +1255,7 @@ export const toolSeoUiCopy: Record<
       convert: "Convert Image",
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
+      mergeSplitPdf: "Merge at Split PDF",
     },
   },
   "id-ID": {
@@ -1098,6 +1266,7 @@ export const toolSeoUiCopy: Record<
       convert: "Konversi Gambar",
       imageToPdf: "Gambar ke PDF",
       pdfToImage: "PDF ke Gambar",
+      mergeSplitPdf: "Gabung & Pisah PDF",
     },
   },
   "vi-VN": {
@@ -1108,6 +1277,7 @@ export const toolSeoUiCopy: Record<
       convert: "Chuyển đổi ảnh",
       imageToPdf: "Ảnh sang PDF",
       pdfToImage: "PDF sang Ảnh",
+      mergeSplitPdf: "Ghép & Tách PDF",
     },
   },
 };

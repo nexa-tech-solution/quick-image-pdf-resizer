@@ -48,6 +48,11 @@ export function Footer() {
                 {t.footer.pdfToImage}
               </Link>
             </li>
+            <li>
+              <Link to="/merge-split-pdf" className="hover:text-primary">
+                {t.footer.mergeSplitPdf}
+              </Link>
+            </li>
           </ul>
         </div>
         <div>

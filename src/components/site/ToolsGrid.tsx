@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ImageIcon, Layers, FileImage, FileText, FileSearch } from "lucide-react";
+import { ImageIcon, Layers, FileImage, FileText, FileSearch, FileStack } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 
 export function ToolsGrid() {
@@ -34,6 +34,12 @@ export function ToolsGrid() {
       title: t.toolsGrid.pdfToImage.title,
       desc: t.toolsGrid.pdfToImage.desc,
       icon: FileSearch,
+    },
+    {
+      to: "/merge-split-pdf",
+      title: t.toolsGrid.mergeSplitPdf.title,
+      desc: t.toolsGrid.mergeSplitPdf.desc,
+      icon: FileStack,
     },
   ] as const;
 
