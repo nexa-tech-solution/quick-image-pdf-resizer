@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { Menu } from "lucide-react";
 import faviconUrl from "@/assets/favicon.svg?url";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { localeMeta, supportedLocales, useLocale } from "@/lib/i18n";
 
 const tools = [
@@ -16,6 +19,7 @@ const tools = [
 export function Header() {
   const { locale, setLocale, t } = useLocale();
   const [open, setOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -43,9 +47,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex min-w-0 items-center gap-2">
           <img src={faviconUrl} alt={t.header.resizeImage} className="h-8 w-8 shrink-0" />
-          <span className="font-display text-lg font-bold tracking-tight">
+          <span className="truncate font-display text-lg font-bold tracking-tight">
             {t.header.resizeImage}
           </span>
         </Link>
@@ -121,10 +125,51 @@ export function Header() {
           </div>
           <Link
             to="/pricing"
-            className="hidden rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 sm:inline-flex"
+            className="hidden rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 md:inline-flex"
           >
             {t.header.getPro}
           </Link>
+          <Sheet
+            open={mobileMenuOpen}
+            onOpenChange={(value) => {
+              setMobileMenuOpen(value);
+              if (value) setOpen(false);
+            }}
+          >
+            <SheetTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="md:hidden"
+                aria-label={t.toolsGrid.toolset}
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[min(22rem,calc(100vw-2rem))] p-0">
+              <SheetHeader className="border-b border-border px-5 py-4 text-left">
+                <SheetTitle className="font-display">{t.toolsGrid.title}</SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col gap-1 px-3 py-4">
+                {tools.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="rounded-lg px-3 py-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+                    activeProps={{
+                      className:
+                        "rounded-lg px-3 py-3 text-sm font-medium text-foreground bg-secondary",
+                    }}
+                    activeOptions={{ exact: true }}
+                  >
+                    {t.header[item.key]}
+                  </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
