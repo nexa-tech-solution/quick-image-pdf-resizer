@@ -49,19 +49,6 @@ export const Route = createRootRoute({
           href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap",
         },
       ],
-      scripts: [
-        {
-          async: true,
-          src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3012411444875177",
-          crossOrigin: "anonymous",
-        },
-        {
-          src: "https://quge5.com/88/tag.min.js",
-          async: true,
-          "data-zone": "240618",
-          "data-cfasync": "false",
-        },
-      ],
     };
   },
 
