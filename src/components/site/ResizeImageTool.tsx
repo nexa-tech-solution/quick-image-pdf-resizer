@@ -233,13 +233,13 @@ export function ResizeImageTool() {
       </div>
 
       <div className="grid gap-5 p-5 md:grid-cols-[minmax(0,1fr)_300px]">
-        <div className="flex items-center justify-center rounded-xl bg-[conic-gradient(at_50%_50%,_#f5f6f8_25%,_#eceef2_25%_50%,_#f5f6f8_50%_75%,_#eceef2_75%)] [background-size:20px_20px] p-4">
-          <div className="relative">
+        <div className="min-w-0 overflow-hidden rounded-xl bg-[conic-gradient(at_50%_50%,_#f5f6f8_25%,_#eceef2_25%_50%,_#f5f6f8_50%_75%,_#eceef2_75%)] [background-size:20px_20px] p-4">
+          <div className="relative flex h-[32vh] min-h-[220px] min-w-0 items-center justify-center sm:h-auto">
             {(processedPreviewUrl || previewUrl) && (
               <img
                 src={processedPreviewUrl ?? previewUrl ?? undefined}
                 alt={t.resizeTool.preview}
-                className="max-h-[420px] w-auto rounded-md object-contain shadow-elevated"
+                className="h-full max-h-[420px] max-w-full rounded-md object-contain shadow-elevated sm:h-auto"
               />
             )}
             {previewBusy && (
@@ -261,7 +261,7 @@ export function ResizeImageTool() {
                   <div className="mb-1 text-[11px] font-medium text-muted-foreground">
                     {group.label}
                   </div>
-                  <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:grid md:grid-cols-2 md:overflow-visible md:pb-0">
+                  <div className="grid grid-cols-2 gap-2 pb-1 md:grid-cols-2 md:pb-0">
                     {presets
                       .filter((p) => p.group === group.id)
                       .map((p) => (
@@ -269,7 +269,7 @@ export function ResizeImageTool() {
                           key={p.size}
                           onClick={() => applyPreset(p.w, p.h)}
                           className={cn(
-                            "min-w-[132px] rounded-lg border border-border px-3 py-2 text-left transition hover:border-primary/60 hover:bg-primary-soft md:min-w-0",
+                            "w-full rounded-lg border border-border px-3 py-2 text-left transition hover:border-primary/60 hover:bg-primary-soft",
                             width === p.w && height === p.h
                               ? "border-primary bg-primary-soft text-primary"
                               : "",
@@ -290,7 +290,7 @@ export function ResizeImageTool() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 {t.resizeTool.dimensions}
               </label>
@@ -299,7 +299,7 @@ export function ResizeImageTool() {
                 onClick={() => setLockRatio((v) => !v)}
                 aria-pressed={lockRatio}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
+                  "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
                   lockRatio
                     ? "border-primary bg-primary-soft text-primary"
                     : "border-border bg-background text-muted-foreground hover:border-primary/60 hover:text-foreground",
@@ -309,14 +309,14 @@ export function ResizeImageTool() {
                 {lockRatio ? t.resizeTool.lockRatio : t.resizeTool.unlockRatio}
               </button>
             </div>
-            <div className="mt-2 grid grid-cols-[1fr_1fr_auto] gap-2">
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
               <NumberField label="W" value={width} onChange={onWidth} />
               <NumberField label="H" value={height} onChange={onHeight} />
               <button
                 type="button"
                 onClick={resetToOriginal}
                 disabled={!originalDims}
-                className="rounded-lg border border-border px-3 text-xs font-medium transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50"
+                className="col-span-2 rounded-lg border border-border px-3 py-2 text-xs font-medium transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-1 sm:py-0"
               >
                 1:1
               </button>
@@ -337,7 +337,7 @@ export function ResizeImageTool() {
                 {t.resizeTool.fit}
               </label>
               <TooltipProvider>
-                <div className="mt-2 grid grid-cols-3 gap-2">
+                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {(["contain", "cover", "stretch"] as const).map((f) => {
                     const Icon = fitIcons[f];
                     const tip =
@@ -374,7 +374,7 @@ export function ResizeImageTool() {
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 {t.resizeTool.format}
               </label>
-              <div className="mt-2 grid grid-cols-4 gap-1.5">
+              <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
                 {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
                   <button
                     key={f}
@@ -395,11 +395,11 @@ export function ResizeImageTool() {
 
           {fit === "contain" && (
             <div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                   {t.resizeTool.background}
                 </label>
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-[11px] text-muted-foreground sm:text-right">
                   {t.resizeTool.backgroundHint}
                 </span>
               </div>
