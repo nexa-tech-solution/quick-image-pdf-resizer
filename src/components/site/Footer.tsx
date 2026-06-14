@@ -31,6 +31,11 @@ export function Footer() {
                 {t.footer.convertFormat}
               </Link>
             </li>
+            <li>
+              <Link to="/remove-background" className="hover:text-primary">
+                {t.header.removeBackground}
+              </Link>
+            </li>
           </ul>
         </div>
         <div>

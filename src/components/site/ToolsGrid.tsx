@@ -1,5 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { ImageIcon, Layers, FileImage, FileText, FileSearch, FileStack } from "lucide-react";
+import {
+  ImageIcon,
+  Layers,
+  FileImage,
+  FileText,
+  FileSearch,
+  FileStack,
+  Scissors,
+} from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 
 export function ToolsGrid() {
@@ -22,6 +30,12 @@ export function ToolsGrid() {
       title: t.toolsGrid.convertFormat.title,
       desc: t.toolsGrid.convertFormat.desc,
       icon: FileImage,
+    },
+    {
+      to: "/remove-background",
+      title: t.header.removeBackground,
+      desc: "Remove image backgrounds locally in your browser.",
+      icon: Scissors,
     },
     {
       to: "/image-to-pdf",

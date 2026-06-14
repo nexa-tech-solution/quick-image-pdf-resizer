@@ -4,6 +4,7 @@ export type SeoRouteKey =
   | "home"
   | "compressImage"
   | "convertImage"
+  | "removeBackground"
   | "imageToPdf"
   | "pdfToImage"
   | "mergeSplitPdf"
@@ -14,6 +15,7 @@ export type ToolSeoKey =
   | "resize"
   | "compress"
   | "convert"
+  | "removeBackground"
   | "imageToPdf"
   | "pdfToImage"
   | "mergeSplitPdf";
@@ -44,6 +46,12 @@ export const seoRouteRegistry: Record<
     changefreq: "weekly",
     schemaType: "SoftwareApplication",
   },
+  removeBackground: {
+    path: "/remove-background",
+    priority: 0.9,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
   imageToPdf: {
     path: "/image-to-pdf",
     priority: 0.85,
@@ -70,6 +78,7 @@ export const toolRouteBySeoKey: Record<ToolSeoKey, SeoRouteKey> = {
   resize: "home",
   compress: "compressImage",
   convert: "convertImage",
+  removeBackground: "removeBackground",
   imageToPdf: "imageToPdf",
   pdfToImage: "pdfToImage",
   mergeSplitPdf: "mergeSplitPdf",
@@ -93,6 +102,7 @@ export function getRouteTitle(t: TranslationSet, key: SeoRouteKey) {
     return `Resize Image — ${t.home.titlePrefix} ${t.home.titleAccent} ${t.home.titleSuffix}`;
   if (key === "compressImage") return t.routes.compressImage.title;
   if (key === "convertImage") return t.routes.convertImage.title;
+  if (key === "removeBackground") return t.routes.removeBackground.title;
   if (key === "imageToPdf") return t.routes.imageToPdf.title;
   if (key === "pdfToImage") return t.routes.pdfToImage.title;
   if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.title;
@@ -104,6 +114,7 @@ export function getRouteDescription(t: TranslationSet, key: SeoRouteKey) {
   if (key === "home") return t.home.description;
   if (key === "compressImage") return t.routes.compressImage.description;
   if (key === "convertImage") return t.routes.convertImage.description;
+  if (key === "removeBackground") return t.routes.removeBackground.description;
   if (key === "imageToPdf") return t.routes.imageToPdf.description;
   if (key === "pdfToImage") return t.routes.pdfToImage.description;
   if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.description;
@@ -344,6 +355,38 @@ export const englishToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  removeBackground: {
+    title: "Remove image backgrounds in your browser",
+    intro:
+      "Use this local background remover to cut out subjects from portraits, product photos, and simple scenes without uploading files.",
+    howTitle: "How to remove a background",
+    how: [
+      "Drop a JPG, PNG, WebP, or AVIF image.",
+      "Wait for the browser to isolate the subject.",
+      "Download the cutout with a transparent background.",
+    ],
+    bestTitle: "Best for",
+    best: [
+      "Product photos and profile images",
+      "Transparent cutouts for design work",
+      "Removing simple backgrounds locally",
+    ],
+    faqTitle: "Background removal FAQ",
+    faqs: [
+      {
+        q: "Are images uploaded to a server?",
+        a: "No. The background removal model runs in your browser, so your files stay on your device.",
+      },
+      {
+        q: "Which images work best?",
+        a: "Portraits, products, and single-subject photos with clear edges usually give the best results.",
+      },
+      {
+        q: "Can I export a transparent result?",
+        a: "Yes. PNG keeps transparency, and WebP or AVIF can do so when your browser supports them.",
+      },
+    ],
+  },
   imageToPdf: {
     title: "Turn images into a PDF",
     intro:
@@ -536,6 +579,38 @@ const portugueseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       {
         q: "PNGs transparentes continuam transparentes?",
         a: "A transparência é preservada nos formatos compatíveis, como PNG e WebP.",
+      },
+    ],
+  },
+  removeBackground: {
+    title: "Remova fundos de imagens no navegador",
+    intro:
+      "Use este removedor local para recortar sujeitos de retratos, fotos de produto e cenas simples sem enviar arquivos.",
+    howTitle: "Como remover um fundo",
+    how: [
+      "Solte uma imagem JPG, PNG, WebP ou AVIF.",
+      "Espere o navegador isolar o assunto.",
+      "Baixe o recorte com fundo transparente.",
+    ],
+    bestTitle: "Ideal para",
+    best: [
+      "Fotos de produto e imagens de perfil",
+      "Recortes transparentes para design",
+      "Remover fundos simples localmente",
+    ],
+    faqTitle: "FAQ sobre remoção de fundo",
+    faqs: [
+      {
+        q: "As imagens são enviadas para um servidor?",
+        a: "Não. O modelo de remoção de fundo roda no navegador, então seus arquivos ficam no seu dispositivo.",
+      },
+      {
+        q: "Quais imagens funcionam melhor?",
+        a: "Retratos, produtos e fotos de um único assunto com bordas claras costumam ter os melhores resultados.",
+      },
+      {
+        q: "Posso exportar com transparência?",
+        a: "Sim. PNG mantém transparência, e WebP ou AVIF também podem manter quando o navegador suportar.",
       },
     ],
   },
@@ -734,6 +809,38 @@ const filipinoToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  removeBackground: {
+    title: "Alisin ang background ng mga image sa browser",
+    intro:
+      "Gamitin ang local background remover para putulin ang subject mula sa portraits, product photos, at simpleng scenes nang hindi nag-a-upload ng file.",
+    howTitle: "Paano alisin ang background",
+    how: [
+      "I-drop ang JPG, PNG, WebP, o AVIF na image.",
+      "Hintaying ihiwalay ng browser ang subject.",
+      "I-download ang cutout na may transparent background.",
+    ],
+    bestTitle: "Pinakamainam para sa",
+    best: [
+      "Product photos at profile images",
+      "Transparent cutouts para sa design work",
+      "Pag-alis ng simpleng background nang lokal",
+    ],
+    faqTitle: "FAQ sa background removal",
+    faqs: [
+      {
+        q: "Ina-upload ba ang images sa server?",
+        a: "Hindi. Tumatakbo ang model sa browser mo, kaya nananatili ang files sa device mo.",
+      },
+      {
+        q: "Aling mga image ang pinakamainam?",
+        a: "Kadalasang pinakamaganda ang resulta sa portraits, products, at mga larawang iisang subject lang na malinaw ang edges.",
+      },
+      {
+        q: "Puwede ba akong mag-export ng transparent result?",
+        a: "Oo. Pinapanatili ng PNG ang transparency, at puwede rin ang WebP o AVIF kapag suportado ng browser.",
+      },
+    ],
+  },
   imageToPdf: {
     title: "Gawing PDF ang images",
     intro:
@@ -926,6 +1033,38 @@ const indonesianToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       {
         q: "Apakah PNG transparan tetap transparan?",
         a: "Transparansi dipertahankan untuk format yang mendukungnya, seperti PNG dan WebP.",
+      },
+    ],
+  },
+  removeBackground: {
+    title: "Hapus background gambar di browser",
+    intro:
+      "Gunakan background remover lokal ini untuk memotong subjek dari foto portrait, foto produk, dan scene sederhana tanpa upload file.",
+    howTitle: "Cara menghapus background",
+    how: [
+      "Drop gambar JPG, PNG, WebP, atau AVIF.",
+      "Tunggu browser mengisolasi subjek.",
+      "Download hasil cutout dengan background transparan.",
+    ],
+    bestTitle: "Cocok untuk",
+    best: [
+      "Foto produk dan foto profil",
+      "Cutout transparan untuk desain",
+      "Menghapus background sederhana secara lokal",
+    ],
+    faqTitle: "FAQ background removal",
+    faqs: [
+      {
+        q: "Apakah gambar diupload ke server?",
+        a: "Tidak. Model background removal berjalan di browser, jadi file tetap di perangkat Anda.",
+      },
+      {
+        q: "Gambar seperti apa yang paling cocok?",
+        a: "Portrait, produk, dan foto dengan satu subjek dan tepi yang jelas biasanya memberi hasil terbaik.",
+      },
+      {
+        q: "Bisakah saya mengekspor hasil transparan?",
+        a: "Ya. PNG menjaga transparansi, dan WebP atau AVIF juga bisa jika browser mendukung.",
       },
     ],
   },
@@ -1124,6 +1263,38 @@ const vietnameseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  removeBackground: {
+    title: "Xóa nền ảnh ngay trong trình duyệt",
+    intro:
+      "Dùng công cụ xóa nền cục bộ để cắt chủ thể từ ảnh chân dung, ảnh sản phẩm và các cảnh đơn giản mà không cần tải file lên.",
+    howTitle: "Cách xóa nền",
+    how: [
+      "Thả một ảnh JPG, PNG, WebP hoặc AVIF.",
+      "Chờ trình duyệt tách chủ thể ra khỏi nền.",
+      "Tải xuống kết quả cắt với nền trong suốt.",
+    ],
+    bestTitle: "Phù hợp nhất cho",
+    best: [
+      "Ảnh sản phẩm và ảnh đại diện",
+      "Cutout trong suốt cho thiết kế",
+      "Xóa nền đơn giản ngay trên máy",
+    ],
+    faqTitle: "FAQ xóa nền",
+    faqs: [
+      {
+        q: "Ảnh có được tải lên server không?",
+        a: "Không. Mô hình xóa nền chạy ngay trong trình duyệt, nên file vẫn ở trên thiết bị của bạn.",
+      },
+      {
+        q: "Ảnh nào cho kết quả tốt nhất?",
+        a: "Ảnh chân dung, ảnh sản phẩm và ảnh chỉ có một chủ thể với viền rõ thường cho kết quả tốt nhất.",
+      },
+      {
+        q: "Có xuất được ảnh trong suốt không?",
+        a: "Có. PNG giữ được độ trong suốt, và WebP hoặc AVIF cũng có thể giữ nếu trình duyệt hỗ trợ.",
+      },
+    ],
+  },
   imageToPdf: {
     title: "Chuyển ảnh thành PDF",
     intro:
@@ -1220,6 +1391,7 @@ export const toolSeoUiCopy: Record<
       resize: "Resize Image",
       compress: "Compress Image",
       convert: "Convert Image",
+      removeBackground: "Remove Background",
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
       mergeSplitPdf: "Merge & Split PDF",
@@ -1231,6 +1403,7 @@ export const toolSeoUiCopy: Record<
       resize: "Resize Image",
       compress: "Compress Image",
       convert: "Convert Image",
+      removeBackground: "Remove Background",
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
       mergeSplitPdf: "Merge & Split PDF",
@@ -1242,6 +1415,7 @@ export const toolSeoUiCopy: Record<
       resize: "Redimensionar Imagem",
       compress: "Comprimir Imagem",
       convert: "Converter Imagem",
+      removeBackground: "Remover Fundo",
       imageToPdf: "Imagem para PDF",
       pdfToImage: "PDF para Imagem",
       mergeSplitPdf: "Mesclar e Dividir PDF",
@@ -1253,6 +1427,7 @@ export const toolSeoUiCopy: Record<
       resize: "Resize Image",
       compress: "Compress Image",
       convert: "Convert Image",
+      removeBackground: "Remove Background",
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
       mergeSplitPdf: "Merge at Split PDF",
@@ -1264,6 +1439,7 @@ export const toolSeoUiCopy: Record<
       resize: "Resize Image",
       compress: "Kompres Gambar",
       convert: "Konversi Gambar",
+      removeBackground: "Hapus Background",
       imageToPdf: "Gambar ke PDF",
       pdfToImage: "PDF ke Gambar",
       mergeSplitPdf: "Gabung & Pisah PDF",
@@ -1275,6 +1451,7 @@ export const toolSeoUiCopy: Record<
       resize: "Resize Image",
       compress: "Nén Ảnh",
       convert: "Chuyển đổi ảnh",
+      removeBackground: "Xóa nền",
       imageToPdf: "Ảnh sang PDF",
       pdfToImage: "PDF sang Ảnh",
       mergeSplitPdf: "Ghép & Tách PDF",

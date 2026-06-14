@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu } from "lucide-react";
+import { ArrowRight, Menu } from "lucide-react";
 import faviconUrl from "@/assets/favicon.svg?url";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -8,6 +8,7 @@ import { localeMeta, supportedLocales, useLocale } from "@/lib/i18n";
 
 const tools = [
   { to: "/", key: "resizeImage" },
+  { to: "/remove-background", key: "removeBackground" },
   { to: "/compress-image", key: "compress" },
   { to: "/convert-image", key: "convert" },
   { to: "/image-to-pdf", key: "imageToPdf" },
@@ -46,29 +47,46 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex min-w-0 items-center gap-2">
+      <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 lg:flex-nowrap lg:px-8">
+        <Link to="/" className="flex min-w-0 shrink-0 items-center gap-2">
           <img src={faviconUrl} alt={t.header.resizeImage} className="h-8 w-8 shrink-0" />
           <span className="truncate font-display text-lg font-bold tracking-tight">
             {t.header.resizeImage}
           </span>
         </Link>
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav
+          className={[
+            "order-3 flex w-full min-w-0 items-center gap-1 overflow-x-auto whitespace-nowrap",
+            "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            "md:order-none md:flex-1 md:justify-center lg:justify-start",
+          ].join(" ")}
+        >
           {tools.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-              activeProps={{
-                className: "rounded-md px-3 py-2 text-sm font-medium text-foreground bg-secondary",
-              }}
-              activeOptions={{ exact: true }}
-            >
-              {t.header[item.key]}
-            </Link>
+            <div key={"to" in item ? item.to : item.href} className="shrink-0">
+              {"to" in item ? (
+                <Link
+                  to={item.to}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground lg:px-4"
+                  activeProps={{
+                    className:
+                      "rounded-md bg-secondary px-3 py-2 text-sm font-medium text-foreground lg:px-4",
+                  }}
+                  activeOptions={{ exact: true }}
+                >
+                  {t.header[item.key]}
+                </Link>
+              ) : (
+                <a
+                  href={item.href}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground lg:px-4"
+                >
+                  {t.header[item.key]}
+                </a>
+              )}
+            </div>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="order-2 ml-auto flex shrink-0 items-center gap-2 md:order-none md:ml-0">
           <div ref={menuRef} className="relative">
             <label className="sr-only" htmlFor="locale-button">
               {t.header.language}
@@ -125,7 +143,7 @@ export function Header() {
           </div>
           <Link
             to="/pricing"
-            className="hidden rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 md:inline-flex"
+            className="hidden shrink-0 rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 md:inline-flex"
           >
             {t.header.getPro}
           </Link>
@@ -141,33 +159,69 @@ export function Header() {
                 type="button"
                 variant="outline"
                 size="icon"
-                className="md:hidden"
+                className="md:hidden shrink-0"
                 aria-label={t.toolsGrid.toolset}
               >
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[min(22rem,calc(100vw-2rem))] p-0">
-              <SheetHeader className="border-b border-border px-5 py-4 text-left">
-                <SheetTitle className="font-display">{t.toolsGrid.title}</SheetTitle>
-              </SheetHeader>
-              <nav className="flex flex-col gap-1 px-3 py-4">
-                {tools.map((item) => (
+            <SheetContent side="right" className="w-[min(20rem,calc(100vw-1rem))] p-0">
+              <div className="flex h-full flex-col">
+                <SheetHeader className="border-b border-border px-3 py-3 text-left">
+                  <SheetTitle className="mt-2 font-display text-lg tracking-tight">
+                    {t.toolsGrid.title}
+                  </SheetTitle>
+                </SheetHeader>
+
+                <nav className="flex-1 space-y-1.5 overflow-y-auto px-2 py-2">
+                  {tools.map((item) => {
+                    const label = t.header[item.key];
+
+                    return (
+                      <div key={"to" in item ? item.to : item.href}>
+                        {"to" in item ? (
+                          <Link
+                            to={item.to}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="group flex items-center justify-between rounded-lg border border-border/60 bg-surface px-3 py-2 text-left transition hover:border-primary/40 hover:bg-primary-soft/40"
+                            activeProps={{
+                              className:
+                                "group flex items-center justify-between rounded-lg border border-primary/30 bg-primary-soft px-3 py-2 text-left",
+                            }}
+                            activeOptions={{ exact: true }}
+                          >
+                            <span className="min-w-0 truncate text-sm font-medium leading-5 text-foreground">
+                              {label}
+                            </span>
+                            <ArrowRight className="ml-3 h-3.5 w-3.5 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                          </Link>
+                        ) : (
+                          <a
+                            href={item.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="group flex items-center justify-between rounded-lg border border-border/60 bg-surface px-3 py-2 text-left transition hover:border-primary/40 hover:bg-primary-soft/40"
+                          >
+                            <span className="min-w-0 truncate text-sm font-medium leading-5 text-foreground">
+                              {label}
+                            </span>
+                            <ArrowRight className="ml-3 h-3.5 w-3.5 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </nav>
+
+                <div className="border-t border-border bg-background px-2 py-2">
                   <Link
-                    key={item.to}
-                    to={item.to}
+                    to="/pricing"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-lg px-3 py-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-                    activeProps={{
-                      className:
-                        "rounded-lg px-3 py-3 text-sm font-medium text-foreground bg-secondary",
-                    }}
-                    activeOptions={{ exact: true }}
+                    className="flex items-center justify-center rounded-lg bg-foreground px-3 py-2.5 text-sm font-medium text-background transition hover:opacity-90"
                   >
-                    {t.header[item.key]}
+                    {t.header.getPro}
                   </Link>
-                ))}
-              </nav>
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

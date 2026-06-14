@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RemoveBackgroundRouteImport } from './routes/remove-background'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PdfToImageRouteImport } from './routes/pdf-to-image'
 import { Route as MergeSplitPdfRouteImport } from './routes/merge-split-pdf'
@@ -18,6 +19,11 @@ import { Route as CompressImageRouteImport } from './routes/compress-image'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RemoveBackgroundRoute = RemoveBackgroundRouteImport.update({
+  id: '/remove-background',
+  path: '/remove-background',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/merge-split-pdf': typeof MergeSplitPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
   '/pricing': typeof PricingRoute
+  '/remove-background': typeof RemoveBackgroundRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/merge-split-pdf': typeof MergeSplitPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
   '/pricing': typeof PricingRoute
+  '/remove-background': typeof RemoveBackgroundRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/merge-split-pdf': typeof MergeSplitPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
   '/pricing': typeof PricingRoute
+  '/remove-background': typeof RemoveBackgroundRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/merge-split-pdf'
     | '/pdf-to-image'
     | '/pricing'
+    | '/remove-background'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/merge-split-pdf'
     | '/pdf-to-image'
     | '/pricing'
+    | '/remove-background'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/merge-split-pdf'
     | '/pdf-to-image'
     | '/pricing'
+    | '/remove-background'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,10 +144,18 @@ export interface RootRouteChildren {
   MergeSplitPdfRoute: typeof MergeSplitPdfRoute
   PdfToImageRoute: typeof PdfToImageRoute
   PricingRoute: typeof PricingRoute
+  RemoveBackgroundRoute: typeof RemoveBackgroundRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/remove-background': {
+      id: '/remove-background'
+      path: '/remove-background'
+      fullPath: '/remove-background'
+      preLoaderRoute: typeof RemoveBackgroundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   MergeSplitPdfRoute: MergeSplitPdfRoute,
   PdfToImageRoute: PdfToImageRoute,
   PricingRoute: PricingRoute,
+  RemoveBackgroundRoute: RemoveBackgroundRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

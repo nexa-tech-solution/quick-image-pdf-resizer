@@ -13,6 +13,7 @@ const relatedTools: Record<ToolSeoKey, ToolSeoKey[]> = {
   resize: ["compress", "convert", "imageToPdf"],
   compress: ["resize", "convert", "imageToPdf"],
   convert: ["resize", "compress", "pdfToImage"],
+  removeBackground: ["compress", "convert", "resize"],
   imageToPdf: ["mergeSplitPdf", "resize", "pdfToImage"],
   pdfToImage: ["mergeSplitPdf", "imageToPdf", "convert"],
   mergeSplitPdf: ["imageToPdf", "pdfToImage", "convert"],
