@@ -123,14 +123,64 @@ export async function processImage(
 }
 
 export function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  void (async () => {
+    const file = new File([blob], filename, {
+      type: blob.type || "application/octet-stream",
+    });
+
+    const saveViaPicker = async () => {
+      if (typeof window === "undefined" || !("showSaveFilePicker" in window)) return false;
+
+      try {
+        const picker = window.showSaveFilePicker;
+        if (typeof picker !== "function") return false;
+
+        const handle = await picker.call(window, {
+          suggestedName: filename,
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const saveViaShare = async () => {
+      if (typeof navigator === "undefined" || !("share" in navigator)) return false;
+
+      try {
+        const share = navigator.share;
+        const canShare = navigator.canShare;
+        if (typeof share !== "function" || typeof canShare !== "function") return false;
+        if (!canShare.call(navigator, { files: [file] })) return false;
+
+        await share.call(navigator, {
+          files: [file],
+          title: filename,
+          text: filename,
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    if (await saveViaPicker()) return;
+    if (await saveViaShare()) return;
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.rel = "noopener";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  })();
 }
 
 export function formatBytes(n: number): string {
