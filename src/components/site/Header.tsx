@@ -14,7 +14,6 @@ const tools = [
   { to: "/image-to-pdf", key: "imageToPdf" },
   { to: "/pdf-to-image", key: "pdfToImage" },
   { to: "/merge-split-pdf", key: "mergeSplitPdf" },
-  { to: "/pricing", key: "pricing" },
 ] as const;
 
 export function Header() {
@@ -141,12 +140,6 @@ export function Header() {
               </div>
             ) : null}
           </div>
-          <Link
-            to="/pricing"
-            className="hidden shrink-0 rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 md:inline-flex"
-          >
-            {t.header.getPro}
-          </Link>
           <Sheet
             open={mobileMenuOpen}
             onOpenChange={(value) => {
@@ -211,16 +204,6 @@ export function Header() {
                     );
                   })}
                 </nav>
-
-                <div className="border-t border-border bg-background px-2 py-2">
-                  <Link
-                    to="/pricing"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center rounded-lg bg-foreground px-3 py-2.5 text-sm font-medium text-background transition hover:opacity-90"
-                  >
-                    {t.header.getPro}
-                  </Link>
-                </div>
               </div>
             </SheetContent>
           </Sheet>

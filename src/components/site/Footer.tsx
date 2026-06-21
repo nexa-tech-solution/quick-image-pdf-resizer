@@ -66,11 +66,6 @@ export function Footer() {
           </div>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
-              <Link to="/pricing" className="hover:text-primary">
-                {t.footer.pricing}
-              </Link>
-            </li>
-            <li>
               <Link to="/about" className="hover:text-primary">
                 {t.footer.about}
               </Link>

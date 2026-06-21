@@ -8,7 +8,6 @@ export type SeoRouteKey =
   | "imageToPdf"
   | "pdfToImage"
   | "mergeSplitPdf"
-  | "pricing"
   | "about";
 
 export type ToolSeoKey =
@@ -70,7 +69,6 @@ export const seoRouteRegistry: Record<
     changefreq: "weekly",
     schemaType: "SoftwareApplication",
   },
-  pricing: { path: "/pricing", priority: 0.45, changefreq: "monthly", schemaType: "WebPage" },
   about: { path: "/about", priority: 0.4, changefreq: "monthly", schemaType: "WebPage" },
 };
 
@@ -106,7 +104,6 @@ export function getRouteTitle(t: TranslationSet, key: SeoRouteKey) {
   if (key === "imageToPdf") return t.routes.imageToPdf.title;
   if (key === "pdfToImage") return t.routes.pdfToImage.title;
   if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.title;
-  if (key === "pricing") return t.routes.pricing.title;
   return t.routes.about.title;
 }
 
@@ -118,7 +115,6 @@ export function getRouteDescription(t: TranslationSet, key: SeoRouteKey) {
   if (key === "imageToPdf") return t.routes.imageToPdf.description;
   if (key === "pdfToImage") return t.routes.pdfToImage.description;
   if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.description;
-  if (key === "pricing") return t.routes.pricing.description;
   return t.routes.about.description;
 }
 

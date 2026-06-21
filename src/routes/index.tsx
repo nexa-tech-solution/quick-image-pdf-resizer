@@ -222,10 +222,10 @@ function CTA() {
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">{t.home.ctaDesc}</p>
         <a
-          href="/pricing"
+          href="#tools-grid"
           className="mt-8 inline-flex items-center gap-2 rounded-lg bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:opacity-90"
         >
-          {t.home.viewPricing}
+          {t.home.browseAllTools}
         </a>
       </div>
     </section>
