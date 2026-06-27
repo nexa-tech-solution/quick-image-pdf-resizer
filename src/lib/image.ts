@@ -24,34 +24,37 @@ export interface ProcessOptions {
 }
 
 export async function loadImage(file: Blob): Promise<HTMLImageElement> {
-  const normalized = await normalizeImageBlob(file);
-  const url = URL.createObjectURL(normalized);
+  const url = URL.createObjectURL(file);
   try {
     try {
       return await loadImageFromUrl(url);
     } catch (error) {
       if (typeof createImageBitmap !== "function") {
-        throw error;
+        return await loadImageWithHeicFallback(file, error);
       }
 
-      const bitmap = await createImageBitmap(file);
       try {
-        const canvas = document.createElement("canvas");
-        canvas.width = bitmap.width;
-        canvas.height = bitmap.height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) throw new Error("Canvas is not available");
-        ctx.drawImage(bitmap, 0, 0);
-
-        const fallbackBlob = await encodeCanvas(canvas, "image/png", 1);
-        const fallbackUrl = URL.createObjectURL(fallbackBlob);
+        const bitmap = await createImageBitmap(file);
         try {
-          return await loadImageFromUrl(fallbackUrl);
+          const canvas = document.createElement("canvas");
+          canvas.width = bitmap.width;
+          canvas.height = bitmap.height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) throw new Error("Canvas is not available");
+          ctx.drawImage(bitmap, 0, 0);
+
+          const fallbackBlob = await encodeCanvas(canvas, "image/png", 1);
+          const fallbackUrl = URL.createObjectURL(fallbackBlob);
+          try {
+            return await loadImageFromUrl(fallbackUrl);
+          } finally {
+            setTimeout(() => URL.revokeObjectURL(fallbackUrl), 5000);
+          }
         } finally {
-          setTimeout(() => URL.revokeObjectURL(fallbackUrl), 5000);
+          bitmap.close();
         }
-      } finally {
-        bitmap.close();
+      } catch (bitmapError) {
+        return await loadImageWithHeicFallback(file, bitmapError);
       }
     }
   } finally {
@@ -60,11 +63,15 @@ export async function loadImage(file: Blob): Promise<HTMLImageElement> {
   }
 }
 
-async function normalizeImageBlob(file: Blob): Promise<Blob> {
-  if (!isHeicLikeBlob(file)) {
-    return file;
+async function loadImageWithHeicFallback(file: Blob, originalError: unknown) {
+  try {
+    return await loadHeicImage(file);
+  } catch {
+    throw originalError instanceof Error ? originalError : new Error("Failed to load image");
   }
+}
 
+async function loadHeicImage(file: Blob) {
   const heic2any = await import("heic2any");
   const converted = await heic2any.default({
     blob: file,
@@ -72,7 +79,17 @@ async function normalizeImageBlob(file: Blob): Promise<Blob> {
     quality: 0.92,
   });
 
-  return Array.isArray(converted) ? (converted[0] ?? file) : converted;
+  const normalized = Array.isArray(converted) ? converted[0] : converted;
+  if (!normalized) {
+    throw new Error("Failed to convert HEIC image");
+  }
+
+  const convertedUrl = URL.createObjectURL(normalized);
+  try {
+    return await loadImageFromUrl(convertedUrl);
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(convertedUrl), 5000);
+  }
 }
 
 export async function processImage(
@@ -186,20 +203,6 @@ async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
     img.onerror = () => rej(new Error("Failed to load image"));
   });
   return img;
-}
-
-function isHeicLikeBlob(file: Blob) {
-  const type = file.type.toLowerCase();
-  if (type === "image/heic" || type === "image/heif" || type === "image/heif-sequence") {
-    return true;
-  }
-
-  if (typeof File !== "undefined" && file instanceof File) {
-    const name = file.name.toLowerCase();
-    return name.endsWith(".heic") || name.endsWith(".heif");
-  }
-
-  return false;
 }
 
 export function downloadBlob(blob: Blob, filename: string) {
