@@ -8,8 +8,9 @@ import type { TranslationSet } from "@/lib/i18n";
 import { localeMeta, supportedLocales, useLocale } from "@/lib/i18n";
 
 type HeaderKey = keyof TranslationSet["header"];
+type HeaderTool = { to: string; key: HeaderKey } | { href: string; key: HeaderKey };
 
-const tools = [
+const tools: HeaderTool[] = [
   { to: "/", key: "resizeImage" },
   { to: "/remove-background", key: "removeBackground" },
   { to: "/compress-image", key: "compress" },
@@ -17,7 +18,7 @@ const tools = [
   { to: "/image-to-pdf", key: "imageToPdf" },
   { to: "/pdf-to-image", key: "pdfToImage" },
   { to: "/merge-split-pdf", key: "mergeSplitPdf" },
-] as const satisfies ReadonlyArray<{ to: string; key: HeaderKey }>;
+] as const;
 
 export function Header() {
   const { locale, setLocale, t } = useLocale();
@@ -58,24 +59,34 @@ export function Header() {
         </Link>
         <nav
           className={[
-            "order-3 hidden w-full min-w-0 items-center gap-1 overflow-x-auto whitespace-nowrap",
+            "order-3 flex w-full min-w-0 items-center gap-1 overflow-x-auto whitespace-nowrap",
             "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-            "md:order-none md:flex md:flex-1 md:justify-center lg:justify-start",
+            "md:order-none md:flex-1 md:justify-center lg:justify-start",
           ].join(" ")}
         >
           {tools.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground lg:px-4"
-              activeProps={{
-                className:
-                  "rounded-md bg-secondary px-3 py-2 text-sm font-medium text-foreground lg:px-4",
-              }}
-              activeOptions={{ exact: true }}
-            >
-              {t.header[item.key]}
-            </Link>
+            <div key={"to" in item ? item.to : item.href} className="shrink-0">
+              {"to" in item ? (
+                <Link
+                  to={item.to}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground lg:px-4"
+                  activeProps={{
+                    className:
+                      "rounded-md bg-secondary px-3 py-2 text-sm font-medium text-foreground lg:px-4",
+                  }}
+                  activeOptions={{ exact: true }}
+                >
+                  {t.header[item.key]}
+                </Link>
+              ) : (
+                <a
+                  href={item.href}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground lg:px-4"
+                >
+                  {t.header[item.key]}
+                </a>
+              )}
+            </div>
           ))}
         </nav>
         <div className="order-2 ml-auto flex shrink-0 items-center gap-2 md:order-none md:ml-0">
@@ -164,22 +175,36 @@ export function Header() {
                     const label = t.header[item.key];
 
                     return (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="group flex items-center justify-between rounded-lg border border-border/60 bg-surface px-3 py-2 text-left transition hover:border-primary/40 hover:bg-primary-soft/40"
-                        activeProps={{
-                          className:
-                            "group flex items-center justify-between rounded-lg border border-primary/30 bg-primary-soft px-3 py-2 text-left",
-                        }}
-                        activeOptions={{ exact: true }}
-                      >
-                        <span className="min-w-0 truncate text-sm font-medium leading-5 text-foreground">
-                          {label}
-                        </span>
-                        <ArrowRight className="ml-3 h-3.5 w-3.5 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
-                      </Link>
+                      <div key={"to" in item ? item.to : item.href}>
+                        {"to" in item ? (
+                          <Link
+                            to={item.to}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="group flex items-center justify-between rounded-lg border border-border/60 bg-surface px-3 py-2 text-left transition hover:border-primary/40 hover:bg-primary-soft/40"
+                            activeProps={{
+                              className:
+                                "group flex items-center justify-between rounded-lg border border-primary/30 bg-primary-soft px-3 py-2 text-left",
+                            }}
+                            activeOptions={{ exact: true }}
+                          >
+                            <span className="min-w-0 truncate text-sm font-medium leading-5 text-foreground">
+                              {label}
+                            </span>
+                            <ArrowRight className="ml-3 h-3.5 w-3.5 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                          </Link>
+                        ) : (
+                          <a
+                            href={item.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="group flex items-center justify-between rounded-lg border border-border/60 bg-surface px-3 py-2 text-left transition hover:border-primary/40 hover:bg-primary-soft/40"
+                          >
+                            <span className="min-w-0 truncate text-sm font-medium leading-5 text-foreground">
+                              {label}
+                            </span>
+                            <ArrowRight className="ml-3 h-3.5 w-3.5 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                          </a>
+                        )}
+                      </div>
                     );
                   })}
                 </nav>
