@@ -246,6 +246,7 @@ function CompressImage() {
                     <PreviewPanel
                       label={`${page.original} · ${formatBytes(selected.file.size)}`}
                       url={selected.previewUrl}
+                      unavailableText={t.resizeTool.previewUnavailable}
                       footer={
                         selected.dimensions
                           ? `${selected.dimensions.width} × ${selected.dimensions.height}`
@@ -257,6 +258,7 @@ function CompressImage() {
                         selected.outputBlob ? ` · ${formatBytes(selected.outputBlob.size)}` : ""
                       }`}
                       url={selected.outputUrl}
+                      unavailableText={t.resizeTool.previewUnavailable}
                       loading={selected.status === "processing"}
                       footer={
                         selected.status === "ready"
@@ -454,25 +456,38 @@ function CompressImage() {
 function PreviewPanel({
   label,
   url,
+  unavailableText,
   footer,
   loading = false,
 }: {
   label: string;
   url?: string;
+  unavailableText: string;
   footer: string;
   loading?: boolean;
 }) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [url]);
+
   return (
     <div>
       <div className="mb-2 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-muted-foreground">
         <span>{label}</span>
         {loading && <Loader2 className="h-3 w-3 animate-spin" />}
       </div>
-      {url ? (
-        <img src={url} alt={label} className="aspect-square w-full rounded-lg object-cover" />
+      {url && !failed ? (
+        <img
+          src={url}
+          alt={label}
+          className="aspect-square w-full rounded-lg object-cover"
+          onError={() => setFailed(true)}
+        />
       ) : (
         <div className="flex aspect-square items-center justify-center rounded-lg border border-border bg-background text-xs text-muted-foreground">
-          {footer}
+          {failed ? unavailableText : footer}
         </div>
       )}
       <div className="mt-2 text-xs text-muted-foreground">{footer}</div>

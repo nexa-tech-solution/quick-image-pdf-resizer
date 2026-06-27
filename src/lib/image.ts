@@ -23,17 +23,36 @@ export interface ProcessOptions {
   backgroundColor?: string;
 }
 
-export async function loadImage(file: File): Promise<HTMLImageElement> {
+export async function loadImage(file: Blob): Promise<HTMLImageElement> {
   const url = URL.createObjectURL(file);
   try {
-    const img = new Image();
-    img.decoding = "async";
-    await new Promise<void>((res, rej) => {
-      img.onload = () => res();
-      img.onerror = () => rej(new Error("Failed to load image"));
-      img.src = url;
-    });
-    return img;
+    try {
+      return await loadImageFromUrl(url);
+    } catch (error) {
+      if (typeof createImageBitmap !== "function") {
+        throw error;
+      }
+
+      const bitmap = await createImageBitmap(file);
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("Canvas is not available");
+        ctx.drawImage(bitmap, 0, 0);
+
+        const fallbackBlob = await encodeCanvas(canvas, "image/png", 1);
+        const fallbackUrl = URL.createObjectURL(fallbackBlob);
+        try {
+          return await loadImageFromUrl(fallbackUrl);
+        } finally {
+          setTimeout(() => URL.revokeObjectURL(fallbackUrl), 5000);
+        }
+      } finally {
+        bitmap.close();
+      }
+    }
   } finally {
     // Defer revoke to allow drawing
     setTimeout(() => URL.revokeObjectURL(url), 5000);
@@ -106,20 +125,51 @@ export async function processImage(
     }
   }
 
-  const blob: Blob = await new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (b) => {
-        if (!b || b.size === 0) {
-          reject(new Error(`Could not encode ${opts.format.toUpperCase()} output`));
-          return;
-        }
-        resolve(b);
-      },
-      formatMime[opts.format],
-      opts.quality,
-    );
-  });
+  const blob = await encodeCanvas(canvas, formatMime[opts.format], opts.quality);
   return { blob, width: outW, height: outH };
+}
+
+async function encodeCanvas(
+  canvas: HTMLCanvasElement,
+  mime: string,
+  quality: number,
+): Promise<Blob> {
+  const blob = await new Promise<Blob | null>((resolve) => {
+    canvas.toBlob((value) => resolve(value), mime, quality);
+  });
+
+  if (blob && blob.size > 0) {
+    return blob;
+  }
+
+  const dataUrl = canvas.toDataURL(mime, quality);
+  const fallback = await dataUrlToBlob(dataUrl);
+  if (fallback.size === 0) {
+    throw new Error(`Could not encode ${mime.toUpperCase()} output`);
+  }
+  return fallback;
+}
+
+async function dataUrlToBlob(dataUrl: string): Promise<Blob> {
+  const response = await fetch(dataUrl);
+  return response.blob();
+}
+
+async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
+  const img = new Image();
+  img.decoding = "async";
+  img.src = url;
+
+  if (typeof img.decode === "function") {
+    await img.decode();
+    return img;
+  }
+
+  await new Promise<void>((res, rej) => {
+    img.onload = () => res();
+    img.onerror = () => rej(new Error("Failed to load image"));
+  });
+  return img;
 }
 
 export function downloadBlob(blob: Blob, filename: string) {

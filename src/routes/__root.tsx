@@ -36,6 +36,7 @@ export const Route = createRootRoute({
         { name: "author", content: "Resize Image" },
         { name: "robots", content: "index,follow" },
         { name: "theme-color", content: "#111827" },
+        { name: "google-adsense-account", content: "ca-pub-3012411444875177" },
       ],
       links: [
         { rel: "stylesheet", href: appCss },

@@ -53,6 +53,7 @@ export function ResizeImageTool() {
   const [previewBusy, setPreviewBusy] = useState(false);
   const [originalDims, setOriginalDims] = useState<{ w: number; h: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [previewFailed, setPreviewFailed] = useState(false);
 
   useEffect(() => {
     if (!file) {
@@ -61,10 +62,12 @@ export function ResizeImageTool() {
       setOutputSize(null);
       setOriginalDims(null);
       setError(null);
+      setPreviewFailed(false);
       return;
     }
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
+    setPreviewFailed(false);
     loadImage(file)
       .then((img) => {
         setOriginalDims({ w: img.naturalWidth, h: img.naturalHeight });
@@ -213,10 +216,10 @@ export function ResizeImageTool() {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated shadow-soft">
-      <div className="flex items-center justify-between border-b border-border bg-surface px-4 py-3">
-        <div className="min-w-0">
-          <div className="truncate font-medium">{file.name}</div>
+    <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated shadow-soft flex-wrap">
+      <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-3 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <div className="block truncate font-medium text-wrap">{file.name}</div>
           <div className="mt-0.5 text-xs text-muted-foreground">
             {originalDims ? `${originalDims.w}×${originalDims.h} · ` : ""}
             {formatBytes(file.size)}
@@ -235,12 +238,17 @@ export function ResizeImageTool() {
       <div className="grid gap-5 p-5 md:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0 overflow-hidden rounded-xl bg-[conic-gradient(at_50%_50%,_#f5f6f8_25%,_#eceef2_25%_50%,_#f5f6f8_50%_75%,_#eceef2_75%)] [background-size:20px_20px] p-4">
           <div className="relative flex h-[32vh] min-h-[220px] min-w-0 items-center justify-center sm:h-auto">
-            {(processedPreviewUrl || previewUrl) && (
+            {(processedPreviewUrl || previewUrl) && !previewFailed ? (
               <img
                 src={processedPreviewUrl ?? previewUrl ?? undefined}
                 alt={t.resizeTool.preview}
                 className="h-full max-h-[420px] max-w-full rounded-md object-contain shadow-elevated sm:h-auto"
+                onError={() => setPreviewFailed(true)}
               />
+            ) : (
+              <div className="flex h-full max-h-[420px] min-h-[220px] w-full items-center justify-center rounded-md border border-border bg-background px-4 text-center text-sm text-muted-foreground">
+                {t.resizeTool.previewUnavailable}
+              </div>
             )}
             {previewBusy && (
               <div className="absolute right-2 top-2 rounded-full border border-border bg-background/85 px-2 py-1 text-[11px] font-medium text-muted-foreground shadow-sm backdrop-blur">

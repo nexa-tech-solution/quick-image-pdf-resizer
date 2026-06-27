@@ -23,7 +23,9 @@ export function ToolPage({
           <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">{description}</p>
         </div>
       </div>
-      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">{children}</div>
+      <div className="mx-auto max-w-4xl px-4 py-10 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8 lg:pb-10">
+        {children}
+      </div>
     </PageShell>
   );
 }
