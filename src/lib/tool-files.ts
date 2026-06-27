@@ -19,11 +19,21 @@ export interface ToolFileItem {
   sizes?: { original: number; output?: number };
 }
 
-export const imageAccept = "image/jpeg,image/png,image/webp,image/avif";
+export const imageAccept =
+  "image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif,.heic,.heif";
 
 export const pdfAccept = "application/pdf";
 
-export const supportedImageTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+export const supportedImageTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+  "image/heic",
+  "image/heif",
+  "image/heif-sequence",
+  "image/heic-sequence",
+]);
 
 export function createToolFileItem(file: File, status: ProcessingStatus = "idle"): ToolFileItem {
   return {

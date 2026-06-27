@@ -24,7 +24,8 @@ export interface ProcessOptions {
 }
 
 export async function loadImage(file: Blob): Promise<HTMLImageElement> {
-  const url = URL.createObjectURL(file);
+  const normalized = await normalizeImageBlob(file);
+  const url = URL.createObjectURL(normalized);
   try {
     try {
       return await loadImageFromUrl(url);
@@ -57,6 +58,21 @@ export async function loadImage(file: Blob): Promise<HTMLImageElement> {
     // Defer revoke to allow drawing
     setTimeout(() => URL.revokeObjectURL(url), 5000);
   }
+}
+
+async function normalizeImageBlob(file: Blob): Promise<Blob> {
+  if (!isHeicLikeBlob(file)) {
+    return file;
+  }
+
+  const heic2any = await import("heic2any");
+  const converted = await heic2any.default({
+    blob: file,
+    toType: "image/jpeg",
+    quality: 0.92,
+  });
+
+  return Array.isArray(converted) ? (converted[0] ?? file) : converted;
 }
 
 export async function processImage(
@@ -170,6 +186,20 @@ async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
     img.onerror = () => rej(new Error("Failed to load image"));
   });
   return img;
+}
+
+function isHeicLikeBlob(file: Blob) {
+  const type = file.type.toLowerCase();
+  if (type === "image/heic" || type === "image/heif" || type === "image/heif-sequence") {
+    return true;
+  }
+
+  if (typeof File !== "undefined" && file instanceof File) {
+    const name = file.name.toLowerCase();
+    return name.endsWith(".heic") || name.endsWith(".heif");
+  }
+
+  return false;
 }
 
 export function downloadBlob(blob: Blob, filename: string) {
