@@ -768,9 +768,6 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
 
             <div className="mt-4 space-y-3">
               <div className="rounded-xl border border-border bg-background px-2.5 py-2 sm:px-3">
-                <div className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                  {copy.shared.output}
-                </div>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
                   <div>
                     <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -801,39 +798,34 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-background px-2.5 py-2 sm:px-3">
-                <div className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                  Actions
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <button
-                    onClick={removeAll}
-                    className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                    {copy.shared.removeAll}
-                  </button>
-                  <button
-                    onClick={downloadZip}
-                    disabled={busy || zipping || !canDownload}
-                    className="flex w-full flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
-                  >
-                    {zipping ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Download className="h-4 w-4" />
-                    )}
-                    {copy.shared.downloadZip}
-                  </button>
-                  <button
-                    onClick={downloadAll}
-                    disabled={busy || zipping || !canDownload}
-                    className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary disabled:opacity-60"
-                  >
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <button
+                  onClick={removeAll}
+                  className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  {copy.shared.removeAll}
+                </button>
+                <button
+                  onClick={downloadZip}
+                  disabled={busy || zipping || !canDownload}
+                  className="flex w-full flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+                >
+                  {zipping ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
                     <Download className="h-4 w-4" />
-                    {copy.shared.downloadAll}
-                  </button>
-                </div>
+                  )}
+                  {copy.shared.downloadZip}
+                </button>
+                <button
+                  onClick={downloadAll}
+                  disabled={busy || zipping || !canDownload}
+                  className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary disabled:opacity-60"
+                >
+                  <Download className="h-4 w-4" />
+                  {copy.shared.downloadAll}
+                </button>
               </div>
             </div>
           </div>
