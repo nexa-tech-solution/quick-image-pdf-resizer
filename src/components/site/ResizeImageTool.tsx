@@ -23,6 +23,7 @@ import {
   supportedImageTypes,
   type ToolFileItem,
 } from "@/lib/tool-files";
+import { makeZipBlob } from "@/lib/zip";
 import { cn } from "@/lib/utils";
 
 const presets = [
@@ -57,6 +58,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
   const [quality, setQuality] = useState(0.85);
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [busy, setBusy] = useState(false);
+  const [zipping, setZipping] = useState(false);
   const itemsRef = useRef<ToolFileItem[]>([]);
 
   useEffect(() => {
@@ -86,6 +88,13 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
   const totalOutput = items.reduce((sum, item) => sum + (item.outputBlob?.size ?? 0), 0);
   const readyCount = items.filter((item) => item.status === "ready").length;
   const errorCount = items.filter((item) => item.status === "error").length;
+  const downloadableItems = useMemo(
+    () =>
+      items.filter((item): item is ToolFileItem & { outputBlob: Blob; outputFilename: string } =>
+        Boolean(item.outputBlob && item.outputFilename),
+      ),
+    [items],
+  );
 
   useEffect(() => {
     if (items.length === 0) {
@@ -285,16 +294,48 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
     setHeight(h);
   };
 
-  const downloadAll = () => {
-    items
-      .filter((item) => item.outputBlob && item.outputFilename)
-      .forEach((item, index) => {
-        window.setTimeout(() => {
-          if (item.outputBlob && item.outputFilename) {
-            downloadBlob(item.outputBlob, item.outputFilename);
-          }
-        }, index * 200);
+  const downloadZip = async () => {
+    if (downloadableItems.length === 0 || zipping) return;
+
+    setZipping(true);
+    try {
+      const nameCounts = new Map<string, number>();
+      const zipEntries = downloadableItems.map((item) => {
+        const currentCount = nameCounts.get(item.outputFilename) ?? 0;
+        nameCounts.set(item.outputFilename, currentCount + 1);
+
+        if (currentCount === 0) {
+          return { name: item.outputFilename, blob: item.outputBlob };
+        }
+
+        const dotIndex = item.outputFilename.lastIndexOf(".");
+        const baseName = dotIndex >= 0 ? item.outputFilename.slice(0, dotIndex) : item.outputFilename;
+        const extension = dotIndex >= 0 ? item.outputFilename.slice(dotIndex) : "";
+
+        return {
+          name: `${baseName} (${currentCount})${extension}`,
+          blob: item.outputBlob,
+        };
       });
+
+      const zipBlob = await makeZipBlob(
+        zipEntries,
+      );
+
+      downloadBlob(zipBlob, "resized-images.zip");
+    } finally {
+      setZipping(false);
+    }
+  };
+
+  const canDownload = downloadableItems.length > 0;
+
+  const downloadAll = () => {
+    downloadableItems.forEach((item, index) => {
+      window.setTimeout(() => {
+        downloadBlob(item.outputBlob, item.outputFilename);
+      }, index * 200);
+    });
   };
 
   const presetGroups = [
@@ -718,15 +759,23 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 {copy.shared.removeAll}
               </button>
               <button
-                onClick={downloadAll}
-                disabled={busy || items.every((item) => !item.outputBlob)}
+                onClick={downloadZip}
+                disabled={busy || zipping || !canDownload}
                 className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
               >
-                {busy ? (
+                {zipping ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Download className="h-4 w-4" />
                 )}
+                Download ZIP
+              </button>
+              <button
+                onClick={downloadAll}
+                disabled={busy || zipping || !canDownload}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary disabled:opacity-60"
+              >
+                <Download className="h-4 w-4" />
                 {copy.shared.downloadAll}
               </button>
             </div>
