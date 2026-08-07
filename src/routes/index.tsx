@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ShieldCheck, Zap, Download, Sparkles } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
@@ -23,10 +24,12 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const [hasFiles, setHasFiles] = useState(false);
+
   return (
     <PageShell>
       <SeoJsonLd routeKey="home" includeHomeSchemas />
-      <Hero />
+      <Hero hasFiles={hasFiles} onHasFilesChange={setHasFiles} />
       <Features />
       <ResizeSeoSection />
       <SeoBoost />
@@ -36,16 +39,30 @@ function Home() {
   );
 }
 
-function Hero() {
+function Hero({
+  hasFiles,
+  onHasFilesChange,
+}: {
+  hasFiles: boolean;
+  onHasFilesChange: (hasFiles: boolean) => void;
+}) {
   const { t } = useLocale();
+  const hideIntro = hasFiles;
 
   return (
     <section className="relative overflow-hidden border-b border-border bg-[var(--gradient-hero)]">
       <div className="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,white,transparent_70%)]">
         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       </div>
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1fr_minmax(0,700px)] md:gap-10 md:py-24 lg:px-8">
-        <div className="flex flex-col justify-center">
+      <div
+        className={`mx-auto grid max-w-7xl px-4 py-16 sm:px-6 lg:px-8 ${
+          hideIntro
+            ? "gap-8 md:grid-cols-1 md:py-14"
+            : "gap-12 md:grid-cols-[1fr_minmax(0,700px)] md:gap-10 md:py-24"
+        }`}
+      >
+        {!hideIntro && (
+          <div className="flex flex-col justify-center">
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface-elevated px-3 py-1 text-xs font-mono uppercase tracking-wider text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-success" />
             {t.home.badge}
@@ -85,9 +102,10 @@ function Hero() {
               </div>
             ))}
           </dl>
-        </div>
-        <div id="tool" className="md:pt-2">
-          <ResizeImageTool />
+          </div>
+        )}
+        <div id="tool" className={hideIntro ? "md:pt-2" : "md:pt-2"}>
+          <ResizeImageTool onHasFilesChange={onHasFilesChange} />
         </div>
       </div>
     </section>

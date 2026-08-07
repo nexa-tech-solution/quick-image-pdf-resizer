@@ -15,6 +15,7 @@ export interface ToolFileItem {
   outputBlob?: Blob;
   outputUrl?: string;
   outputFilename?: string;
+  sourceDimensions?: { width: number; height: number };
   dimensions?: { width: number; height: number };
   sizes?: { original: number; output?: number };
 }

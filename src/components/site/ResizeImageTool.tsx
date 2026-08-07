@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Crop, Download, Loader2, Lock, Maximize2, Move, RefreshCw, Unlock, X } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,9 +14,14 @@ import {
 import { toolEnhancementCopy, useLocale } from "@/lib/i18n";
 import {
   canEncodeImageFormat,
+  cleanupToolFileItem,
+  cleanupToolFileItems,
+  createToolFileItem,
   imageAccept,
+  revokeUrl,
   savingPercent,
   supportedImageTypes,
+  type ToolFileItem,
 } from "@/lib/tool-files";
 import { cn } from "@/lib/utils";
 
@@ -35,10 +40,15 @@ const fitIcons = {
   stretch: Move,
 } as const;
 
-export function ResizeImageTool() {
+type ResizeImageToolProps = {
+  onHasFilesChange?: (hasFiles: boolean) => void;
+};
+
+export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {}) {
   const { locale, t } = useLocale();
   const copy = toolEnhancementCopy[locale];
-  const [file, setFile] = useState<File | null>(null);
+  const [items, setItems] = useState<ToolFileItem[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [width, setWidth] = useState<number>(1080);
   const [height, setHeight] = useState<number>(1080);
   const [lockRatio, setLockRatio] = useState(true);
@@ -47,118 +57,226 @@ export function ResizeImageTool() {
   const [quality, setQuality] = useState(0.85);
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [busy, setBusy] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [processedPreviewUrl, setProcessedPreviewUrl] = useState<string | null>(null);
-  const [outputSize, setOutputSize] = useState<number | null>(null);
-  const [previewBusy, setPreviewBusy] = useState(false);
-  const [originalDims, setOriginalDims] = useState<{ w: number; h: number } | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [previewFailed, setPreviewFailed] = useState(false);
+  const itemsRef = useRef<ToolFileItem[]>([]);
 
   useEffect(() => {
-    if (!file) {
-      setPreviewUrl(null);
-      setProcessedPreviewUrl(null);
-      setOutputSize(null);
-      setOriginalDims(null);
-      setError(null);
-      setPreviewFailed(false);
+    itemsRef.current = items;
+  }, [items]);
+
+  useEffect(() => {
+    onHasFilesChange?.(items.length > 0);
+  }, [items.length, onHasFilesChange]);
+
+  useEffect(() => () => cleanupToolFileItems(itemsRef.current), []);
+
+  const fileKey = useMemo(
+    () => items.map((item) => `${item.id}:${item.file.lastModified}`).join("|"),
+    [items],
+  );
+  const selected = items.find((item) => item.id === selectedId) ?? items[0] ?? null;
+  const ratio = useMemo(
+    () =>
+      selected?.sourceDimensions
+        ? selected.sourceDimensions.width / selected.sourceDimensions.height
+        : 1,
+    [selected],
+  );
+  const validDimensions = width >= 1 && height >= 1 && width <= 10000 && height <= 10000;
+  const totalOriginal = items.reduce((sum, item) => sum + item.file.size, 0);
+  const totalOutput = items.reduce((sum, item) => sum + (item.outputBlob?.size ?? 0), 0);
+  const readyCount = items.filter((item) => item.status === "ready").length;
+  const errorCount = items.filter((item) => item.status === "error").length;
+
+  useEffect(() => {
+    if (items.length === 0) {
+      setBusy(false);
       return;
     }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    setPreviewFailed(false);
-    loadImage(file)
-      .then((img) => {
-        setOriginalDims({ w: img.naturalWidth, h: img.naturalHeight });
-        setWidth(img.naturalWidth);
-        setHeight(img.naturalHeight);
-      })
-      .catch(() => setError(copy.shared.processingError));
-    return () => URL.revokeObjectURL(url);
-  }, [copy.shared.processingError, file]);
 
-  useEffect(() => {
-    if (!file || !originalDims || width < 1 || height < 1 || width > 10000 || height > 10000) {
+    if (!validDimensions) {
+      setBusy(false);
       return;
     }
 
     let cancelled = false;
-    setPreviewBusy(true);
-    setError(null);
 
-    const timer = window.setTimeout(async () => {
-      try {
-        const supported = await canEncodeImageFormat(format);
-        if (!supported) throw new Error("Unsupported output format");
-        const { blob } = await processImage(file, {
-          width,
-          height,
-          fit,
-          format,
-          quality,
-          backgroundColor: fit === "contain" ? backgroundColor : undefined,
-        });
-        if (cancelled) return;
-
-        const url = URL.createObjectURL(blob);
-        setOutputSize(blob.size);
-        setProcessedPreviewUrl((current) => {
-          if (current) URL.revokeObjectURL(current);
-          return url;
-        });
-      } catch (err) {
-        if (cancelled) return;
-        setOutputSize(null);
-        setError(
-          err instanceof Error && err.message.includes("Unsupported")
-            ? copy.shared.unsupportedOutput
-            : copy.shared.processingError,
+    async function processAll() {
+      setBusy(true);
+      const supported = await canEncodeImageFormat(format);
+      if (!supported) {
+        setItems((current) =>
+          current.map((item) => ({
+            ...item,
+            status: "error",
+            error: copy.shared.unsupportedOutput,
+          })),
         );
-      } finally {
-        if (!cancelled) setPreviewBusy(false);
+        setBusy(false);
+        return;
       }
-    }, 120);
+
+      for (const item of itemsRef.current) {
+        if (cancelled) break;
+
+        setItems((current) =>
+          current.map((candidate) => {
+            if (candidate.id !== item.id) return candidate;
+            revokeUrl(candidate.outputUrl);
+            return {
+              ...candidate,
+              status: "processing",
+              error: undefined,
+              outputBlob: undefined,
+              outputUrl: undefined,
+              outputFilename: undefined,
+              dimensions: undefined,
+              sourceDimensions: undefined,
+              sizes: { original: candidate.file.size },
+            };
+          }),
+        );
+
+        try {
+          const {
+            blob,
+            width: outW,
+            height: outH,
+            sourceWidth,
+            sourceHeight,
+          } = await processImage(item.file, {
+            width,
+            height,
+            fit,
+            format,
+            quality,
+            backgroundColor: fit === "contain" ? backgroundColor : undefined,
+          });
+          if (cancelled) break;
+          if (!itemsRef.current.some((candidate) => candidate.id === item.id)) continue;
+
+          const outputUrl = URL.createObjectURL(blob);
+          setItems((current) =>
+            current.map((candidate) =>
+              candidate.id === item.id
+                ? {
+                    ...candidate,
+                    status: "ready",
+                    outputBlob: blob,
+                    outputUrl,
+                    outputFilename: replaceExt(candidate.file.name, formatExt[format]),
+                    dimensions: { width: outW, height: outH },
+                    sourceDimensions: { width: sourceWidth, height: sourceHeight },
+                    sizes: { original: candidate.file.size, output: blob.size },
+                  }
+                : candidate,
+            ),
+          );
+        } catch (err) {
+          setItems((current) =>
+            current.map((candidate) =>
+              candidate.id === item.id
+                ? {
+                    ...candidate,
+                    status: "error",
+                    error:
+                      err instanceof Error && err.message.includes("Unsupported")
+                        ? copy.shared.unsupportedOutput
+                        : copy.shared.processingError,
+                  }
+                : candidate,
+            ),
+          );
+        }
+      }
+
+      if (!cancelled) setBusy(false);
+    }
+
+    processAll();
 
     return () => {
       cancelled = true;
-      clearTimeout(timer);
     };
   }, [
     backgroundColor,
     copy.shared.processingError,
     copy.shared.unsupportedOutput,
-    file,
+    fileKey,
     fit,
     format,
     height,
-    originalDims,
+    items.length,
     quality,
+    validDimensions,
     width,
   ]);
 
   useEffect(() => {
-    return () => {
-      if (processedPreviewUrl) URL.revokeObjectURL(processedPreviewUrl);
-    };
-  }, [processedPreviewUrl]);
+    if (items.length === 0) {
+      setSelectedId(null);
+      return;
+    }
 
-  const ratio = useMemo(() => (originalDims ? originalDims.w / originalDims.h : 1), [originalDims]);
-  const validDimensions = width >= 1 && height >= 1 && width <= 10000 && height <= 10000;
-  const outputDelta = file && outputSize ? savingPercent(file.size, outputSize) : null;
-  const presetGroups = [
-    { id: "social", label: copy.resize.social },
-    { id: "video", label: copy.resize.video },
-    { id: "web", label: copy.resize.web },
-  ] as const;
+    if (!selectedId || !items.some((item) => item.id === selectedId)) {
+      setSelectedId(items[0]?.id ?? null);
+    }
+  }, [items, selectedId]);
 
-  const onWidth = (v: number) => {
-    setWidth(v);
-    if (lockRatio && originalDims) setHeight(Math.round(v / ratio));
+  const addFiles = async (files: File[]) => {
+    if (files.length === 0) return;
+
+    if (itemsRef.current.length === 0) {
+      try {
+        const img = await loadImage(files[0]);
+        setWidth(img.naturalWidth);
+        setHeight(img.naturalHeight);
+      } catch {
+        // Keep the current dimensions if the first file cannot be decoded yet.
+      }
+    }
+
+    const next = files.map((file) => createToolFileItem(file, "idle"));
+    setItems((current) => [...current, ...next]);
+    setSelectedId((current) => current ?? next[0]?.id ?? null);
   };
-  const onHeight = (v: number) => {
-    setHeight(v);
-    if (lockRatio && originalDims) setWidth(Math.round(v * ratio));
+
+  const removeItem = (id: string) => {
+    setItems((current) => {
+      const target = current.find((item) => item.id === id);
+      if (target) cleanupToolFileItem(target);
+      return current.filter((item) => item.id !== id);
+    });
+    if (selectedId === id) {
+      setSelectedId(itemsRef.current.find((item) => item.id !== id)?.id ?? null);
+    }
+  };
+
+  const removeAll = () => {
+    cleanupToolFileItems(itemsRef.current);
+    setItems([]);
+    setSelectedId(null);
+    setBusy(false);
+  };
+
+  const resetToOriginal = () => {
+    if (!selected?.sourceDimensions) return;
+    setLockRatio(true);
+    setWidth(selected.sourceDimensions.width);
+    setHeight(selected.sourceDimensions.height);
+  };
+
+  const onWidth = (value: number) => {
+    setWidth(value);
+    if (lockRatio && selected?.sourceDimensions) {
+      setHeight(Math.round(value / ratio));
+    }
+  };
+
+  const onHeight = (value: number) => {
+    setHeight(value);
+    if (lockRatio && selected?.sourceDimensions) {
+      setWidth(Math.round(value * ratio));
+    }
   };
 
   const applyPreset = (w: number, h: number) => {
@@ -167,48 +285,33 @@ export function ResizeImageTool() {
     setHeight(h);
   };
 
-  const onDownload = async () => {
-    if (!file || !validDimensions) return;
-    setBusy(true);
-    setError(null);
-    try {
-      const supported = await canEncodeImageFormat(format);
-      if (!supported) throw new Error("Unsupported output format");
-      const { blob } = await processImage(file, {
-        width,
-        height,
-        fit,
-        format,
-        quality,
-        backgroundColor: fit === "contain" ? backgroundColor : undefined,
+  const downloadAll = () => {
+    items
+      .filter((item) => item.outputBlob && item.outputFilename)
+      .forEach((item, index) => {
+        window.setTimeout(() => {
+          if (item.outputBlob && item.outputFilename) {
+            downloadBlob(item.outputBlob, item.outputFilename);
+          }
+        }, index * 200);
       });
-      downloadBlob(blob, replaceExt(file.name, formatExt[format]));
-    } catch (err) {
-      setError(
-        err instanceof Error && err.message.includes("Unsupported")
-          ? copy.shared.unsupportedOutput
-          : copy.shared.processingError,
-      );
-    } finally {
-      setBusy(false);
-    }
   };
 
-  const resetToOriginal = () => {
-    if (!originalDims) return;
-    setLockRatio(true);
-    setWidth(originalDims.w);
-    setHeight(originalDims.h);
-  };
+  const presetGroups = [
+    { id: "social", label: copy.resize.social },
+    { id: "video", label: copy.resize.video },
+    { id: "web", label: copy.resize.web },
+  ] as const;
 
-  if (!file) {
+  if (items.length === 0) {
     return (
       <FileDropzone
         accept={imageAccept}
+        multiple
         validateFile={(item) =>
           supportedImageTypes.has(item.type) ? null : copy.shared.unsupportedImageFormat
         }
-        onFiles={(files) => setFile(files[0])}
+        onFiles={addFiles}
         title={t.resizeTool.dropTitle}
         hint={t.resizeTool.dropHint}
       />
@@ -216,297 +319,417 @@ export function ResizeImageTool() {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated shadow-soft flex-wrap">
-      <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-3 flex-wrap">
+    <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated shadow-soft">
+      <div className="flex flex-wrap items-center gap-3 border-b border-border bg-surface px-4 py-3">
         <div className="min-w-0 flex-1">
-          <div className="block truncate font-medium text-wrap">{file.name}</div>
-          <div className="mt-0.5 text-xs text-muted-foreground">
-            {originalDims ? `${originalDims.w}×${originalDims.h} · ` : ""}
-            {formatBytes(file.size)}
+          <div className="truncate font-medium">
+            {items.length} {copy.imageToPdf.files}
           </div>
-          {error && <div className="mt-2 text-xs text-destructive">{error}</div>}
+          <div className="mt-0.5 text-xs text-muted-foreground">
+            {copy.shared.total}: {formatBytes(totalOriginal)}
+            {totalOutput > 0 && <> → {formatBytes(totalOutput)}</>}
+            {readyCount > 0 && (
+              <>
+                {" "}
+                · {copy.shared.ready}: {readyCount}
+              </>
+            )}
+            {errorCount > 0 && (
+              <>
+                {" "}
+                · {copy.shared.error}: {errorCount}
+              </>
+            )}
+          </div>
         </div>
         <button
-          onClick={() => setFile(null)}
+          onClick={removeAll}
           className="rounded-md p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-          aria-label={t.resizeTool.remove}
+          aria-label={copy.shared.removeAll}
         >
           <X className="h-4 w-4" />
         </button>
       </div>
 
-      <div className="grid gap-5 p-5 md:grid-cols-[minmax(0,1fr)_300px]">
-        <div className="min-w-0 overflow-hidden rounded-xl bg-[conic-gradient(at_50%_50%,_#f5f6f8_25%,_#eceef2_25%_50%,_#f5f6f8_50%_75%,_#eceef2_75%)] [background-size:20px_20px] p-4">
-          <div className="relative flex h-[32vh] min-h-[220px] min-w-0 items-center justify-center sm:h-auto">
-            {(processedPreviewUrl || previewUrl) && !previewFailed ? (
-              <img
-                src={processedPreviewUrl ?? previewUrl ?? undefined}
-                alt={t.resizeTool.preview}
-                className="h-full max-h-[420px] max-w-full rounded-md object-contain shadow-elevated sm:h-auto"
-                onError={() => setPreviewFailed(true)}
-              />
-            ) : (
-              <div className="flex h-full max-h-[420px] min-h-[220px] w-full items-center justify-center rounded-md border border-border bg-background px-4 text-center text-sm text-muted-foreground">
-                {t.resizeTool.previewUnavailable}
+      <div className="space-y-6 p-5">
+        <FileDropzone
+          accept={imageAccept}
+          multiple
+          validateFile={(item) =>
+            supportedImageTypes.has(item.type) ? null : copy.shared.unsupportedImageFormat
+          }
+          onFiles={addFiles}
+          title={copy.batch.addMore}
+          hint={t.resizeTool.dropHint}
+          className="py-6"
+        />
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="space-y-4">
+            {selected && (
+              <div className="grid gap-3 rounded-2xl border border-border bg-surface-elevated p-4 sm:grid-cols-2">
+                <PreviewPanel
+                  label={`${copy.shared.original} · ${formatBytes(selected.file.size)}`}
+                  url={selected.previewUrl}
+                  unavailableText={t.resizeTool.previewUnavailable}
+                  footer={
+                    selected.sourceDimensions
+                      ? `${selected.sourceDimensions.width} × ${selected.sourceDimensions.height}`
+                      : selected.file.name
+                  }
+                />
+                <PreviewPanel
+                  label={`${copy.shared.output}${
+                    selected.outputBlob ? ` · ${formatBytes(selected.outputBlob.size)}` : ""
+                  }`}
+                  url={selected.outputUrl}
+                  unavailableText={t.resizeTool.previewUnavailable}
+                  loading={selected.status === "processing" || busy}
+                  footer={
+                    selected.status === "ready"
+                      ? `${selected.dimensions?.width} × ${selected.dimensions?.height} · ${formatExt[format].toUpperCase()}`
+                      : selected.status === "error"
+                        ? (selected.error ?? copy.shared.error)
+                      : copy.resize.outputEstimate
+                  }
+                />
               </div>
             )}
-            {previewBusy && (
-              <div className="absolute right-2 top-2 rounded-full border border-border bg-background/85 px-2 py-1 text-[11px] font-medium text-muted-foreground shadow-sm backdrop-blur">
-                {t.resizeTool.updating}
-              </div>
-            )}
-          </div>
-        </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-              {t.resizeTool.presets}
-            </label>
-            <div className="mt-2 space-y-3">
-              {presetGroups.map((group) => (
-                <div key={group.id}>
-                  <div className="mb-1 text-[11px] font-medium text-muted-foreground">
-                    {group.label}
+            <div className="space-y-2">
+              {items.map((item) => {
+                const delta = savingPercent(item.file.size, item.outputBlob?.size);
+
+                return (
+                  <div
+                    key={item.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedId(item.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedId(item.id);
+                      }
+                    }}
+                    className={`grid w-full gap-3 rounded-xl border bg-surface-elevated p-3 text-left transition md:grid-cols-[1fr_auto_auto_auto] md:items-center ${
+                      selected?.id === item.id
+                        ? "border-primary bg-primary-soft/40"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium">{item.file.name}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {formatBytes(item.file.size)}
+                        {item.outputBlob && ` → ${formatBytes(item.outputBlob.size)}`}
+                      </div>
+                      {delta !== null && delta < 0 && (
+                        <div className="mt-1 text-xs text-amber-700">
+                          {copy.batch.outputLargerHint}
+                        </div>
+                      )}
+                      {item.error && (
+                        <div className="mt-1 text-xs text-destructive">{item.error}</div>
+                      )}
+                    </div>
+                    <div className="text-xs font-mono text-muted-foreground">
+                      {item.status === "processing"
+                        ? copy.batch.processing
+                        : item.status === "ready"
+                          ? copy.shared.ready
+                          : item.status === "error"
+                            ? copy.shared.error
+                            : "Idle"}
+                    </div>
+                    <div
+                      className={`text-xs font-mono ${
+                        delta === null
+                          ? "text-muted-foreground"
+                          : delta >= 0
+                            ? "text-success"
+                            : "text-amber-700"
+                      }`}
+                    >
+                      {delta === null ? "..." : `${delta > 0 ? "-" : "+"}${Math.abs(delta)}%`}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        disabled={!item.outputBlob}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          if (item.outputBlob && item.outputFilename) {
+                            downloadBlob(item.outputBlob, item.outputFilename);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-primary disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        {t.resizeTool.download}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          removeItem(item.id);
+                        }}
+                        className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 pb-1 md:grid-cols-2 md:pb-0">
-                    {presets
-                      .filter((p) => p.group === group.id)
-                      .map((p) => (
-                        <button
-                          key={p.size}
-                          onClick={() => applyPreset(p.w, p.h)}
-                          className={cn(
-                            "w-full rounded-lg border border-border px-3 py-2 text-left transition hover:border-primary/60 hover:bg-primary-soft",
-                            width === p.w && height === p.h
-                              ? "border-primary bg-primary-soft text-primary"
-                              : "",
-                          )}
-                        >
-                          <span className="block text-xs font-medium">
-                            {t.resizeTool.presetLabels[p.labelKey]}
-                          </span>
-                          <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
-                            {p.size}
-                          </span>
-                        </button>
-                      ))}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between gap-3">
-              <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                {t.resizeTool.dimensions}
-              </label>
-              <button
-                type="button"
-                onClick={() => setLockRatio((v) => !v)}
-                aria-pressed={lockRatio}
-                className={cn(
-                  "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
-                  lockRatio
-                    ? "border-primary bg-primary-soft text-primary"
-                    : "border-border bg-background text-muted-foreground hover:border-primary/60 hover:text-foreground",
-                )}
-              >
-                {lockRatio ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
-                {lockRatio ? t.resizeTool.lockRatio : t.resizeTool.unlockRatio}
-              </button>
-            </div>
-            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-              <NumberField label="W" value={width} onChange={onWidth} />
-              <NumberField label="H" value={height} onChange={onHeight} />
-              <button
-                type="button"
-                onClick={resetToOriginal}
-                disabled={!originalDims}
-                className="col-span-2 rounded-lg border border-border px-3 py-2 text-xs font-medium transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-1 sm:py-0"
-              >
-                1:1
-              </button>
-            </div>
-            <p
-              className={cn(
-                "mt-2 text-[11px]",
-                validDimensions ? "text-muted-foreground" : "text-destructive",
-              )}
-            >
-              {validDimensions ? t.resizeTool.lockHelp : copy.shared.invalidDimensions}
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
+          <div className="min-w-0 space-y-5 rounded-2xl border border-border bg-surface-elevated p-5">
             <div>
               <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                {t.resizeTool.fit}
+                {t.resizeTool.presets}
               </label>
-              <TooltipProvider>
-                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {(["contain", "cover", "stretch"] as const).map((f) => {
-                    const Icon = fitIcons[f];
-                    const tip =
-                      f === "contain"
-                        ? copy.resize.containTip
-                        : f === "cover"
-                          ? copy.resize.coverTip
-                          : copy.resize.stretchTip;
-
-                    return (
-                      <Tooltip key={f}>
-                        <TooltipTrigger asChild>
+              <div className="mt-2 space-y-3">
+                {presetGroups.map((group) => (
+                  <div key={group.id}>
+                    <div className="mb-1 text-[11px] font-medium text-muted-foreground">
+                      {group.label}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 pb-1 md:pb-0">
+                      {presets
+                        .filter((p) => p.group === group.id)
+                        .map((p) => (
                           <button
-                            onClick={() => setFit(f)}
+                            key={p.size}
+                            onClick={() => applyPreset(p.w, p.h)}
                             className={cn(
-                              "flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
-                              fit === f
+                              "min-h-16 w-full rounded-lg border border-border px-3 py-2.5 text-left transition hover:border-primary/60 hover:bg-primary-soft",
+                              width === p.w && height === p.h
                                 ? "border-primary bg-primary-soft text-primary"
-                                : "hover:border-primary/60",
+                                : "",
                             )}
                           >
-                            <Icon className="h-3.5 w-3.5" />
-                            <span>{t.resizeTool.fitOptions[f]}</span>
+                            <span className="block text-xs font-medium">
+                              {t.resizeTool.presetLabels[p.labelKey]}
+                            </span>
+                            <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
+                              {p.size}
+                            </span>
                           </button>
-                        </TooltipTrigger>
-                        <TooltipContent>{tip}</TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              </TooltipProvider>
-            </div>
-            <div>
-              <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                {t.resizeTool.format}
-              </label>
-              <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
-                {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setFormat(f)}
-                    className={cn(
-                      "min-w-0 rounded-lg border border-border px-1.5 py-2 text-[11px] uppercase font-mono transition",
-                      format === f
-                        ? "border-primary bg-primary-soft text-primary"
-                        : "hover:border-primary/60",
-                    )}
-                  >
-                    {f === "jpeg" ? "JPG" : f.toUpperCase()}
-                  </button>
+                        ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-          </div>
 
-          {fit === "contain" && (
             <div>
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  {t.resizeTool.background}
+                  {t.resizeTool.dimensions}
                 </label>
-                <span className="text-[11px] text-muted-foreground sm:text-right">
-                  {t.resizeTool.backgroundHint}
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setLockRatio((v) => !v)}
+                  aria-pressed={lockRatio}
+                  className={cn(
+                    "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
+                    lockRatio
+                      ? "border-primary bg-primary-soft text-primary"
+                      : "border-border bg-background text-muted-foreground hover:border-primary/60 hover:text-foreground",
+                  )}
+                >
+                  {lockRatio ? (
+                    <Lock className="h-3.5 w-3.5" />
+                  ) : (
+                    <Unlock className="h-3.5 w-3.5" />
+                  )}
+                  {lockRatio ? t.resizeTool.lockRatio : t.resizeTool.unlockRatio}
+                </button>
               </div>
-              <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1.5">
-                <input
-                  type="color"
-                  value={backgroundColor}
-                  onChange={(e) => setBackgroundColor(e.target.value)}
-                  aria-label={t.resizeTool.backgroundColor}
-                  className="h-8 w-9 cursor-pointer rounded border-0 bg-transparent p-0"
-                />
-                <input
-                  type="text"
-                  value={backgroundColor}
-                  onChange={(e) => setBackgroundColor(e.target.value)}
-                  aria-label={t.resizeTool.backgroundHexColor}
-                  className="min-w-0 flex-1 bg-transparent font-mono text-sm uppercase outline-none"
-                />
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <NumberField label="W" value={width} onChange={onWidth} />
+                <NumberField label="H" value={height} onChange={onHeight} />
+                <button
+                  type="button"
+                  onClick={resetToOriginal}
+                  disabled={!selected?.sourceDimensions}
+                  className="col-span-2 rounded-lg border border-border px-3 py-2 text-xs font-medium transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-1 sm:py-0"
+                >
+                  1:1
+                </button>
               </div>
-            </div>
-          )}
-
-          {format !== "png" && (
-            <div>
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  {t.resizeTool.quality}
-                </label>
-                <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
-              </div>
-              <input
-                type="range"
-                min={10}
-                max={100}
-                value={Math.round(quality * 100)}
-                onChange={(e) => setQuality(Number(e.target.value) / 100)}
-                className="mt-2 w-full accent-[var(--color-primary)]"
-              />
-            </div>
-          )}
-
-          <div className="grid gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                {copy.shared.output}
-              </div>
-              <div className="mt-1 font-mono text-sm font-medium">
-                {width}×{height} · {formatExt[format].toUpperCase()}
-              </div>
-              <div className="mt-1 text-xs text-muted-foreground">
-                {outputSize ? formatBytes(outputSize) : copy.resize.outputEstimate}
-              </div>
-            </div>
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                {copy.shared.sizeChange}
-              </div>
-              <div
+              <p
                 className={cn(
-                  "mt-1 font-mono text-sm font-medium",
-                  outputDelta === null
-                    ? "text-muted-foreground"
-                    : outputDelta >= 0
-                      ? "text-success"
-                      : "text-amber-600",
+                  "mt-2 text-[11px]",
+                  validDimensions ? "text-muted-foreground" : "text-destructive",
                 )}
               >
-                {outputDelta === null
-                  ? "..."
-                  : `${outputDelta > 0 ? "-" : "+"}${Math.abs(outputDelta)}%`}
+                {validDimensions ? t.resizeTool.lockHelp : copy.shared.invalidDimensions}
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
+              <div>
+                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  {t.resizeTool.fit}
+                </label>
+                <TooltipProvider>
+                  <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {(["contain", "cover", "stretch"] as const).map((f) => {
+                      const Icon = fitIcons[f];
+                      const tip =
+                        f === "contain"
+                          ? copy.resize.containTip
+                          : f === "cover"
+                            ? copy.resize.coverTip
+                            : copy.resize.stretchTip;
+
+                      return (
+                        <Tooltip key={f}>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => setFit(f)}
+                              className={cn(
+                                "flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
+                                fit === f
+                                  ? "border-primary bg-primary-soft text-primary"
+                                  : "hover:border-primary/60",
+                              )}
+                            >
+                              <Icon className="h-3.5 w-3.5" />
+                              <span>{t.resizeTool.fitOptions[f]}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>{tip}</TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
+                  </div>
+                </TooltipProvider>
               </div>
-              <div className="mt-1 text-xs text-muted-foreground">
-                {outputDelta !== null && outputDelta < 0
-                  ? copy.shared.outputLarger
-                  : `${copy.shared.original}: ${formatBytes(file.size)}`}
+              <div>
+                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  {t.resizeTool.format}
+                </label>
+                <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+                  {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setFormat(f)}
+                      className={cn(
+                        "min-w-0 rounded-lg border border-border px-1.5 py-2 text-[11px] uppercase font-mono transition",
+                        format === f
+                          ? "border-primary bg-primary-soft text-primary"
+                          : "hover:border-primary/60",
+                      )}
+                    >
+                      {f === "jpeg" ? "JPG" : f.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex gap-2 pt-2">
-            <button
-              onClick={() => setFile(null)}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
-            >
-              <RefreshCw className="h-4 w-4" />
-              {t.resizeTool.new}
-            </button>
-            <button
-              onClick={onDownload}
-              disabled={busy || !validDimensions || Boolean(error)}
-              className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
-            >
-              {busy ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
-              {t.resizeTool.download}
-            </button>
+            {fit === "contain" && (
+              <div>
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                  <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                    {t.resizeTool.background}
+                  </label>
+                  <span className="text-[11px] text-muted-foreground sm:text-right">
+                    {t.resizeTool.backgroundHint}
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1.5">
+                  <input
+                    type="color"
+                    value={backgroundColor}
+                    onChange={(e) => setBackgroundColor(e.target.value)}
+                    aria-label={t.resizeTool.backgroundColor}
+                    className="h-8 w-9 cursor-pointer rounded border-0 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    value={backgroundColor}
+                    onChange={(e) => setBackgroundColor(e.target.value)}
+                    aria-label={t.resizeTool.backgroundHexColor}
+                    className="min-w-0 flex-1 bg-transparent font-mono text-sm uppercase outline-none"
+                  />
+                </div>
+              </div>
+            )}
+
+            {format !== "png" && (
+              <div>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                    {t.resizeTool.quality}
+                  </label>
+                  <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={10}
+                  max={100}
+                  value={Math.round(quality * 100)}
+                  onChange={(e) => setQuality(Number(e.target.value) / 100)}
+                  className="mt-2 w-full accent-[var(--color-primary)]"
+                />
+              </div>
+            )}
+
+            <div className="grid gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+              <div>
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                  {copy.shared.output}
+                </div>
+                <div className="mt-1 font-mono text-sm font-medium">
+                  {width}×{height} · {formatExt[format].toUpperCase()}
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {items.length} {copy.imageToPdf.files}
+                </div>
+              </div>
+              <div>
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                  {copy.shared.sizeChange}
+                </div>
+                <div className="mt-1 font-mono text-sm font-medium text-muted-foreground">
+                  {busy ? t.resizeTool.updating : copy.resize.outputEstimate}
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {selected?.status === "error"
+                    ? (selected.error ?? copy.shared.error)
+                    : selected?.sourceDimensions
+                      ? `${selected.sourceDimensions.width} × ${selected.sourceDimensions.height}`
+                      : copy.batch.dimensionsPending}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={removeAll}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
+              >
+                <RefreshCw className="h-4 w-4" />
+                {copy.shared.removeAll}
+              </button>
+              <button
+                onClick={downloadAll}
+                disabled={busy || items.every((item) => !item.outputBlob)}
+                className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+              >
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                {copy.shared.downloadAll}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -521,19 +744,61 @@ function NumberField({
 }: {
   label: string;
   value: number;
-  onChange: (v: number) => void;
+  onChange: (value: number) => void;
 }) {
   return (
-    <div className="flex items-center rounded-lg border border-border bg-background focus-within:border-primary">
-      <span className="px-3 text-xs font-mono text-muted-foreground">{label}</span>
+    <label className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2">
+      <span className="font-mono text-[11px] uppercase text-muted-foreground">{label}</span>
       <input
         type="number"
+        value={value}
         min={1}
         max={10000}
-        value={value}
-        onChange={(e) => onChange(Math.min(10000, Math.max(1, Number(e.target.value) || 0)))}
-        className="w-full bg-transparent py-2 pr-3 text-sm outline-none"
+        onChange={(e) => onChange(Number(e.target.value) || 1)}
+        className="w-full bg-transparent font-mono text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
+    </label>
+  );
+}
+
+function PreviewPanel({
+  label,
+  url,
+  unavailableText,
+  footer,
+  loading = false,
+}: {
+  label: string;
+  url?: string;
+  unavailableText: string;
+  footer: string;
+  loading?: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [url]);
+
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-muted-foreground">
+        <span>{label}</span>
+        {loading && <Loader2 className="h-3 w-3 animate-spin" />}
+      </div>
+      {url && !failed ? (
+        <img
+          src={url}
+          alt={label}
+          className="aspect-square w-full rounded-lg object-cover"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <div className="flex aspect-square items-center justify-center rounded-lg border border-border bg-background text-xs text-muted-foreground">
+          {failed ? unavailableText : footer}
+        </div>
+      )}
+      <div className="mt-2 text-xs text-muted-foreground">{footer}</div>
     </div>
   );
 }

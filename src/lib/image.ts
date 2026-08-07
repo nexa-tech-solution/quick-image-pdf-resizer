@@ -95,7 +95,13 @@ async function loadHeicImage(file: Blob) {
 export async function processImage(
   file: File,
   opts: ProcessOptions,
-): Promise<{ blob: Blob; width: number; height: number }> {
+): Promise<{
+  blob: Blob;
+  width: number;
+  height: number;
+  sourceWidth: number;
+  sourceHeight: number;
+}> {
   const img = await loadImage(file);
   const srcW = img.naturalWidth;
   const srcH = img.naturalHeight;
@@ -159,7 +165,7 @@ export async function processImage(
   }
 
   const blob = await encodeCanvas(canvas, formatMime[opts.format], opts.quality);
-  return { blob, width: outW, height: outH };
+  return { blob, width: outW, height: outH, sourceWidth: srcW, sourceHeight: srcH };
 }
 
 async function encodeCanvas(

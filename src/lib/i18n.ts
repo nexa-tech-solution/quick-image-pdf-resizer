@@ -184,7 +184,7 @@ const messages = {
       open: "Open",
     },
     resizeTool: {
-      dropTitle: "Drop an image to resize",
+      dropTitle: "Drop images to resize",
       dropHint: "JPG, PNG, WebP or AVIF — up to 250 MB",
       dimensions: "Dimensions",
       lockRatio: "Lock Ratio",
@@ -591,7 +591,7 @@ const messages = {
       open: "Open",
     },
     resizeTool: {
-      dropTitle: "Drop an image to resize",
+      dropTitle: "Drop images to resize",
       dropHint: "JPG, PNG, WebP or AVIF — up to 250 MB",
       dimensions: "Dimensions",
       lockRatio: "Lock Ratio",
@@ -1000,7 +1000,7 @@ const messages = {
       open: "Abrir",
     },
     resizeTool: {
-      dropTitle: "Solte uma imagem para redimensionar",
+      dropTitle: "Solte imagens para redimensionar",
       dropHint: "JPG, PNG, WebP ou AVIF — até 250 MB",
       dimensions: "Dimensões",
       lockRatio: "Travar proporção",
@@ -1417,7 +1417,7 @@ const messages = {
       open: "Buksan",
     },
     resizeTool: {
-      dropTitle: "I-drop ang larawan para baguhin ang sukat",
+      dropTitle: "I-drop ang mga larawan para baguhin ang sukat",
       dropHint: "JPG, PNG, WebP o AVIF — hanggang 250 MB",
       dimensions: "Sukat",
       lockRatio: "I-lock ang Ratio",
