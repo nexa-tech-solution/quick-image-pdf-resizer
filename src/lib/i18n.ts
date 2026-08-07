@@ -194,6 +194,7 @@ const messages = {
       format: "Format",
       quality: "Quality",
       presets: "Presets",
+      store: "App Store / Play Store",
       remove: "Remove",
       preview: "Preview",
       previewUnavailable: "Preview unavailable on this device",
@@ -208,6 +209,8 @@ const messages = {
         stretch: "Stretch",
       },
       presetLabels: {
+        appIcon: "App icon",
+        featureGraphic: "Feature graphic",
         socialSquare: "Social square",
         storyReel: "Story / Reel",
         youtubeThumb: "YouTube thumb",
@@ -615,6 +618,8 @@ const messages = {
         stretch: "Stretch",
       },
       presetLabels: {
+        appIcon: "App icon",
+        featureGraphic: "Feature graphic",
         socialSquare: "Social square",
         storyReel: "Story / Reel",
         youtubeThumb: "YouTube thumb",
@@ -2274,6 +2279,8 @@ const messages = {
         stretch: "Kéo giãn",
       },
       presetLabels: {
+        appIcon: "Biểu tượng app",
+        featureGraphic: "Ảnh nổi bật",
         socialSquare: "Vuông social",
         storyReel: "Story / Reel",
         youtubeThumb: "Thumbnail YouTube",
@@ -2561,6 +2568,7 @@ export const toolEnhancementCopy: Record<
       unsupportedImageFormat: string;
     };
     resize: {
+      store: string;
       social: string;
       video: string;
       web: string;
@@ -2610,6 +2618,7 @@ export const toolEnhancementCopy: Record<
       unsupportedImageFormat: "This image format is not supported.",
     },
     resize: {
+      store: "App Store / Play Store",
       social: "Social",
       video: "Video",
       web: "Web",
@@ -2658,6 +2667,7 @@ export const toolEnhancementCopy: Record<
       unsupportedImageFormat: "This image format is not supported.",
     },
     resize: {
+      store: "App Store / Play Store",
       social: "Social",
       video: "Video",
       web: "Web",
@@ -2755,6 +2765,7 @@ export const toolEnhancementCopy: Record<
       unsupportedImageFormat: "Hindi suportado ang format ng image na ito.",
     },
     resize: {
+      store: "App Store / Play Store",
       social: "Social",
       video: "Video",
       web: "Web",
@@ -2851,6 +2862,7 @@ export const toolEnhancementCopy: Record<
       unsupportedImageFormat: "Định dạng ảnh này chưa được hỗ trợ.",
     },
     resize: {
+      store: "App Store / Play Store",
       social: "Mạng xã hội",
       video: "Video",
       web: "Web",

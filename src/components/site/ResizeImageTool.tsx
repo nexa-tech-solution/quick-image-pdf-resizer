@@ -33,6 +33,8 @@ import {
 } from "@/components/ui/accordion";
 
 const presets = [
+  { group: "store", labelKey: "appIcon", size: "1024×1024", w: 1024, h: 1024 },
+  { group: "store", labelKey: "featureGraphic", size: "1024×500", w: 1024, h: 500 },
   { group: "social", labelKey: "socialSquare", size: "1080×1080", w: 1080, h: 1080 },
   { group: "social", labelKey: "storyReel", size: "1080×1920", w: 1080, h: 1920 },
   { group: "social", labelKey: "profile", size: "800×800", w: 800, h: 800 },
@@ -344,6 +346,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
   };
 
   const presetGroups = [
+    { id: "store", label: copy.resize.store },
     { id: "social", label: copy.resize.social },
     { id: "video", label: copy.resize.video },
     { id: "web", label: copy.resize.web },
@@ -531,27 +534,27 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
             </div>
           </div>
 
-          <div className="min-w-0 rounded-2xl bg-surface-elevated p-4">
+          <div className="min-w-0 rounded-2xl bg-surface-elevated">
             <Accordion
               type="multiple"
               defaultValue={["presets", "dimensions"]}
-              className="space-y-2"
+              className="space-y-1.5 sm:space-y-2"
             >
               <AccordionItem
                 value="presets"
                 className="overflow-hidden rounded-xl border border-border"
               >
-                <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
                   {t.resizeTool.presets}
                 </AccordionTrigger>
-                <AccordionContent className="px-3 pb-3 pt-0">
-                  <div className="space-y-3">
+                <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
+                  <div className="space-y-2.5 sm:space-y-3">
                     {presetGroups.map((group) => (
                       <div key={group.id}>
-                        <div className="mb-2 text-[11px] font-medium text-muted-foreground">
+                        <div className="mb-1.5 text-[11px] font-medium text-muted-foreground sm:mb-2">
                           {group.label}
                         </div>
-                        <div className="flex gap-2 overflow-x-auto pb-1 pr-1 [scrollbar-width:thin]">
+                        <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/2)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:thin] sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
                           {presets
                             .filter((p) => p.group === group.id)
                             .map((p) => (
@@ -559,7 +562,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                                 key={p.size}
                                 onClick={() => applyPreset(p.w, p.h)}
                                 className={cn(
-                                  "w-36 shrink-0 rounded-lg border border-border px-3 py-2.5 text-left transition hover:border-primary/60 hover:bg-primary-soft",
+                                  "min-w-0 snap-start rounded-lg border border-border px-2.5 py-2 text-left transition hover:border-primary/60 hover:bg-primary-soft sm:w-36 sm:px-3 sm:py-2.5",
                                   width === p.w && height === p.h
                                     ? "border-primary bg-primary-soft text-primary"
                                     : "",
@@ -584,10 +587,10 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 value="dimensions"
                 className="overflow-hidden rounded-xl border border-border"
               >
-                <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
                   {t.resizeTool.dimensions}
                 </AccordionTrigger>
-                <AccordionContent className="px-3 pb-3 pt-0">
+                <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
                   <div className="flex items-center justify-between gap-3">
                     <button
                       type="button"
@@ -635,12 +638,12 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 value="fit"
                 className="overflow-hidden rounded-xl border border-border"
               >
-                <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
                   {t.resizeTool.fit}
                 </AccordionTrigger>
-                <AccordionContent className="px-3 pb-3 pt-0">
+                <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
                   <TooltipProvider>
-                    <div className="flex gap-2 overflow-x-auto pb-1 pr-1 [scrollbar-width:thin]">
+                    <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/3)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:thin] sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
                       {(["contain", "cover", "stretch"] as const).map((f) => {
                         const Icon = fitIcons[f];
                         const tip =
@@ -656,7 +659,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                               <button
                                 onClick={() => setFit(f)}
                                 className={cn(
-                                  "flex min-h-10 w-28 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
+                                  "flex min-h-10 w-28 shrink-0 snap-start items-center justify-center gap-1.5 rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
                                   fit === f
                                     ? "border-primary bg-primary-soft text-primary"
                                     : "hover:border-primary/60",
@@ -679,17 +682,17 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 value="format"
                 className="overflow-hidden rounded-xl border border-border"
               >
-                <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
                   {t.resizeTool.format}
                 </AccordionTrigger>
-                <AccordionContent className="px-3 pb-3 pt-0">
-                  <div className="flex gap-2 overflow-x-auto pb-1 pr-1 [scrollbar-width:thin]">
+                <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
+                  <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/2)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:thin] sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
                     {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
                       <button
                         key={f}
                         onClick={() => setFormat(f)}
                         className={cn(
-                          "w-20 shrink-0 rounded-lg border border-border px-1.5 py-2 text-[11px] uppercase font-mono transition",
+                          "min-w-0 snap-start rounded-lg border border-border px-1.5 py-2 text-[11px] uppercase font-mono transition",
                           format === f
                             ? "border-primary bg-primary-soft text-primary"
                             : "hover:border-primary/60",
@@ -707,10 +710,10 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                   value="background"
                   className="overflow-hidden rounded-xl border border-border"
                 >
-                  <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                  <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
                     {t.resizeTool.background}
                   </AccordionTrigger>
-                  <AccordionContent className="px-3 pb-3 pt-0">
+                  <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-[11px] text-muted-foreground sm:text-right">
                         {t.resizeTool.backgroundHint}
@@ -741,7 +744,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                   value="quality"
                   className="overflow-hidden rounded-xl border border-border"
                 >
-                  <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                  <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
                     <span className="flex items-center gap-2">
                       {t.resizeTool.quality}
                       <span className="text-xs font-mono normal-case tracking-normal">
@@ -749,7 +752,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                       </span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="px-3 pb-3 pt-0">
+                  <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
                     <input
                       type="range"
                       min={10}
@@ -764,7 +767,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
             </Accordion>
 
             <div className="mt-4 space-y-3">
-              <div className="rounded-xl border border-border bg-background px-3 py-2">
+              <div className="rounded-xl border border-border bg-background px-2.5 py-2 sm:px-3">
                 <div className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   {copy.shared.output}
                 </div>
@@ -798,14 +801,14 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 </div>
               </div>
 
-              <div className="rounded-xl border border-border bg-background px-3 py-2">
+              <div className="rounded-xl border border-border bg-background px-2.5 py-2 sm:px-3">
                 <div className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   Actions
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <button
                     onClick={removeAll}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
+                    className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
                   >
                     <RefreshCw className="h-4 w-4" />
                     {copy.shared.removeAll}
@@ -813,7 +816,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                   <button
                     onClick={downloadZip}
                     disabled={busy || zipping || !canDownload}
-                    className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+                    className="flex w-full flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
                   >
                     {zipping ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -825,7 +828,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                   <button
                     onClick={downloadAll}
                     disabled={busy || zipping || !canDownload}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary disabled:opacity-60"
+                    className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary disabled:opacity-60"
                   >
                     <Download className="h-4 w-4" />
                     {copy.shared.downloadAll}
