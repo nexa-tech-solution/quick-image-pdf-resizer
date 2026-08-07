@@ -25,6 +25,12 @@ import {
 } from "@/lib/tool-files";
 import { makeZipBlob } from "@/lib/zip";
 import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const presets = [
   { group: "social", labelKey: "socialSquare", size: "1080×1080", w: 1080, h: 1080 },
@@ -309,7 +315,8 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
         }
 
         const dotIndex = item.outputFilename.lastIndexOf(".");
-        const baseName = dotIndex >= 0 ? item.outputFilename.slice(0, dotIndex) : item.outputFilename;
+        const baseName =
+          dotIndex >= 0 ? item.outputFilename.slice(0, dotIndex) : item.outputFilename;
         const extension = dotIndex >= 0 ? item.outputFilename.slice(dotIndex) : "";
 
         return {
@@ -318,9 +325,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
         };
       });
 
-      const zipBlob = await makeZipBlob(
-        zipEntries,
-      );
+      const zipBlob = await makeZipBlob(zipEntries);
 
       downloadBlob(zipBlob, "resized-images.zip");
     } finally {
@@ -431,7 +436,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                       ? `${selected.dimensions?.width} × ${selected.dimensions?.height} · ${formatExt[format].toUpperCase()}`
                       : selected.status === "error"
                         ? (selected.error ?? copy.shared.error)
-                      : copy.resize.outputEstimate
+                        : copy.resize.outputEstimate
                   }
                 />
               </div>
@@ -526,258 +531,307 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
             </div>
           </div>
 
-          <div className="min-w-0 space-y-5 rounded-2xl border border-border bg-surface-elevated p-5">
-            <div>
-              <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                {t.resizeTool.presets}
-              </label>
-              <div className="mt-2 space-y-3">
-                {presetGroups.map((group) => (
-                  <div key={group.id}>
-                    <div className="mb-1 text-[11px] font-medium text-muted-foreground">
-                      {group.label}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 pb-1 md:pb-0">
-                      {presets
-                        .filter((p) => p.group === group.id)
-                        .map((p) => (
-                          <button
-                            key={p.size}
-                            onClick={() => applyPreset(p.w, p.h)}
-                            className={cn(
-                              "min-h-16 w-full rounded-lg border border-border px-3 py-2.5 text-left transition hover:border-primary/60 hover:bg-primary-soft",
-                              width === p.w && height === p.h
-                                ? "border-primary bg-primary-soft text-primary"
-                                : "",
-                            )}
-                          >
-                            <span className="block text-xs font-medium">
-                              {t.resizeTool.presetLabels[p.labelKey]}
-                            </span>
-                            <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
-                              {p.size}
-                            </span>
-                          </button>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between gap-3">
-                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  {t.resizeTool.dimensions}
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setLockRatio((v) => !v)}
-                  aria-pressed={lockRatio}
-                  className={cn(
-                    "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
-                    lockRatio
-                      ? "border-primary bg-primary-soft text-primary"
-                      : "border-border bg-background text-muted-foreground hover:border-primary/60 hover:text-foreground",
-                  )}
-                >
-                  {lockRatio ? (
-                    <Lock className="h-3.5 w-3.5" />
-                  ) : (
-                    <Unlock className="h-3.5 w-3.5" />
-                  )}
-                  {lockRatio ? t.resizeTool.lockRatio : t.resizeTool.unlockRatio}
-                </button>
-              </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-                <NumberField label="W" value={width} onChange={onWidth} />
-                <NumberField label="H" value={height} onChange={onHeight} />
-                <button
-                  type="button"
-                  onClick={resetToOriginal}
-                  disabled={!selected?.sourceDimensions}
-                  className="col-span-2 rounded-lg border border-border px-3 py-2 text-xs font-medium transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-1 sm:py-0"
-                >
-                  1:1
-                </button>
-              </div>
-              <p
-                className={cn(
-                  "mt-2 text-[11px]",
-                  validDimensions ? "text-muted-foreground" : "text-destructive",
-                )}
+          <div className="min-w-0 rounded-2xl bg-surface-elevated p-4">
+            <Accordion
+              type="multiple"
+              defaultValue={["presets", "dimensions"]}
+              className="space-y-2"
+            >
+              <AccordionItem
+                value="presets"
+                className="overflow-hidden rounded-xl border border-border"
               >
-                {validDimensions ? t.resizeTool.lockHelp : copy.shared.invalidDimensions}
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
-              <div>
-                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  {t.resizeTool.fit}
-                </label>
-                <TooltipProvider>
-                  <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {(["contain", "cover", "stretch"] as const).map((f) => {
-                      const Icon = fitIcons[f];
-                      const tip =
-                        f === "contain"
-                          ? copy.resize.containTip
-                          : f === "cover"
-                            ? copy.resize.coverTip
-                            : copy.resize.stretchTip;
-
-                      return (
-                        <Tooltip key={f}>
-                          <TooltipTrigger asChild>
-                            <button
-                              onClick={() => setFit(f)}
-                              className={cn(
-                                "flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
-                                fit === f
-                                  ? "border-primary bg-primary-soft text-primary"
-                                  : "hover:border-primary/60",
-                              )}
-                            >
-                              <Icon className="h-3.5 w-3.5" />
-                              <span>{t.resizeTool.fitOptions[f]}</span>
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>{tip}</TooltipContent>
-                        </Tooltip>
-                      );
-                    })}
+                <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                  {t.resizeTool.presets}
+                </AccordionTrigger>
+                <AccordionContent className="px-3 pb-3 pt-0">
+                  <div className="space-y-3">
+                    {presetGroups.map((group) => (
+                      <div key={group.id}>
+                        <div className="mb-2 text-[11px] font-medium text-muted-foreground">
+                          {group.label}
+                        </div>
+                        <div className="flex gap-2 overflow-x-auto pb-1 pr-1 [scrollbar-width:thin]">
+                          {presets
+                            .filter((p) => p.group === group.id)
+                            .map((p) => (
+                              <button
+                                key={p.size}
+                                onClick={() => applyPreset(p.w, p.h)}
+                                className={cn(
+                                  "w-36 shrink-0 rounded-lg border border-border px-3 py-2.5 text-left transition hover:border-primary/60 hover:bg-primary-soft",
+                                  width === p.w && height === p.h
+                                    ? "border-primary bg-primary-soft text-primary"
+                                    : "",
+                                )}
+                              >
+                                <span className="block text-xs font-medium">
+                                  {t.resizeTool.presetLabels[p.labelKey]}
+                                </span>
+                                <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
+                                  {p.size}
+                                </span>
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </TooltipProvider>
-              </div>
-              <div>
-                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  {t.resizeTool.format}
-                </label>
-                <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
-                  {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem
+                value="dimensions"
+                className="overflow-hidden rounded-xl border border-border"
+              >
+                <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                  {t.resizeTool.dimensions}
+                </AccordionTrigger>
+                <AccordionContent className="px-3 pb-3 pt-0">
+                  <div className="flex items-center justify-between gap-3">
                     <button
-                      key={f}
-                      onClick={() => setFormat(f)}
+                      type="button"
+                      onClick={() => setLockRatio((v) => !v)}
+                      aria-pressed={lockRatio}
                       className={cn(
-                        "min-w-0 rounded-lg border border-border px-1.5 py-2 text-[11px] uppercase font-mono transition",
-                        format === f
+                        "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
+                        lockRatio
                           ? "border-primary bg-primary-soft text-primary"
-                          : "hover:border-primary/60",
+                          : "border-border bg-background text-muted-foreground hover:border-primary/60 hover:text-foreground",
                       )}
                     >
-                      {f === "jpeg" ? "JPG" : f.toUpperCase()}
+                      {lockRatio ? (
+                        <Lock className="h-3.5 w-3.5" />
+                      ) : (
+                        <Unlock className="h-3.5 w-3.5" />
+                      )}
+                      {lockRatio ? t.resizeTool.lockRatio : t.resizeTool.unlockRatio}
                     </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+                  </div>
+                  <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                    <NumberField label="W" value={width} onChange={onWidth} />
+                    <NumberField label="H" value={height} onChange={onHeight} />
+                    <button
+                      type="button"
+                      onClick={resetToOriginal}
+                      disabled={!selected?.sourceDimensions}
+                      className="col-span-2 rounded-lg border border-border px-3 py-2 text-xs font-medium transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-1 sm:py-0"
+                    >
+                      1:1
+                    </button>
+                  </div>
+                  <p
+                    className={cn(
+                      "mt-2 text-[11px]",
+                      validDimensions ? "text-muted-foreground" : "text-destructive",
+                    )}
+                  >
+                    {validDimensions ? t.resizeTool.lockHelp : copy.shared.invalidDimensions}
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
 
-            {fit === "contain" && (
-              <div>
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+              <AccordionItem
+                value="fit"
+                className="overflow-hidden rounded-xl border border-border"
+              >
+                <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                  {t.resizeTool.fit}
+                </AccordionTrigger>
+                <AccordionContent className="px-3 pb-3 pt-0">
+                  <TooltipProvider>
+                    <div className="flex gap-2 overflow-x-auto pb-1 pr-1 [scrollbar-width:thin]">
+                      {(["contain", "cover", "stretch"] as const).map((f) => {
+                        const Icon = fitIcons[f];
+                        const tip =
+                          f === "contain"
+                            ? copy.resize.containTip
+                            : f === "cover"
+                              ? copy.resize.coverTip
+                              : copy.resize.stretchTip;
+
+                        return (
+                          <Tooltip key={f}>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => setFit(f)}
+                                className={cn(
+                                  "flex min-h-10 w-28 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border px-2 py-2 text-xs capitalize transition",
+                                  fit === f
+                                    ? "border-primary bg-primary-soft text-primary"
+                                    : "hover:border-primary/60",
+                                )}
+                              >
+                                <Icon className="h-3.5 w-3.5" />
+                                <span>{t.resizeTool.fitOptions[f]}</span>
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>{tip}</TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                  </TooltipProvider>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem
+                value="format"
+                className="overflow-hidden rounded-xl border border-border"
+              >
+                <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                  {t.resizeTool.format}
+                </AccordionTrigger>
+                <AccordionContent className="px-3 pb-3 pt-0">
+                  <div className="flex gap-2 overflow-x-auto pb-1 pr-1 [scrollbar-width:thin]">
+                    {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
+                      <button
+                        key={f}
+                        onClick={() => setFormat(f)}
+                        className={cn(
+                          "w-20 shrink-0 rounded-lg border border-border px-1.5 py-2 text-[11px] uppercase font-mono transition",
+                          format === f
+                            ? "border-primary bg-primary-soft text-primary"
+                            : "hover:border-primary/60",
+                        )}
+                      >
+                        {f === "jpeg" ? "JPG" : f.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {fit === "contain" && (
+                <AccordionItem
+                  value="background"
+                  className="overflow-hidden rounded-xl border border-border"
+                >
+                  <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
                     {t.resizeTool.background}
-                  </label>
-                  <span className="text-[11px] text-muted-foreground sm:text-right">
-                    {t.resizeTool.backgroundHint}
-                  </span>
-                </div>
-                <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1.5">
-                  <input
-                    type="color"
-                    value={backgroundColor}
-                    onChange={(e) => setBackgroundColor(e.target.value)}
-                    aria-label={t.resizeTool.backgroundColor}
-                    className="h-8 w-9 cursor-pointer rounded border-0 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    value={backgroundColor}
-                    onChange={(e) => setBackgroundColor(e.target.value)}
-                    aria-label={t.resizeTool.backgroundHexColor}
-                    className="min-w-0 flex-1 bg-transparent font-mono text-sm uppercase outline-none"
-                  />
-                </div>
-              </div>
-            )}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-3 pb-3 pt-0">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="text-[11px] text-muted-foreground sm:text-right">
+                        {t.resizeTool.backgroundHint}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1.5">
+                      <input
+                        type="color"
+                        value={backgroundColor}
+                        onChange={(e) => setBackgroundColor(e.target.value)}
+                        aria-label={t.resizeTool.backgroundColor}
+                        className="h-8 w-9 cursor-pointer rounded border-0 bg-transparent p-0"
+                      />
+                      <input
+                        type="text"
+                        value={backgroundColor}
+                        onChange={(e) => setBackgroundColor(e.target.value)}
+                        aria-label={t.resizeTool.backgroundHexColor}
+                        className="min-w-0 flex-1 bg-transparent font-mono text-sm uppercase outline-none"
+                      />
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
 
-            {format !== "png" && (
-              <div>
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                    {t.resizeTool.quality}
-                  </label>
-                  <span className="text-xs font-mono">{Math.round(quality * 100)}</span>
-                </div>
-                <input
-                  type="range"
-                  min={10}
-                  max={100}
-                  value={Math.round(quality * 100)}
-                  onChange={(e) => setQuality(Number(e.target.value) / 100)}
-                  className="mt-2 w-full accent-[var(--color-primary)]"
-                />
-              </div>
-            )}
+              {format !== "png" && (
+                <AccordionItem
+                  value="quality"
+                  className="overflow-hidden rounded-xl border border-border"
+                >
+                  <AccordionTrigger className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline">
+                    <span className="flex items-center gap-2">
+                      {t.resizeTool.quality}
+                      <span className="text-xs font-mono normal-case tracking-normal">
+                        {Math.round(quality * 100)}
+                      </span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-3 pb-3 pt-0">
+                    <input
+                      type="range"
+                      min={10}
+                      max={100}
+                      value={Math.round(quality * 100)}
+                      onChange={(e) => setQuality(Number(e.target.value) / 100)}
+                      className="mt-1 w-full accent-[var(--color-primary)]"
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+            </Accordion>
 
-            <div className="grid gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
-              <div>
-                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            <div className="mt-4 space-y-3">
+              <div className="rounded-xl border border-border bg-background px-3 py-2">
+                <div className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   {copy.shared.output}
                 </div>
-                <div className="mt-1 font-mono text-sm font-medium">
-                  {width}×{height} · {formatExt[format].toUpperCase()}
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  {items.length} {copy.imageToPdf.files}
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
+                  <div>
+                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      {copy.shared.output}
+                    </div>
+                    <div className="mt-1 font-mono text-sm font-medium">
+                      {width}×{height} · {formatExt[format].toUpperCase()}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {items.length} {copy.imageToPdf.files}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      {copy.shared.sizeChange}
+                    </div>
+                    <div className="mt-1 font-mono text-sm font-medium text-muted-foreground">
+                      {busy ? t.resizeTool.updating : copy.resize.outputEstimate}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {selected?.status === "error"
+                        ? (selected.error ?? copy.shared.error)
+                        : selected?.sourceDimensions
+                          ? `${selected.sourceDimensions.width} × ${selected.sourceDimensions.height}`
+                          : copy.batch.dimensionsPending}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div>
-                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                  {copy.shared.sizeChange}
-                </div>
-                <div className="mt-1 font-mono text-sm font-medium text-muted-foreground">
-                  {busy ? t.resizeTool.updating : copy.resize.outputEstimate}
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  {selected?.status === "error"
-                    ? (selected.error ?? copy.shared.error)
-                    : selected?.sourceDimensions
-                      ? `${selected.sourceDimensions.width} × ${selected.sourceDimensions.height}`
-                      : copy.batch.dimensionsPending}
-                </div>
-              </div>
-            </div>
 
-            <div className="flex gap-2 pt-2">
-              <button
-                onClick={removeAll}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
-              >
-                <RefreshCw className="h-4 w-4" />
-                {copy.shared.removeAll}
-              </button>
-              <button
-                onClick={downloadZip}
-                disabled={busy || zipping || !canDownload}
-                className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
-              >
-                {zipping ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                {copy.shared.downloadZip}
-              </button>
-              <button
-                onClick={downloadAll}
-                disabled={busy || zipping || !canDownload}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary disabled:opacity-60"
-              >
-                <Download className="h-4 w-4" />
-                {copy.shared.downloadAll}
-              </button>
+              <div className="rounded-xl border border-border bg-background px-3 py-2">
+                <div className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  Actions
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={removeAll}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    {copy.shared.removeAll}
+                  </button>
+                  <button
+                    onClick={downloadZip}
+                    disabled={busy || zipping || !canDownload}
+                    className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+                  >
+                    {zipping ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
+                    {copy.shared.downloadZip}
+                  </button>
+                  <button
+                    onClick={downloadAll}
+                    disabled={busy || zipping || !canDownload}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary disabled:opacity-60"
+                  >
+                    <Download className="h-4 w-4" />
+                    {copy.shared.downloadAll}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
