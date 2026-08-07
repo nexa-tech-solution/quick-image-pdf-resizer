@@ -2550,6 +2550,7 @@ export const toolEnhancementCopy: Record<
       output: string;
       sizeChange: string;
       outputLarger: string;
+      downloadZip: string;
       downloadAll: string;
       removeAll: string;
       total: string;
@@ -2598,6 +2599,7 @@ export const toolEnhancementCopy: Record<
       output: "Output",
       sizeChange: "Size change",
       outputLarger: "Output is larger than the original.",
+      downloadZip: "Download ZIP",
       downloadAll: "Download all",
       removeAll: "Remove all",
       total: "Total",
@@ -2645,6 +2647,7 @@ export const toolEnhancementCopy: Record<
       output: "Output",
       sizeChange: "Size change",
       outputLarger: "Output is larger than the original.",
+      downloadZip: "Download ZIP",
       downloadAll: "Download all",
       removeAll: "Remove all",
       total: "Total",
@@ -2693,6 +2696,7 @@ export const toolEnhancementCopy: Record<
       output: "Saída",
       sizeChange: "Mudança de tamanho",
       outputLarger: "A saída ficou maior que o original.",
+      downloadZip: "Baixar ZIP",
       downloadAll: "Baixar tudo",
       removeAll: "Remover tudo",
       total: "Total",
@@ -2740,6 +2744,7 @@ export const toolEnhancementCopy: Record<
       output: "Output",
       sizeChange: "Size change",
       outputLarger: "Mas malaki ang output kaysa original.",
+      downloadZip: "Download ZIP",
       downloadAll: "Download all",
       removeAll: "Remove all",
       total: "Total",
@@ -2787,6 +2792,7 @@ export const toolEnhancementCopy: Record<
       output: "Output",
       sizeChange: "Perubahan ukuran",
       outputLarger: "Output lebih besar dari file asli.",
+      downloadZip: "Unduh ZIP",
       downloadAll: "Unduh semua",
       removeAll: "Hapus semua",
       total: "Total",
@@ -2834,6 +2840,7 @@ export const toolEnhancementCopy: Record<
       output: "Kết quả",
       sizeChange: "Thay đổi dung lượng",
       outputLarger: "Kết quả lớn hơn file gốc.",
+      downloadZip: "Tải ZIP",
       downloadAll: "Tải tất cả",
       removeAll: "Xóa tất cả",
       total: "Tổng",

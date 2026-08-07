@@ -768,7 +768,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 ) : (
                   <Download className="h-4 w-4" />
                 )}
-                Download ZIP
+                {copy.shared.downloadZip}
               </button>
               <button
                 onClick={downloadAll}
