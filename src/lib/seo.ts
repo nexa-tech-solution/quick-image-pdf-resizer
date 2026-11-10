@@ -1,4 +1,5 @@
 import type { Locale, TranslationSet } from "@/lib/i18n";
+import { getV3CopyForT, type V3ToolKey } from "@/lib/tools-v3";
 
 export type SeoRouteKey =
   | "home"
@@ -9,6 +10,7 @@ export type SeoRouteKey =
   | "pdfToImage"
   | "mergeSplitPdf"
   | "compressPdf"
+  | V3ToolKey
   | "about";
 
 export type ToolSeoKey =
@@ -77,6 +79,42 @@ export const seoRouteRegistry: Record<
     changefreq: "weekly",
     schemaType: "SoftwareApplication",
   },
+  textToPdf: {
+    path: "/text-to-pdf",
+    priority: 0.85,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
+  extractPdfImages: {
+    path: "/extract-pdf-images",
+    priority: 0.85,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
+  pdfToWord: {
+    path: "/pdf-to-word",
+    priority: 0.85,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
+  protectPdf: {
+    path: "/protect-pdf",
+    priority: 0.85,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
+  unlockPdf: {
+    path: "/unlock-pdf",
+    priority: 0.85,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
+  scanDocument: {
+    path: "/scan-document",
+    priority: 0.85,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
   about: { path: "/about", priority: 0.4, changefreq: "monthly", schemaType: "WebPage" },
 };
 
@@ -90,6 +128,18 @@ export const toolRouteBySeoKey: Record<ToolSeoKey, SeoRouteKey> = {
   mergeSplitPdf: "mergeSplitPdf",
   compressPdf: "compressPdf",
 };
+
+const v3Keys = new Set<string>([
+  "textToPdf",
+  "extractPdfImages",
+  "pdfToWord",
+  "protectPdf",
+  "unlockPdf",
+  "scanDocument",
+]);
+function isV3Key(key: SeoRouteKey): key is V3ToolKey {
+  return v3Keys.has(key);
+}
 
 export function getSiteUrl() {
   return normalizeSiteUrl(import.meta.env.VITE_SITE_URL || defaultSiteUrl);
@@ -114,6 +164,7 @@ export function getRouteTitle(t: TranslationSet, key: SeoRouteKey) {
   if (key === "pdfToImage") return t.routes.pdfToImage.title;
   if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.title;
   if (key === "compressPdf") return t.routes.compressPdf.title;
+  if (isV3Key(key)) return getV3CopyForT(t)[key].title;
   return t.routes.about.title;
 }
 
@@ -126,6 +177,7 @@ export function getRouteDescription(t: TranslationSet, key: SeoRouteKey) {
   if (key === "pdfToImage") return t.routes.pdfToImage.description;
   if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.description;
   if (key === "compressPdf") return t.routes.compressPdf.description;
+  if (isV3Key(key)) return getV3CopyForT(t)[key].description;
   return t.routes.about.description;
 }
 

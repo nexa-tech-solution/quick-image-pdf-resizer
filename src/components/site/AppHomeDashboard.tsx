@@ -12,6 +12,12 @@ import {
   Minimize2,
   Scaling,
   Scissors,
+  Type,
+  Images,
+  FileType,
+  Lock,
+  LockOpen,
+  ScanLine,
   type LucideIcon,
 } from "lucide-react";
 import type { TranslationSet } from "@/lib/i18n";
@@ -44,6 +50,22 @@ const gridTools: { to: string; key: HeaderKey; icon: LucideIcon; tile: string }[
     icon: FileStack,
     tile: "bg-teal-100 text-teal-600",
   },
+  {
+    to: "/scan-document",
+    key: "scanDocument",
+    icon: ScanLine,
+    tile: "bg-indigo-100 text-indigo-600",
+  },
+  { to: "/text-to-pdf", key: "textToPdf", icon: Type, tile: "bg-lime-100 text-lime-700" },
+  { to: "/pdf-to-word", key: "pdfToWord", icon: FileType, tile: "bg-blue-100 text-blue-600" },
+  {
+    to: "/extract-pdf-images",
+    key: "extractPdfImages",
+    icon: Images,
+    tile: "bg-fuchsia-100 text-fuchsia-600",
+  },
+  { to: "/protect-pdf", key: "protectPdf", icon: Lock, tile: "bg-slate-200 text-slate-700" },
+  { to: "/unlock-pdf", key: "unlockPdf", icon: LockOpen, tile: "bg-yellow-100 text-yellow-700" },
 ];
 
 /** App-style home: two featured cards + an icon grid of every tool. */

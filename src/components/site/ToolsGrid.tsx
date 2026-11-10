@@ -7,11 +7,19 @@ import {
   FileSearch,
   FileStack,
   Scissors,
+  Type,
+  Images,
+  FileType,
+  Lock,
+  LockOpen,
+  ScanLine,
 } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
+import { useV3Copy } from "@/lib/tools-v3";
 
 export function ToolsGrid() {
   const { t } = useLocale();
+  const v3 = useV3Copy();
   const items = [
     {
       to: "/",
@@ -55,6 +63,22 @@ export function ToolsGrid() {
       desc: t.toolsGrid.mergeSplitPdf.desc,
       icon: FileStack,
     },
+    {
+      to: "/scan-document",
+      title: t.header.scanDocument,
+      desc: v3.scanDocument.intro,
+      icon: ScanLine,
+    },
+    { to: "/text-to-pdf", title: t.header.textToPdf, desc: v3.textToPdf.intro, icon: Type },
+    { to: "/pdf-to-word", title: t.header.pdfToWord, desc: v3.pdfToWord.intro, icon: FileType },
+    {
+      to: "/extract-pdf-images",
+      title: t.header.extractPdfImages,
+      desc: v3.extractPdfImages.intro,
+      icon: Images,
+    },
+    { to: "/protect-pdf", title: t.header.protectPdf, desc: v3.protectPdf.intro, icon: Lock },
+    { to: "/unlock-pdf", title: t.header.unlockPdf, desc: v3.unlockPdf.intro, icon: LockOpen },
   ] as const;
 
   return (

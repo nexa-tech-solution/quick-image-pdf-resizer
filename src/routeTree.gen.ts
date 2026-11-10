@@ -14,12 +14,18 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as CompressImageRouteImport } from './routes/compress-image'
 import { Route as CompressPdfRouteImport } from './routes/compress-pdf'
 import { Route as ConvertImageRouteImport } from './routes/convert-image'
+import { Route as ExtractPdfImagesRouteImport } from './routes/extract-pdf-images'
 import { Route as FilesRouteImport } from './routes/files'
 import { Route as ImageToPdfRouteImport } from './routes/image-to-pdf'
 import { Route as MergeSplitPdfRouteImport } from './routes/merge-split-pdf'
 import { Route as PdfToImageRouteImport } from './routes/pdf-to-image'
+import { Route as PdfToWordRouteImport } from './routes/pdf-to-word'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ProtectPdfRouteImport } from './routes/protect-pdf'
 import { Route as RemoveBackgroundRouteImport } from './routes/remove-background'
+import { Route as ScanDocumentRouteImport } from './routes/scan-document'
+import { Route as TextToPdfRouteImport } from './routes/text-to-pdf'
+import { Route as UnlockPdfRouteImport } from './routes/unlock-pdf'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +52,11 @@ const ConvertImageRoute = ConvertImageRouteImport.update({
   path: '/convert-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExtractPdfImagesRoute = ExtractPdfImagesRouteImport.update({
+  id: '/extract-pdf-images',
+  path: '/extract-pdf-images',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FilesRoute = FilesRouteImport.update({
   id: '/files',
   path: '/files',
@@ -66,14 +77,39 @@ const PdfToImageRoute = PdfToImageRouteImport.update({
   path: '/pdf-to-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PdfToWordRoute = PdfToWordRouteImport.update({
+  id: '/pdf-to-word',
+  path: '/pdf-to-word',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProtectPdfRoute = ProtectPdfRouteImport.update({
+  id: '/protect-pdf',
+  path: '/protect-pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RemoveBackgroundRoute = RemoveBackgroundRouteImport.update({
   id: '/remove-background',
   path: '/remove-background',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScanDocumentRoute = ScanDocumentRouteImport.update({
+  id: '/scan-document',
+  path: '/scan-document',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TextToPdfRoute = TextToPdfRouteImport.update({
+  id: '/text-to-pdf',
+  path: '/text-to-pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnlockPdfRoute = UnlockPdfRouteImport.update({
+  id: '/unlock-pdf',
+  path: '/unlock-pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -83,12 +119,18 @@ export interface FileRoutesByFullPath {
   '/compress-image': typeof CompressImageRoute
   '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
+  '/extract-pdf-images': typeof ExtractPdfImagesRoute
   '/files': typeof FilesRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/merge-split-pdf': typeof MergeSplitPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
+  '/pdf-to-word': typeof PdfToWordRoute
   '/pricing': typeof PricingRoute
+  '/protect-pdf': typeof ProtectPdfRoute
   '/remove-background': typeof RemoveBackgroundRoute
+  '/scan-document': typeof ScanDocumentRoute
+  '/text-to-pdf': typeof TextToPdfRoute
+  '/unlock-pdf': typeof UnlockPdfRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -96,12 +138,18 @@ export interface FileRoutesByTo {
   '/compress-image': typeof CompressImageRoute
   '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
+  '/extract-pdf-images': typeof ExtractPdfImagesRoute
   '/files': typeof FilesRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/merge-split-pdf': typeof MergeSplitPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
+  '/pdf-to-word': typeof PdfToWordRoute
   '/pricing': typeof PricingRoute
+  '/protect-pdf': typeof ProtectPdfRoute
   '/remove-background': typeof RemoveBackgroundRoute
+  '/scan-document': typeof ScanDocumentRoute
+  '/text-to-pdf': typeof TextToPdfRoute
+  '/unlock-pdf': typeof UnlockPdfRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -110,12 +158,18 @@ export interface FileRoutesById {
   '/compress-image': typeof CompressImageRoute
   '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
+  '/extract-pdf-images': typeof ExtractPdfImagesRoute
   '/files': typeof FilesRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/merge-split-pdf': typeof MergeSplitPdfRoute
   '/pdf-to-image': typeof PdfToImageRoute
+  '/pdf-to-word': typeof PdfToWordRoute
   '/pricing': typeof PricingRoute
+  '/protect-pdf': typeof ProtectPdfRoute
   '/remove-background': typeof RemoveBackgroundRoute
+  '/scan-document': typeof ScanDocumentRoute
+  '/text-to-pdf': typeof TextToPdfRoute
+  '/unlock-pdf': typeof UnlockPdfRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -125,12 +179,18 @@ export interface FileRouteTypes {
     | '/compress-image'
     | '/compress-pdf'
     | '/convert-image'
+    | '/extract-pdf-images'
     | '/files'
     | '/image-to-pdf'
     | '/merge-split-pdf'
     | '/pdf-to-image'
+    | '/pdf-to-word'
     | '/pricing'
+    | '/protect-pdf'
     | '/remove-background'
+    | '/scan-document'
+    | '/text-to-pdf'
+    | '/unlock-pdf'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -138,12 +198,18 @@ export interface FileRouteTypes {
     | '/compress-image'
     | '/compress-pdf'
     | '/convert-image'
+    | '/extract-pdf-images'
     | '/files'
     | '/image-to-pdf'
     | '/merge-split-pdf'
     | '/pdf-to-image'
+    | '/pdf-to-word'
     | '/pricing'
+    | '/protect-pdf'
     | '/remove-background'
+    | '/scan-document'
+    | '/text-to-pdf'
+    | '/unlock-pdf'
   id:
     | '__root__'
     | '/'
@@ -151,12 +217,18 @@ export interface FileRouteTypes {
     | '/compress-image'
     | '/compress-pdf'
     | '/convert-image'
+    | '/extract-pdf-images'
     | '/files'
     | '/image-to-pdf'
     | '/merge-split-pdf'
     | '/pdf-to-image'
+    | '/pdf-to-word'
     | '/pricing'
+    | '/protect-pdf'
     | '/remove-background'
+    | '/scan-document'
+    | '/text-to-pdf'
+    | '/unlock-pdf'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -165,12 +237,18 @@ export interface RootRouteChildren {
   CompressImageRoute: typeof CompressImageRoute
   CompressPdfRoute: typeof CompressPdfRoute
   ConvertImageRoute: typeof ConvertImageRoute
+  ExtractPdfImagesRoute: typeof ExtractPdfImagesRoute
   FilesRoute: typeof FilesRoute
   ImageToPdfRoute: typeof ImageToPdfRoute
   MergeSplitPdfRoute: typeof MergeSplitPdfRoute
   PdfToImageRoute: typeof PdfToImageRoute
+  PdfToWordRoute: typeof PdfToWordRoute
   PricingRoute: typeof PricingRoute
+  ProtectPdfRoute: typeof ProtectPdfRoute
   RemoveBackgroundRoute: typeof RemoveBackgroundRoute
+  ScanDocumentRoute: typeof ScanDocumentRoute
+  TextToPdfRoute: typeof TextToPdfRoute
+  UnlockPdfRoute: typeof UnlockPdfRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -210,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConvertImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/extract-pdf-images': {
+      id: '/extract-pdf-images'
+      path: '/extract-pdf-images'
+      fullPath: '/extract-pdf-images'
+      preLoaderRoute: typeof ExtractPdfImagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/files': {
       id: '/files'
       path: '/files'
@@ -238,6 +323,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PdfToImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pdf-to-word': {
+      id: '/pdf-to-word'
+      path: '/pdf-to-word'
+      fullPath: '/pdf-to-word'
+      preLoaderRoute: typeof PdfToWordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -245,11 +337,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/protect-pdf': {
+      id: '/protect-pdf'
+      path: '/protect-pdf'
+      fullPath: '/protect-pdf'
+      preLoaderRoute: typeof ProtectPdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/remove-background': {
       id: '/remove-background'
       path: '/remove-background'
       fullPath: '/remove-background'
       preLoaderRoute: typeof RemoveBackgroundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scan-document': {
+      id: '/scan-document'
+      path: '/scan-document'
+      fullPath: '/scan-document'
+      preLoaderRoute: typeof ScanDocumentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/text-to-pdf': {
+      id: '/text-to-pdf'
+      path: '/text-to-pdf'
+      fullPath: '/text-to-pdf'
+      preLoaderRoute: typeof TextToPdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unlock-pdf': {
+      id: '/unlock-pdf'
+      path: '/unlock-pdf'
+      fullPath: '/unlock-pdf'
+      preLoaderRoute: typeof UnlockPdfRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -261,12 +381,18 @@ const rootRouteChildren: RootRouteChildren = {
   CompressImageRoute: CompressImageRoute,
   CompressPdfRoute: CompressPdfRoute,
   ConvertImageRoute: ConvertImageRoute,
+  ExtractPdfImagesRoute: ExtractPdfImagesRoute,
   FilesRoute: FilesRoute,
   ImageToPdfRoute: ImageToPdfRoute,
   MergeSplitPdfRoute: MergeSplitPdfRoute,
   PdfToImageRoute: PdfToImageRoute,
+  PdfToWordRoute: PdfToWordRoute,
   PricingRoute: PricingRoute,
+  ProtectPdfRoute: ProtectPdfRoute,
   RemoveBackgroundRoute: RemoveBackgroundRoute,
+  ScanDocumentRoute: ScanDocumentRoute,
+  TextToPdfRoute: TextToPdfRoute,
+  UnlockPdfRoute: UnlockPdfRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

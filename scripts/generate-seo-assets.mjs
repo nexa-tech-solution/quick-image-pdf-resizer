@@ -21,6 +21,12 @@ const routes = [
   { path: "/merge-split-pdf", priority: "0.85", changefreq: "weekly" },
   { path: "/compress-pdf", priority: "0.9", changefreq: "weekly" },
   { path: "/remove-background", priority: "0.85", changefreq: "weekly" },
+  { path: "/text-to-pdf", priority: "0.85", changefreq: "weekly" },
+  { path: "/extract-pdf-images", priority: "0.85", changefreq: "weekly" },
+  { path: "/pdf-to-word", priority: "0.85", changefreq: "weekly" },
+  { path: "/protect-pdf", priority: "0.85", changefreq: "weekly" },
+  { path: "/unlock-pdf", priority: "0.85", changefreq: "weekly" },
+  { path: "/scan-document", priority: "0.85", changefreq: "weekly" },
   { path: "/about", priority: "0.4", changefreq: "monthly" },
 ];
 

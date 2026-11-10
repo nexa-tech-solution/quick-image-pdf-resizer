@@ -10,6 +10,12 @@ import {
   LayoutGrid,
   Layers,
   Scissors,
+  Type,
+  Images,
+  FileType,
+  Lock,
+  LockOpen,
+  ScanLine,
   type LucideIcon,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -29,6 +35,12 @@ const allTools: Tool[] = [
   { to: "/pdf-to-image", key: "pdfToImage", icon: FileImage },
   { to: "/compress-pdf", key: "compressPdf", icon: FileArchive },
   { to: "/merge-split-pdf", key: "mergeSplitPdf", icon: FileStack },
+  { to: "/scan-document", key: "scanDocument", icon: ScanLine },
+  { to: "/text-to-pdf", key: "textToPdf", icon: Type },
+  { to: "/pdf-to-word", key: "pdfToWord", icon: FileType },
+  { to: "/extract-pdf-images", key: "extractPdfImages", icon: Images },
+  { to: "/protect-pdf", key: "protectPdf", icon: Lock },
+  { to: "/unlock-pdf", key: "unlockPdf", icon: LockOpen },
 ];
 
 // Bottom tabs: three most-used tools + "My files"; everything else lives in the sheet.

@@ -59,10 +59,10 @@ function Hero({
         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       </div>
       <div
-        className={`mx-auto grid max-w-7xl px-4 py-5 sm:px-6 sm:py-16 lg:px-8 ${
+        className={`mx-auto grid max-w-7xl grid-cols-1 px-4 [&>*]:min-w-0 py-5 sm:px-6 sm:py-16 lg:px-8 ${
           hideIntro
             ? "gap-5 sm:gap-8 md:grid-cols-1 md:py-14"
-            : "gap-5 sm:gap-12 md:grid-cols-[1fr_minmax(0,700px)] md:gap-10 md:py-24"
+            : "gap-5 sm:gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,700px)] md:gap-10 md:py-24"
         }`}
       >
         {!hideIntro && (
