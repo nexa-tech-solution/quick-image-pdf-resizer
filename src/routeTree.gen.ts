@@ -9,49 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RemoveBackgroundRouteImport } from './routes/remove-background'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as PdfToImageRouteImport } from './routes/pdf-to-image'
-import { Route as MergeSplitPdfRouteImport } from './routes/merge-split-pdf'
-import { Route as ImageToPdfRouteImport } from './routes/image-to-pdf'
-import { Route as ConvertImageRouteImport } from './routes/convert-image'
-import { Route as CompressImageRouteImport } from './routes/compress-image'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as CompressImageRouteImport } from './routes/compress-image'
+import { Route as ConvertImageRouteImport } from './routes/convert-image'
+import { Route as ImageToPdfRouteImport } from './routes/image-to-pdf'
+import { Route as MergeSplitPdfRouteImport } from './routes/merge-split-pdf'
+import { Route as PdfToImageRouteImport } from './routes/pdf-to-image'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as RemoveBackgroundRouteImport } from './routes/remove-background'
 
-const RemoveBackgroundRoute = RemoveBackgroundRouteImport.update({
-  id: '/remove-background',
-  path: '/remove-background',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PdfToImageRoute = PdfToImageRouteImport.update({
-  id: '/pdf-to-image',
-  path: '/pdf-to-image',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MergeSplitPdfRoute = MergeSplitPdfRouteImport.update({
-  id: '/merge-split-pdf',
-  path: '/merge-split-pdf',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ImageToPdfRoute = ImageToPdfRouteImport.update({
-  id: '/image-to-pdf',
-  path: '/image-to-pdf',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConvertImageRoute = ConvertImageRouteImport.update({
-  id: '/convert-image',
-  path: '/convert-image',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CompressImageRoute = CompressImageRouteImport.update({
-  id: '/compress-image',
-  path: '/compress-image',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -59,9 +29,39 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CompressImageRoute = CompressImageRouteImport.update({
+  id: '/compress-image',
+  path: '/compress-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConvertImageRoute = ConvertImageRouteImport.update({
+  id: '/convert-image',
+  path: '/convert-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImageToPdfRoute = ImageToPdfRouteImport.update({
+  id: '/image-to-pdf',
+  path: '/image-to-pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MergeSplitPdfRoute = MergeSplitPdfRouteImport.update({
+  id: '/merge-split-pdf',
+  path: '/merge-split-pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PdfToImageRoute = PdfToImageRouteImport.update({
+  id: '/pdf-to-image',
+  path: '/pdf-to-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RemoveBackgroundRoute = RemoveBackgroundRouteImport.update({
+  id: '/remove-background',
+  path: '/remove-background',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -149,53 +149,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/remove-background': {
-      id: '/remove-background'
-      path: '/remove-background'
-      fullPath: '/remove-background'
-      preLoaderRoute: typeof RemoveBackgroundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pdf-to-image': {
-      id: '/pdf-to-image'
-      path: '/pdf-to-image'
-      fullPath: '/pdf-to-image'
-      preLoaderRoute: typeof PdfToImageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/merge-split-pdf': {
-      id: '/merge-split-pdf'
-      path: '/merge-split-pdf'
-      fullPath: '/merge-split-pdf'
-      preLoaderRoute: typeof MergeSplitPdfRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/image-to-pdf': {
-      id: '/image-to-pdf'
-      path: '/image-to-pdf'
-      fullPath: '/image-to-pdf'
-      preLoaderRoute: typeof ImageToPdfRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/convert-image': {
-      id: '/convert-image'
-      path: '/convert-image'
-      fullPath: '/convert-image'
-      preLoaderRoute: typeof ConvertImageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/compress-image': {
-      id: '/compress-image'
-      path: '/compress-image'
-      fullPath: '/compress-image'
-      preLoaderRoute: typeof CompressImageRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -205,11 +163,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/compress-image': {
+      id: '/compress-image'
+      path: '/compress-image'
+      fullPath: '/compress-image'
+      preLoaderRoute: typeof CompressImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/convert-image': {
+      id: '/convert-image'
+      path: '/convert-image'
+      fullPath: '/convert-image'
+      preLoaderRoute: typeof ConvertImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/image-to-pdf': {
+      id: '/image-to-pdf'
+      path: '/image-to-pdf'
+      fullPath: '/image-to-pdf'
+      preLoaderRoute: typeof ImageToPdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/merge-split-pdf': {
+      id: '/merge-split-pdf'
+      path: '/merge-split-pdf'
+      fullPath: '/merge-split-pdf'
+      preLoaderRoute: typeof MergeSplitPdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pdf-to-image': {
+      id: '/pdf-to-image'
+      path: '/pdf-to-image'
+      fullPath: '/pdf-to-image'
+      preLoaderRoute: typeof PdfToImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/remove-background': {
+      id: '/remove-background'
+      path: '/remove-background'
+      fullPath: '/remove-background'
+      preLoaderRoute: typeof RemoveBackgroundRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
