@@ -198,6 +198,7 @@ function MergeSplitPdf() {
         multiple
         onFiles={addFiles}
         title={sources.length === 0 ? page.dropTitleEmpty : page.dropTitleFilled}
+        compact={sources.length > 0}
         hint={page.hint}
         disabled={reading}
       />
@@ -343,7 +344,7 @@ function MergeSplitPdf() {
             )}
           </div>
 
-          <div className="h-fit space-y-4 rounded-2xl border border-border bg-surface-elevated p-5">
+          <div className="h-fit space-y-4 rounded-2xl border border-border bg-surface-elevated p-4 sm:p-5">
             <div>
               <div className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 {page.output}
@@ -360,19 +361,21 @@ function MergeSplitPdf() {
               </div>
             )}
 
-            <button
-              type="button"
-              onClick={exportPdf}
-              disabled={busy || reading || pages.length === 0}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {busy ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
-              {page.exportButton}
-            </button>
+            <div className="mobile-cta">
+              <button
+                type="button"
+                onClick={exportPdf}
+                disabled={busy || reading || pages.length === 0}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                {page.exportButton}
+              </button>
+            </div>
             <p className="text-xs text-muted-foreground">{page.exportHint}</p>
           </div>
         </div>

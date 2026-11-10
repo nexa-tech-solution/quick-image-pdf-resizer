@@ -26,11 +26,11 @@ function About() {
     <PageShell>
       <SeoJsonLd routeKey="about" />
       <section className="border-b border-border bg-[var(--gradient-hero)]">
-        <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-16 lg:px-8">
           <div className="font-mono text-xs uppercase tracking-widest text-primary">
             {page.eyebrow}
           </div>
-          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+          <h1 className="mt-2 font-display text-3xl font-bold tracking-tight sm:mt-3 sm:text-5xl">
             {page.titleText}
           </h1>
           <p className="mt-5 text-lg text-muted-foreground">{page.intro}</p>

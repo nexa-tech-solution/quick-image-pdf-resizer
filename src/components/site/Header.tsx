@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Menu } from "lucide-react";
+import { ArrowRight, Check, Menu } from "lucide-react";
 import faviconUrl from "@/assets/favicon.svg?url";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -50,7 +50,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 lg:flex-nowrap lg:px-8">
+      <div className="mx-auto flex min-h-14 max-w-7xl flex-wrap items-center gap-3 px-4 py-2 md:min-h-16 md:py-3 sm:px-6 lg:flex-nowrap lg:px-8">
         <Link to="/" className="flex min-w-0 shrink-0 items-center gap-2">
           <img src={faviconUrl} alt={t.header.resizeImage} className="h-8 w-8 shrink-0" />
           <span className="truncate font-display text-lg font-bold tracking-tight">
@@ -59,7 +59,7 @@ export function Header() {
         </Link>
         <nav
           className={[
-            "order-3 flex w-full min-w-0 items-center gap-1 overflow-x-auto whitespace-nowrap",
+            "order-3 hidden w-full min-w-0 md:flex items-center gap-1 overflow-x-auto whitespace-nowrap",
             "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             "md:order-none md:flex-1 md:justify-center lg:justify-start",
           ].join(" ")}
@@ -90,33 +90,34 @@ export function Header() {
           ))}
         </nav>
         <div className="order-2 ml-auto flex shrink-0 items-center gap-2 md:order-none md:ml-0">
-          <div ref={menuRef} className="relative">
-            <label className="sr-only" htmlFor="locale-button">
-              {t.header.language}
-            </label>
-            <button
-              id="locale-button"
-              type="button"
-              aria-haspopup="listbox"
-              aria-expanded={open}
-              onClick={() => setOpen((value) => !value)}
-              className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-background text-lg transition hover:border-primary/60 focus:border-primary focus:outline-none"
-              title={`${t.header.language}: ${localeMeta[locale].country}`}
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                className="flex h-10 items-center gap-1.5 rounded-full border border-border bg-background pl-2.5 pr-3 text-sm font-medium transition hover:bg-secondary"
+                aria-label={`${t.header.language}: ${localeMeta[locale].country}`}
+              >
+                <span aria-hidden="true" className="text-lg leading-none">
+                  {localeMeta[locale].flag}
+                </span>
+                <span className="uppercase text-muted-foreground">{locale.split("-")[0]}</span>
+              </button>
+            </SheetTrigger>
+            <SheetContent
+              side="bottom"
+              className="left-[var(--app-inset)] right-[var(--app-inset)] max-h-[80vh] rounded-t-3xl px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))]"
             >
-              <span aria-hidden="true">{localeMeta[locale].flag}</span>
-              <span className="sr-only">
-                {t.header.language}: {localeMeta[locale].country}
-              </span>
-            </button>
-            {open ? (
+              <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-border" aria-hidden="true" />
+              <SheetHeader className="text-left">
+                <SheetTitle className="text-lg">{t.header.language}</SheetTitle>
+              </SheetHeader>
               <div
                 role="listbox"
                 aria-label={t.header.language}
-                className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-background shadow-lg"
+                className="mt-3 space-y-1 overflow-y-auto"
               >
                 {supportedLocales.map((item) => {
                   const active = item === locale;
-
                   return (
                     <button
                       key={item}
@@ -128,22 +129,23 @@ export function Header() {
                         setOpen(false);
                       }}
                       className={[
-                        "flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition hover:bg-secondary",
+                        "flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-[15px] transition",
                         active
-                          ? "bg-secondary font-medium text-foreground"
-                          : "text-muted-foreground",
+                          ? "bg-primary-soft font-semibold text-foreground"
+                          : "hover:bg-secondary",
                       ].join(" ")}
                     >
-                      <span aria-hidden="true" className="text-base">
+                      <span aria-hidden="true" className="text-2xl leading-none">
                         {localeMeta[item].flag}
                       </span>
-                      <span>{localeMeta[item].country}</span>
+                      <span className="flex-1">{localeMeta[item].country}</span>
+                      {active && <Check className="h-5 w-5 text-primary" />}
                     </button>
                   );
                 })}
               </div>
-            ) : null}
-          </div>
+            </SheetContent>
+          </Sheet>
           <Sheet
             open={mobileMenuOpen}
             onOpenChange={(value) => {
@@ -156,7 +158,7 @@ export function Header() {
                 type="button"
                 variant="outline"
                 size="icon"
-                className="md:hidden shrink-0"
+                className="hidden shrink-0"
                 aria-label={t.toolsGrid.toolset}
               >
                 <Menu className="h-5 w-5" />

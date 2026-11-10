@@ -264,7 +264,7 @@ export function RemoveBackgroundTool() {
           <p className="mt-2 text-xs leading-5 text-muted-foreground">{page.bestResults}</p>
         </div>
 
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="mobile-cta grid grid-cols-2 gap-2">
           <Button type="button" variant="outline" onClick={() => setFile(null)}>
             <RefreshCw className="mr-2 h-4 w-4" />
             {page.newButton}

@@ -4,9 +4,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Mobile-only app: responsive breakpoints are pushed out of reach so every
+   viewport renders the phone layout. The app is framed as a centered column. */
+@theme {
+  --breakpoint-sm: 9999px;
+  --breakpoint-md: 9999px;
+  --breakpoint-lg: 9999px;
+  --breakpoint-xl: 9999px;
+  --breakpoint-2xl: 9999px;
+}
+
 @theme inline {
-  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Be Vietnam Pro", ui-sans-serif, system-ui, ui-monospace, "SF Mono", Menlo, monospace;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -39,37 +49,37 @@
   --color-surface-elevated: var(--surface-elevated);
   --shadow-soft: 0 1px 2px 0 oklch(0.2 0.04 260 / 0.04), 0 1px 3px 0 oklch(0.2 0.04 260 / 0.06);
   --shadow-elevated: 0 10px 30px -12px oklch(0.2 0.04 260 / 0.12), 0 4px 12px -4px oklch(0.2 0.04 260 / 0.06);
-  --shadow-glow: 0 0 0 8px oklch(0.62 0.18 256 / 0.08);
+  --shadow-glow: 0 0 0 8px oklch(0.58 0.21 25 / 0.08);
   --gradient-hero: linear-gradient(135deg, oklch(0.985 0.005 250), oklch(0.96 0.012 250));
-  --gradient-primary: linear-gradient(135deg, oklch(0.62 0.18 256), oklch(0.55 0.2 262));
+  --gradient-primary: linear-gradient(135deg, oklch(0.62 0.21 25), oklch(0.54 0.22 22));
 }
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.99 0.003 250);
+  --background: oklch(1 0 0);
   --foreground: oklch(0.18 0.03 260);
-  --surface: oklch(0.975 0.006 250);
+  --surface: oklch(0.97 0.004 260);
   --surface-elevated: oklch(1 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.03 260);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.03 260);
-  --primary: oklch(0.62 0.18 256);
+  --primary: oklch(0.58 0.21 25);
   --primary-foreground: oklch(0.99 0 0);
-  --primary-soft: oklch(0.95 0.04 256);
+  --primary-soft: oklch(0.95 0.03 20);
   --secondary: oklch(0.96 0.008 250);
   --secondary-foreground: oklch(0.22 0.03 260);
   --muted: oklch(0.955 0.01 250);
   --muted-foreground: oklch(0.5 0.02 256);
-  --accent: oklch(0.95 0.04 256);
-  --accent-foreground: oklch(0.4 0.16 256);
+  --accent: oklch(0.95 0.03 20);
+  --accent-foreground: oklch(0.45 0.18 25);
   --destructive: oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.99 0 0);
   --success: oklch(0.68 0.15 160);
   --success-foreground: oklch(0.99 0 0);
   --border: oklch(0.92 0.01 250);
   --input: oklch(0.92 0.01 250);
-  --ring: oklch(0.62 0.18 256);
+  --ring: oklch(0.58 0.21 25);
 }
 
 .dark {
@@ -117,7 +127,48 @@
   }
 
   h1, h2, h3, h4, .font-display {
-    font-family: var(--font-mono);
-    letter-spacing: -0.02em;
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
   }
+}
+
+/* App frame: phone-width column centered on any screen. */
+:root {
+  --app-w: 30rem;
+  /* inset from viewport edge to the column edge (0 on phones) */
+  --app-inset: max(0px, calc((100% - var(--app-w)) / 2)); /* % resolves per fixed element = viewport minus scrollbar */
+}
+
+html {
+  background: var(--color-surface);
+}
+
+/* Floating primary-action bar above the bottom tab bar, inside the app column. */
+.mobile-cta {
+  position: fixed;
+  left: calc(var(--app-inset) + 0.75rem);
+  right: calc(var(--app-inset) + 0.75rem);
+  bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  z-index: 30;
+  margin: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--color-background) 92%, transparent);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* iOS Safari zooms into any focused field under 16px. Keep fields at 16px so
+   tapping an input never zooms (and never pans the page sideways). */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+/* Guard against stray horizontal overflow panning the app sideways. */
+html,
+body {
+  overflow-x: clip;
 }

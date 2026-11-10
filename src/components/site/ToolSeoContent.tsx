@@ -25,7 +25,7 @@ export function ToolSeoContent({ tool }: { tool: ToolSeoKey }) {
   const ui = toolSeoUiCopy[locale];
 
   return (
-    <section className="mt-12 border-t border-border pt-10">
+    <section className="mt-12 hidden border-t border-border pt-10 md:block">
       <div className="max-w-3xl">
         <h2 className="font-display text-2xl font-bold tracking-tight">{copy.title}</h2>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.intro}</p>

@@ -209,6 +209,7 @@ function CompressImage() {
             }
             onFiles={addFiles}
             title={copy.batch.addMore}
+            compact
             hint="JPG, PNG, WebP or AVIF - up to 250 MB"
             className="py-6"
           />
@@ -289,7 +290,7 @@ function CompressImage() {
                           setSelectedId(item.id);
                         }
                       }}
-                      className={`grid w-full gap-3 rounded-xl border bg-surface-elevated p-3 text-left transition md:grid-cols-[1fr_auto_auto_auto] md:items-center ${
+                      className={`grid w-full grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 rounded-xl border bg-surface-elevated p-3 text-left transition md:grid-cols-[1fr_auto_auto_auto] md:items-center ${
                         selected?.id === item.id
                           ? "border-primary bg-primary-soft/40"
                           : "border-border hover:border-primary/50"
@@ -362,7 +363,7 @@ function CompressImage() {
               </div>
             </div>
 
-            <div className="space-y-5 rounded-2xl border border-border bg-surface-elevated p-5">
+            <div className="space-y-5 rounded-2xl border border-border bg-surface-elevated p-4 sm:p-5">
               <div>
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                   {page.format}
@@ -425,25 +426,27 @@ function CompressImage() {
                   {page.pngHint}
                 </div>
               )}
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() =>
-                  items
-                    .filter((item) => item.outputBlob && item.outputFilename)
-                    .forEach((item, index) => {
-                      window.setTimeout(() => {
-                        if (item.outputBlob && item.outputFilename) {
-                          downloadBlob(item.outputBlob, item.outputFilename);
-                        }
-                      }, index * 200);
-                    })
-                }
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
-              >
-                {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-                {copy.shared.downloadAll}
-              </button>
+              <div className="mobile-cta">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() =>
+                    items
+                      .filter((item) => item.outputBlob && item.outputFilename)
+                      .forEach((item, index) => {
+                        window.setTimeout(() => {
+                          if (item.outputBlob && item.outputFilename) {
+                            downloadBlob(item.outputBlob, item.outputFilename);
+                          }
+                        }, index * 200);
+                      })
+                  }
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+                >
+                  {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {copy.shared.downloadAll}
+                </button>
+              </div>
             </div>
           </div>
         </div>

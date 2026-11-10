@@ -213,6 +213,7 @@ function ConvertImage() {
             }
             onFiles={addFiles}
             title={copy.batch.addMore}
+            compact
             hint="JPG, PNG, WebP or AVIF - up to 250 MB"
             className="py-6"
           />
@@ -262,7 +263,7 @@ function ConvertImage() {
                           setSelectedId(item.id);
                         }
                       }}
-                      className={`grid w-full gap-3 rounded-xl border bg-surface-elevated p-3 text-left transition md:grid-cols-[1fr_auto_auto_auto] md:items-center ${
+                      className={`grid w-full grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 rounded-xl border bg-surface-elevated p-3 text-left transition md:grid-cols-[1fr_auto_auto_auto] md:items-center ${
                         selected?.id === item.id
                           ? "border-primary bg-primary-soft/40"
                           : "border-border hover:border-primary/50"
@@ -335,7 +336,7 @@ function ConvertImage() {
               </div>
             </div>
 
-            <div className="space-y-5 rounded-2xl border border-border bg-surface-elevated p-5">
+            <div className="space-y-5 rounded-2xl border border-border bg-surface-elevated p-4 sm:p-5">
               <div>
                 <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                   {page.convertTo}
@@ -376,7 +377,7 @@ function ConvertImage() {
                   <p className="mt-2 text-xs text-muted-foreground">{page.qualityHint}</p>
                 </div>
               )}
-              <div className="flex gap-2">
+              <div className="mobile-cta flex gap-2">
                 <button
                   onClick={removeAll}
                   className="flex-1 rounded-lg border border-border px-3 py-2.5 text-sm hover:bg-secondary"

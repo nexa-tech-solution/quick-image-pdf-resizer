@@ -16,6 +16,8 @@ interface FileDropzoneProps {
   onError?: (message: string | null) => void;
   disabled?: boolean;
   className?: string;
+  /** Single-row variant for "add more files" once a batch exists. */
+  compact?: boolean;
 }
 
 export function FileDropzone({
@@ -31,6 +33,7 @@ export function FileDropzone({
   onError,
   disabled = false,
   className,
+  compact = false,
 }: FileDropzoneProps) {
   const [drag, setDrag] = useState(false);
   const [internalError, setInternalError] = useState<string | null>(null);
@@ -102,7 +105,10 @@ export function FileDropzone({
       onDragLeave={() => setDrag(false)}
       onDrop={onDrop}
       className={cn(
-        "group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-surface-elevated px-6 py-14 text-center transition focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+        "group relative flex cursor-pointer rounded-2xl border-2 border-dashed bg-surface-elevated transition active:scale-[0.99] active:bg-primary-soft/40 focus:outline-none focus-visible:ring-2 focus:ring-ring focus:ring-offset-2",
+        compact
+          ? "flex-row flex-wrap items-center gap-3 px-4 py-3 text-left"
+          : "flex-col items-center justify-center px-5 py-10 text-center sm:px-6 sm:py-14",
         disabled && "cursor-not-allowed opacity-60",
         drag
           ? "border-primary bg-primary-soft"
@@ -112,16 +118,24 @@ export function FileDropzone({
     >
       <div
         className={cn(
-          "mb-4 flex h-14 w-14 items-center justify-center rounded-2xl transition",
+          compact
+            ? "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition"
+            : "mb-4 flex h-14 w-14 items-center justify-center rounded-2xl transition",
           drag ? "bg-primary text-primary-foreground" : "bg-primary-soft text-primary",
         )}
       >
         <Upload className="h-6 w-6" />
       </div>
-      <div className="font-display text-lg font-semibold">{title}</div>
-      <div className="mt-1 text-sm text-muted-foreground">{acceptedLabels ?? hint}</div>
+      <div className={cn("min-w-0", compact && "flex-1")}>
+        <div className={cn("font-display font-semibold", compact ? "text-sm" : "text-lg")}>
+          {title}
+        </div>
+        <div className={cn("text-muted-foreground", compact ? "truncate text-xs" : "mt-1 text-sm")}>
+          {acceptedLabels ?? hint}
+        </div>
+      </div>
       {shownError && (
-        <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <div className="mt-3 w-full rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {shownError}
         </div>
       )}

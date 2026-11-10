@@ -143,7 +143,7 @@ function PdfToImage() {
         />
       ) : (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-border bg-surface-elevated p-5">
+          <div className="rounded-2xl border border-border bg-surface-elevated p-4 sm:p-5">
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
                 <div className="truncate font-medium">{file.name}</div>
@@ -228,7 +228,7 @@ function PdfToImage() {
                 </div>
               )}
             </div>
-            <div className="mt-4 flex gap-2">
+            <div className="mobile-cta mt-4 flex gap-2">
               <button
                 onClick={reset}
                 className="flex-1 rounded-lg border border-border px-3 py-2.5 text-sm hover:bg-secondary"

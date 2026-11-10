@@ -368,39 +368,33 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-surface-elevated shadow-soft">
-      <div className="flex flex-wrap items-center gap-3 border-b border-border bg-surface px-4 py-3">
-        <div className="min-w-0 flex-1">
-          <div className="truncate font-medium">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 text-sm">
+          <span className="font-semibold">
             {items.length} {copy.imageToPdf.files}
-          </div>
-          <div className="mt-0.5 text-xs text-muted-foreground">
-            {copy.shared.total}: {formatBytes(totalOriginal)}
+          </span>
+          <span className="text-muted-foreground">
+            {" "}
+            · {formatBytes(totalOriginal)}
             {totalOutput > 0 && <> → {formatBytes(totalOutput)}</>}
-            {readyCount > 0 && (
-              <>
-                {" "}
-                · {copy.shared.ready}: {readyCount}
-              </>
-            )}
-            {errorCount > 0 && (
-              <>
-                {" "}
-                · {copy.shared.error}: {errorCount}
-              </>
-            )}
-          </div>
+          </span>
+          {errorCount > 0 && (
+            <span className="text-destructive">
+              {" "}
+              · {copy.shared.error}: {errorCount}
+            </span>
+          )}
         </div>
         <button
           onClick={removeAll}
-          className="rounded-md p-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-          aria-label={copy.shared.removeAll}
+          className="shrink-0 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
         >
-          <X className="h-4 w-4" />
+          {copy.shared.removeAll}
         </button>
       </div>
 
-      <div className="space-y-6 p-5">
+      <div className="space-y-4">
         <FileDropzone
           accept={imageAccept}
           multiple
@@ -409,14 +403,14 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
           }
           onFiles={addFiles}
           title={copy.batch.addMore}
+          compact
           hint={t.resizeTool.dropHint}
-          className="py-6"
         />
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_420px]">
           <div className="space-y-4">
             {selected && (
-              <div className="grid gap-3 rounded-2xl border border-border bg-surface-elevated p-4 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-3">
                 <PreviewPanel
                   label={`${copy.shared.original} · ${formatBytes(selected.file.size)}`}
                   url={selected.previewUrl}
@@ -445,7 +439,15 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
               </div>
             )}
 
-            <div className="space-y-2">
+            {selected &&
+              (savingPercent(selected.file.size, selected.outputBlob?.size) ?? 0) < 0 && (
+                <p className="rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                  {copy.batch.outputLargerHint}
+                </p>
+              )}
+
+            {/* With one file the preview already shows everything; list only for batches. */}
+            <div className={items.length > 1 ? "space-y-2" : "hidden"}>
               {items.map((item) => {
                 const delta = savingPercent(item.file.size, item.outputBlob?.size);
 
@@ -461,100 +463,86 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                         setSelectedId(item.id);
                       }
                     }}
-                    className={`grid w-full gap-3 rounded-xl border bg-surface-elevated p-3 text-left transition md:grid-cols-[1fr_auto_auto_auto] md:items-center ${
+                    className={`flex w-full items-center gap-3 rounded-2xl p-2 text-left transition ${
                       selected?.id === item.id
-                        ? "border-primary bg-primary-soft/40"
-                        : "border-border hover:border-primary/50"
+                        ? "bg-primary-soft/60"
+                        : "bg-surface hover:bg-secondary"
                     }`}
                   >
-                    <div className="min-w-0">
+                    <img
+                      src={item.outputUrl ?? item.previewUrl}
+                      alt=""
+                      className="h-12 w-12 shrink-0 rounded-xl bg-background object-cover"
+                    />
+                    <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-medium">{item.file.name}</div>
-                      <div className="mt-1 text-xs text-muted-foreground">
-                        {formatBytes(item.file.size)}
-                        {item.outputBlob && ` → ${formatBytes(item.outputBlob.size)}`}
+                      <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                        {item.status === "processing" ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : null}
+                        <span className="truncate">
+                          {item.error ??
+                            `${formatBytes(item.file.size)}${
+                              item.outputBlob ? ` → ${formatBytes(item.outputBlob.size)}` : ""
+                            }`}
+                        </span>
+                        {delta !== null && (
+                          <span
+                            className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                              delta >= 0
+                                ? "bg-success/15 text-success"
+                                : "bg-amber-100 text-amber-700"
+                            }`}
+                          >
+                            {delta > 0 ? "-" : "+"}
+                            {Math.abs(delta)}%
+                          </span>
+                        )}
                       </div>
-                      {delta !== null && delta < 0 && (
-                        <div className="mt-1 text-xs text-amber-700">
-                          {copy.batch.outputLargerHint}
-                        </div>
-                      )}
-                      {item.error && (
-                        <div className="mt-1 text-xs text-destructive">{item.error}</div>
-                      )}
                     </div>
-                    <div className="text-xs font-mono text-muted-foreground">
-                      {item.status === "processing"
-                        ? copy.batch.processing
-                        : item.status === "ready"
-                          ? copy.shared.ready
-                          : item.status === "error"
-                            ? copy.shared.error
-                            : "Idle"}
-                    </div>
-                    <div
-                      className={`text-xs font-mono ${
-                        delta === null
-                          ? "text-muted-foreground"
-                          : delta >= 0
-                            ? "text-success"
-                            : "text-amber-700"
-                      }`}
+                    <button
+                      type="button"
+                      disabled={!item.outputBlob}
+                      aria-label={t.resizeTool.download}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        if (item.outputBlob && item.outputFilename) {
+                          downloadBlob(item.outputBlob, item.outputFilename);
+                        }
+                      }}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-background text-primary shadow-soft transition disabled:opacity-40"
                     >
-                      {delta === null ? "..." : `${delta > 0 ? "-" : "+"}${Math.abs(delta)}%`}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        disabled={!item.outputBlob}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          if (item.outputBlob && item.outputFilename) {
-                            downloadBlob(item.outputBlob, item.outputFilename);
-                          }
-                        }}
-                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-primary disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                        {t.resizeTool.download}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          removeItem(item.id);
-                        }}
-                        className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
+                      <Download className="h-[18px] w-[18px]" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={copy.shared.removeAll}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        removeItem(item.id);
+                      }}
+                      className="flex h-10 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          <div className="min-w-0 rounded-2xl bg-surface-elevated">
-            <Accordion
-              type="multiple"
-              defaultValue={["presets", "dimensions"]}
-              className="space-y-1.5 sm:space-y-2"
-            >
-              <AccordionItem
-                value="presets"
-                className="overflow-hidden rounded-xl border border-border"
-              >
-                <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
+          <div className="min-w-0 rounded-2xl bg-surface px-1">
+            <Accordion type="multiple" defaultValue={["presets", "dimensions"]} className="">
+              <AccordionItem value="presets" className="border-b border-border/70 last:border-b-0">
+                <AccordionTrigger className="px-3 py-3.5 text-sm font-semibold text-foreground no-underline hover:no-underline">
                   {t.resizeTool.presets}
                 </AccordionTrigger>
-                <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
-                  <div className="space-y-2.5 sm:space-y-3">
+                <AccordionContent className="px-3 pb-3.5 pt-0">
+                  <div className="space-y-3">
                     {presetGroups.map((group) => (
                       <div key={group.id}>
-                        <div className="mb-1.5 text-[11px] font-medium text-muted-foreground sm:mb-2">
-                          {group.label}
-                        </div>
-                        <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/2)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:thin] sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
+                        <div className="mb-1.5 text-xs text-muted-foreground">{group.label}</div>
+                        <div className="-mx-3 flex gap-2 overflow-x-auto px-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                           {presets
                             .filter((p) => p.group === group.id)
                             .map((p) => (
@@ -562,17 +550,15 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                                 key={p.size}
                                 onClick={() => applyPreset(p.w, p.h)}
                                 className={cn(
-                                  "min-w-0 snap-start rounded-lg border border-border px-2.5 py-2 text-left transition hover:border-primary/60 hover:bg-primary-soft sm:w-36 sm:px-3 sm:py-2.5",
+                                  "shrink-0 rounded-full px-3.5 py-2 text-left transition",
                                   width === p.w && height === p.h
-                                    ? "border-primary bg-primary-soft text-primary"
-                                    : "",
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-background text-foreground shadow-soft hover:bg-primary-soft",
                                 )}
                               >
-                                <span className="block text-xs font-medium">
+                                <span className="whitespace-nowrap text-xs font-medium">
                                   {t.resizeTool.presetLabels[p.labelKey]}
-                                </span>
-                                <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">
-                                  {p.size}
+                                  <span className="ml-1.5 opacity-60">{p.size}</span>
                                 </span>
                               </button>
                             ))}
@@ -585,12 +571,12 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
 
               <AccordionItem
                 value="dimensions"
-                className="overflow-hidden rounded-xl border border-border"
+                className="border-b border-border/70 last:border-b-0"
               >
-                <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
+                <AccordionTrigger className="px-3 py-3.5 text-sm font-semibold text-foreground no-underline hover:no-underline">
                   {t.resizeTool.dimensions}
                 </AccordionTrigger>
-                <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
+                <AccordionContent className="px-3 pb-3.5 pt-0">
                   <div className="flex items-center justify-between gap-3">
                     <button
                       type="button"
@@ -634,16 +620,13 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem
-                value="fit"
-                className="overflow-hidden rounded-xl border border-border"
-              >
-                <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
+              <AccordionItem value="fit" className="border-b border-border/70 last:border-b-0">
+                <AccordionTrigger className="px-3 py-3.5 text-sm font-semibold text-foreground no-underline hover:no-underline">
                   {t.resizeTool.fit}
                 </AccordionTrigger>
-                <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
+                <AccordionContent className="px-3 pb-3.5 pt-0">
                   <TooltipProvider>
-                    <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/3)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:thin] sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
+                    <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/3)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
                       {(["contain", "cover", "stretch"] as const).map((f) => {
                         const Icon = fitIcons[f];
                         const tip =
@@ -678,15 +661,12 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem
-                value="format"
-                className="overflow-hidden rounded-xl border border-border"
-              >
-                <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
+              <AccordionItem value="format" className="border-b border-border/70 last:border-b-0">
+                <AccordionTrigger className="px-3 py-3.5 text-sm font-semibold text-foreground no-underline hover:no-underline">
                   {t.resizeTool.format}
                 </AccordionTrigger>
-                <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
-                  <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/2)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:thin] sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
+                <AccordionContent className="px-3 pb-3.5 pt-0">
+                  <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/2)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
                     {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
                       <button
                         key={f}
@@ -708,12 +688,12 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
               {fit === "contain" && (
                 <AccordionItem
                   value="background"
-                  className="overflow-hidden rounded-xl border border-border"
+                  className="border-b border-border/70 last:border-b-0"
                 >
-                  <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
+                  <AccordionTrigger className="px-3 py-3.5 text-sm font-semibold text-foreground no-underline hover:no-underline">
                     {t.resizeTool.background}
                   </AccordionTrigger>
-                  <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
+                  <AccordionContent className="px-3 pb-3.5 pt-0">
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-[11px] text-muted-foreground sm:text-right">
                         {t.resizeTool.backgroundHint}
@@ -742,9 +722,9 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
               {format !== "png" && (
                 <AccordionItem
                   value="quality"
-                  className="overflow-hidden rounded-xl border border-border"
+                  className="border-b border-border/70 last:border-b-0"
                 >
-                  <AccordionTrigger className="px-2.5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground no-underline hover:no-underline sm:px-3 sm:py-3">
+                  <AccordionTrigger className="px-3 py-3.5 text-sm font-semibold text-foreground no-underline hover:no-underline">
                     <span className="flex items-center gap-2">
                       {t.resizeTool.quality}
                       <span className="text-xs font-mono normal-case tracking-normal">
@@ -752,7 +732,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                       </span>
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="px-2.5 pb-2.5 pt-0 sm:px-3 sm:pb-3">
+                  <AccordionContent className="px-3 pb-3.5 pt-0">
                     <input
                       type="range"
                       min={10}
@@ -767,64 +747,35 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
             </Accordion>
 
             <div className="mt-4 space-y-3">
-              <div className="rounded-xl border border-border bg-background px-2.5 py-2 sm:px-3">
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
-                  <div>
-                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                      {copy.shared.output}
-                    </div>
-                    <div className="mt-1 font-mono text-sm font-medium">
-                      {width}×{height} · {formatExt[format].toUpperCase()}
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {items.length} {copy.imageToPdf.files}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                      {copy.shared.sizeChange}
-                    </div>
-                    <div className="mt-1 font-mono text-sm font-medium text-muted-foreground">
-                      {busy ? t.resizeTool.updating : copy.resize.outputEstimate}
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {selected?.status === "error"
-                        ? (selected.error ?? copy.shared.error)
-                        : selected?.sourceDimensions
-                          ? `${selected.sourceDimensions.width} × ${selected.sourceDimensions.height}`
-                          : copy.batch.dimensionsPending}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2 sm:flex-row">
+              <div className="mobile-cta flex gap-2">
                 <button
                   onClick={removeAll}
-                  className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary"
+                  aria-label={copy.shared.removeAll}
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition hover:bg-secondary"
                 >
-                  <RefreshCw className="h-4 w-4" />
-                  {copy.shared.removeAll}
+                  <RefreshCw className="h-5 w-5" />
                 </button>
+                {items.length > 1 && (
+                  <button
+                    onClick={downloadAll}
+                    disabled={busy || zipping || !canDownload}
+                    className="flex h-12 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border px-3 text-sm font-medium transition hover:bg-secondary disabled:opacity-50"
+                  >
+                    <Download className="h-4 w-4" />
+                    {copy.shared.downloadAll}
+                  </button>
+                )}
                 <button
-                  onClick={downloadZip}
+                  onClick={items.length > 1 ? downloadZip : downloadAll}
                   disabled={busy || zipping || !canDownload}
-                  className="flex w-full flex-[2] items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+                  className="flex h-12 min-w-0 flex-[1.3] items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-soft transition hover:opacity-90 disabled:opacity-50"
                 >
-                  {zipping ? (
+                  {zipping || busy ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <Download className="h-4 w-4" />
                   )}
-                  {copy.shared.downloadZip}
-                </button>
-                <button
-                  onClick={downloadAll}
-                  disabled={busy || zipping || !canDownload}
-                  className="flex w-full flex-1 items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm transition hover:bg-secondary disabled:opacity-60"
-                >
-                  <Download className="h-4 w-4" />
-                  {copy.shared.downloadAll}
+                  {items.length > 1 ? copy.shared.downloadZip : t.resizeTool.download}
                 </button>
               </div>
             </div>
@@ -880,7 +831,7 @@ function PreviewPanel({
 
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between text-xs font-mono uppercase tracking-wider text-muted-foreground">
+      <div className="mb-1.5 flex items-center justify-between text-[11px] font-medium text-muted-foreground">
         <span>{label}</span>
         {loading && <Loader2 className="h-3 w-3 animate-spin" />}
       </div>
@@ -888,15 +839,15 @@ function PreviewPanel({
         <img
           src={url}
           alt={label}
-          className="aspect-square w-full rounded-lg object-cover"
+          className="aspect-[4/3] w-full rounded-2xl bg-surface object-contain"
           onError={() => setFailed(true)}
         />
       ) : (
-        <div className="flex aspect-square items-center justify-center rounded-lg border border-border bg-background text-xs text-muted-foreground">
+        <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-surface p-3 text-center text-xs text-muted-foreground">
           {failed ? unavailableText : footer}
         </div>
       )}
-      <div className="mt-2 text-xs text-muted-foreground">{footer}</div>
+      <div className="mt-1.5 truncate text-[11px] text-muted-foreground">{footer}</div>
     </div>
   );
 }

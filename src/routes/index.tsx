@@ -6,6 +6,7 @@ import { ResizeImageTool } from "@/components/site/ResizeImageTool";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { ToolSeoContent } from "@/components/site/ToolSeoContent";
 import { ToolsGrid } from "@/components/site/ToolsGrid";
+import { AppHomeDashboard } from "@/components/site/AppHomeDashboard";
 import { getBrowserLocale, getTranslationSet, useLocale } from "@/lib/i18n";
 import { createRouteHead } from "@/lib/seo";
 
@@ -30,11 +31,14 @@ function Home() {
     <PageShell>
       <SeoJsonLd routeKey="home" includeHomeSchemas />
       <Hero hasFiles={hasFiles} onHasFilesChange={setHasFiles} />
-      <Features />
-      <ResizeSeoSection />
-      <SeoBoost />
-      <ToolsGrid />
-      <CTA />
+      {/* Secondary/SEO content is desktop-only; mobile shows just the tool. */}
+      <div className="hidden md:block">
+        <Features />
+        <ResizeSeoSection />
+        <SeoBoost />
+        <ToolsGrid />
+        <CTA />
+      </div>
     </PageShell>
   );
 }
@@ -50,61 +54,28 @@ function Hero({
   const hideIntro = hasFiles;
 
   return (
-    <section className="relative overflow-hidden border-b border-border bg-[var(--gradient-hero)]">
+    <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,white,transparent_70%)]">
         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       </div>
       <div
-        className={`mx-auto grid max-w-7xl px-4 py-16 sm:px-6 lg:px-8 ${
+        className={`mx-auto grid max-w-7xl px-4 py-5 sm:px-6 sm:py-16 lg:px-8 ${
           hideIntro
-            ? "gap-8 md:grid-cols-1 md:py-14"
-            : "gap-12 md:grid-cols-[1fr_minmax(0,700px)] md:gap-10 md:py-24"
+            ? "gap-5 sm:gap-8 md:grid-cols-1 md:py-14"
+            : "gap-5 sm:gap-12 md:grid-cols-[1fr_minmax(0,700px)] md:gap-10 md:py-24"
         }`}
       >
         {!hideIntro && (
-          <div className="flex flex-col justify-center">
-          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface-elevated px-3 py-1 text-xs font-mono uppercase tracking-wider text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-success" />
-            {t.home.badge}
-          </div>
-          <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-            {t.home.titlePrefix}
-            <br />
-            <span className="text-primary">{t.home.titleAccent}</span> {t.home.titleSuffix}
-          </h1>
-          <p className="mt-5 max-w-lg text-base text-muted-foreground sm:text-lg">
-            {t.home.description}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              to="/compress-image"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-soft transition hover:opacity-90"
-            >
-              {t.home.startResizing}
-              <Sparkles className="h-4 w-4" />
-            </Link>
-            <a
-              href="#tools-grid"
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-5 py-3 text-sm font-medium transition hover:border-primary/40"
-            >
-              {t.home.browseAllTools}
-            </a>
-          </div>
-          <dl className="mt-10 grid max-w-md grid-cols-3 gap-6">
-            {[
-              ["7", t.home.tools],
-              ["0", t.home.uploads],
-              ["∞", t.home.filesPerDay],
-            ].map(([n, l]) => (
-              <div key={l}>
-                <dt className="font-display text-2xl font-bold text-primary">{n}</dt>
-                <dd className="text-xs uppercase tracking-wider text-muted-foreground">{l}</dd>
-              </div>
-            ))}
-          </dl>
+          <div>
+            {/* Keep a real H1 for SEO; the app UI leads with the dashboard. */}
+            <h1 className="sr-only">
+              {t.home.titlePrefix} {t.home.titleAccent} {t.home.titleSuffix}
+            </h1>
+            <AppHomeDashboard />
+            <h2 className="mt-6 text-base font-bold">{t.toolsGrid.resizeImage.title}</h2>
           </div>
         )}
-        <div id="tool" className={hideIntro ? "md:pt-2" : "md:pt-2"}>
+        <div id="tool" className="scroll-mt-20">
           <ResizeImageTool onHasFilesChange={onHasFilesChange} />
         </div>
       </div>
@@ -143,7 +114,7 @@ function Features() {
   ];
   return (
     <section id="tools" className="border-b border-border bg-surface">
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-14 sm:grid-cols-3 sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-3 px-4 py-8 sm:gap-6 sm:py-14 sm:grid-cols-3 sm:px-6 lg:px-8">
         {items.map(({ icon: Icon, title, desc }) => (
           <div
             key={title}
@@ -169,12 +140,12 @@ function SeoBoost() {
 
   return (
     <section className="border-b border-border bg-surface">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-16 lg:px-8">
         <div className="max-w-3xl">
           <div className="font-mono text-xs uppercase tracking-widest text-primary">
             {seo.eyebrow}
           </div>
-          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="mt-2 font-display text-2xl font-bold tracking-tight sm:text-4xl">
             {seo.title}
           </h2>
           <p className="mt-4 text-muted-foreground">{seo.intro}</p>
@@ -235,7 +206,7 @@ function CTA() {
   return (
     <section className="border-t border-border bg-surface">
       <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-4xl">
           {t.home.ctaTitle}
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">{t.home.ctaDesc}</p>
