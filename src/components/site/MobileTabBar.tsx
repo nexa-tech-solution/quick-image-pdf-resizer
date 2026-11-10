@@ -5,6 +5,7 @@ import {
   FileImage,
   FileStack,
   FileText,
+  FolderOpen,
   ImageIcon,
   LayoutGrid,
   Layers,
@@ -30,7 +31,11 @@ const allTools: Tool[] = [
   { to: "/merge-split-pdf", key: "mergeSplitPdf", icon: FileStack },
 ];
 
-const primaryTools = allTools.slice(0, 4);
+// Bottom tabs: three most-used tools + "My files"; everything else lives in the sheet.
+const primaryTools: Tool[] = [
+  ...allTools.slice(0, 3),
+  { to: "/files", key: "filesTab", icon: FolderOpen },
+];
 
 /** Bottom tab bar shown only on small screens — thumb-reachable navigation between tools. */
 export function MobileTabBar() {

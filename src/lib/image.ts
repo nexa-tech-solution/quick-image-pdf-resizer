@@ -1,3 +1,4 @@
+import { addToHistory } from "@/lib/file-history";
 export type ImageFormat = "jpeg" | "png" | "webp" | "avif";
 
 export const formatMime: Record<ImageFormat, string> = {
@@ -211,7 +212,14 @@ async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
   return img;
 }
 
-export function downloadBlob(blob: Blob, filename: string) {
+export function downloadBlob(
+  blob: Blob,
+  filename: string,
+  options: { saveToHistory?: boolean } = {},
+) {
+  // Every tool downloads through here, so this is the single place that feeds "My files".
+  if (options.saveToHistory !== false) void addToHistory(blob, filename);
+
   void (async () => {
     const file = new File([blob], filename, {
       type: blob.type || "application/octet-stream",

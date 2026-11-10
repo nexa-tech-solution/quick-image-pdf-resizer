@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { getRecentTools } from "@/lib/recent-tools";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -48,6 +49,16 @@ const gridTools: { to: string; key: HeaderKey; icon: LucideIcon; tile: string }[
 /** App-style home: two featured cards + an icon grid of every tool. */
 export function AppHomeDashboard() {
   const { t } = useLocale();
+  // Read after mount: localStorage isn't available during SSR.
+  const [recent, setRecent] = useState<typeof gridTools>([]);
+  useEffect(() => {
+    const paths = getRecentTools();
+    setRecent(
+      paths
+        .map((path) => gridTools.find((tool) => tool.to === path))
+        .filter((tool): tool is (typeof gridTools)[number] => Boolean(tool)),
+    );
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -69,6 +80,26 @@ export function AppHomeDashboard() {
           art={<CompressArt />}
         />
       </div>
+
+      {recent.length > 0 && (
+        <section>
+          <h2 className="mb-2.5 text-base font-bold">{t.header.recent}</h2>
+          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {recent.map(({ to, key, icon: Icon, tile }) => (
+              <Link
+                key={to}
+                to={to}
+                className="flex shrink-0 items-center gap-2 rounded-full bg-surface py-1.5 pl-1.5 pr-3.5 text-sm font-medium transition hover:bg-secondary active:scale-[0.98]"
+              >
+                <span className={`flex h-8 w-8 items-center justify-center rounded-full ${tile}`}>
+                  <Icon className="h-4 w-4" />
+                </span>
+                {t.header[key]}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section>
         <h2 className="mb-3 text-base font-bold">{t.toolsGrid.toolset}</h2>

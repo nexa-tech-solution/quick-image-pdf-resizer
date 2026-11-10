@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Analytics } from "@vercel/analytics/react";
 import appCss from "../styles.css?url";
@@ -35,13 +36,19 @@ export const Route = createRootRoute({
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "author", content: "Resize Image" },
         { name: "robots", content: "index,follow" },
-        { name: "theme-color", content: "#111827" },
+        { name: "theme-color", content: "#ffffff" },
+        // iOS "Add to Home Screen": open full-screen like a native app.
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+        { name: "apple-mobile-web-app-title", content: "Resize Image" },
       ],
       links: [
         { rel: "stylesheet", href: appCss },
         { rel: "icon", type: "image/svg+xml", href: faviconUrl },
         { rel: "shortcut icon", href: faviconUrl },
-        { rel: "apple-touch-icon", href: faviconUrl },
+        { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
+        { rel: "manifest", href: "/manifest.webmanifest" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
         {
@@ -83,5 +90,12 @@ function HtmlDocument({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  // Register the offline/installable worker in production only (dev HMR + SW don't mix).
+  useEffect(() => {
+    if (import.meta.env.PROD && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/app-sw.js").catch(() => {});
+    }
+  }, []);
+
   return <Outlet />;
 }

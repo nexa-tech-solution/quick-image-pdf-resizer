@@ -266,12 +266,7 @@ export function RemoveBackgroundTool() {
         </div>
 
         <div className="mobile-cta flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1"
-            onClick={() => setFile(null)}
-          >
+          <Button type="button" variant="outline" className="flex-1" onClick={() => setFile(null)}>
             <RefreshCw className="mr-2 h-4 w-4" />
             {page.newButton}
           </Button>
