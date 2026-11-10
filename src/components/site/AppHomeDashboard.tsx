@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
+  FileArchive,
   FileImage,
   FileStack,
   FileText,
@@ -27,6 +28,12 @@ const gridTools: { to: string; key: HeaderKey; icon: LucideIcon; tile: string }[
     key: "removeBackground",
     icon: Scissors,
     tile: "bg-violet-100 text-violet-600",
+  },
+  {
+    to: "/compress-pdf",
+    key: "compressPdf",
+    icon: FileArchive,
+    tile: "bg-red-100 text-red-600",
   },
   { to: "/image-to-pdf", key: "imageToPdf", icon: FileText, tile: "bg-orange-100 text-orange-600" },
   { to: "/pdf-to-image", key: "pdfToImage", icon: FileImage, tile: "bg-amber-100 text-amber-600" },

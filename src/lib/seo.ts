@@ -8,6 +8,7 @@ export type SeoRouteKey =
   | "imageToPdf"
   | "pdfToImage"
   | "mergeSplitPdf"
+  | "compressPdf"
   | "about";
 
 export type ToolSeoKey =
@@ -17,7 +18,8 @@ export type ToolSeoKey =
   | "removeBackground"
   | "imageToPdf"
   | "pdfToImage"
-  | "mergeSplitPdf";
+  | "mergeSplitPdf"
+  | "compressPdf";
 
 export const siteName = "Resize Image";
 export const defaultSiteUrl = "http://localhost:8080";
@@ -69,6 +71,12 @@ export const seoRouteRegistry: Record<
     changefreq: "weekly",
     schemaType: "SoftwareApplication",
   },
+  compressPdf: {
+    path: "/compress-pdf",
+    priority: 0.9,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
   about: { path: "/about", priority: 0.4, changefreq: "monthly", schemaType: "WebPage" },
 };
 
@@ -80,6 +88,7 @@ export const toolRouteBySeoKey: Record<ToolSeoKey, SeoRouteKey> = {
   imageToPdf: "imageToPdf",
   pdfToImage: "pdfToImage",
   mergeSplitPdf: "mergeSplitPdf",
+  compressPdf: "compressPdf",
 };
 
 export function getSiteUrl() {
@@ -104,6 +113,7 @@ export function getRouteTitle(t: TranslationSet, key: SeoRouteKey) {
   if (key === "imageToPdf") return t.routes.imageToPdf.title;
   if (key === "pdfToImage") return t.routes.pdfToImage.title;
   if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.title;
+  if (key === "compressPdf") return t.routes.compressPdf.title;
   return t.routes.about.title;
 }
 
@@ -115,6 +125,7 @@ export function getRouteDescription(t: TranslationSet, key: SeoRouteKey) {
   if (key === "imageToPdf") return t.routes.imageToPdf.description;
   if (key === "pdfToImage") return t.routes.pdfToImage.description;
   if (key === "mergeSplitPdf") return t.routes.mergeSplitPdf.description;
+  if (key === "compressPdf") return t.routes.compressPdf.description;
   return t.routes.about.description;
 }
 
@@ -447,6 +458,38 @@ export const englishToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  compressPdf: {
+    title: "Compress PDF files online without uploading",
+    intro:
+      "Reduce PDF file size in your browser with three compression levels. Great for scans and photo-heavy PDFs you need to email or upload.",
+    howTitle: "How to compress a PDF",
+    how: [
+      "Drop a PDF file.",
+      "Pick Light, Balanced or Strong compression.",
+      "Download or share the smaller PDF.",
+    ],
+    bestTitle: "Best for",
+    best: [
+      "Scanned documents that are too large to email",
+      "Photo-heavy reports and portfolios",
+      "Meeting upload size limits on forms",
+    ],
+    faqTitle: "Compress PDF FAQ",
+    faqs: [
+      {
+        q: "Is my PDF uploaded to a server?",
+        a: "No. Compression runs entirely in your browser, so the file never leaves your device.",
+      },
+      {
+        q: "Will the text stay selectable?",
+        a: "Pages are re-rendered as images, so text is not selectable in the compressed file. Keep the original if you need to copy text.",
+      },
+      {
+        q: "Which level should I choose?",
+        a: "Balanced works for most files. Use Strong for the smallest size or Light when quality matters most.",
+      },
+    ],
+  },
   mergeSplitPdf: {
     title: "Merge and split PDF pages in your browser",
     intro:
@@ -671,6 +714,38 @@ const portugueseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       {
         q: "Como obtenho imagens em maior resolução?",
         a: "Aumente a escala antes de renderizar as páginas do PDF.",
+      },
+    ],
+  },
+  compressPdf: {
+    title: "Comprima PDF online sem upload",
+    intro:
+      "Reduza o tamanho de PDFs no navegador com três níveis de compressão. Ideal para digitalizações e PDFs com muitas fotos.",
+    howTitle: "Como comprimir um PDF",
+    how: [
+      "Solte um arquivo PDF.",
+      "Escolha compressão Leve, Equilibrada ou Forte.",
+      "Baixe ou compartilhe o PDF menor.",
+    ],
+    bestTitle: "Ideal para",
+    best: [
+      "Documentos digitalizados grandes demais para e-mail",
+      "Relatórios e portfólios com muitas fotos",
+      "Cumprir limites de upload em formulários",
+    ],
+    faqTitle: "Perguntas sobre comprimir PDF",
+    faqs: [
+      {
+        q: "Meu PDF é enviado para um servidor?",
+        a: "Não. A compressão roda no navegador, então o arquivo não sai do seu dispositivo.",
+      },
+      {
+        q: "O texto continua selecionável?",
+        a: "As páginas viram imagens, então o texto não fica selecionável. Mantenha o original se precisar copiar texto.",
+      },
+      {
+        q: "Qual nível escolher?",
+        a: "Equilibrado serve para a maioria. Use Forte para o menor tamanho ou Leve quando a qualidade importa.",
       },
     ],
   },
@@ -901,6 +976,38 @@ const filipinoToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  compressPdf: {
+    title: "I-compress ang PDF online nang walang upload",
+    intro:
+      "Paliitin ang PDF sa browser gamit ang tatlong antas ng compression. Mainam para sa mga scan at PDF na maraming larawan.",
+    howTitle: "Paano i-compress ang PDF",
+    how: [
+      "I-drop ang PDF file.",
+      "Pumili ng Mahina, Balanse o Malakas.",
+      "I-download o ibahagi ang mas maliit na PDF.",
+    ],
+    bestTitle: "Mainam para sa",
+    best: [
+      "Mga scan na sobrang laki para i-email",
+      "Mga report at portfolio na maraming larawan",
+      "Pag-abot sa limitasyon ng upload sa mga form",
+    ],
+    faqTitle: "FAQ sa pag-compress ng PDF",
+    faqs: [
+      {
+        q: "Ina-upload ba ang PDF ko sa server?",
+        a: "Hindi. Sa browser tumatakbo ang compression kaya hindi umaalis ang file sa device mo.",
+      },
+      {
+        q: "Mapipili pa ba ang teksto?",
+        a: "Ginagawang larawan ang mga pahina kaya hindi mapipili ang teksto. Itago ang orihinal kung kailangan mong kopyahin ang teksto.",
+      },
+      {
+        q: "Anong antas ang pipiliin?",
+        a: "Balanse ang angkop sa karamihan. Malakas para sa pinakamaliit, Mahina kung mahalaga ang kalidad.",
+      },
+    ],
+  },
   mergeSplitPdf: {
     title: "I-merge at i-split ang PDF pages sa browser",
     intro:
@@ -1128,6 +1235,38 @@ const indonesianToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  compressPdf: {
+    title: "Kompres PDF online tanpa upload",
+    intro:
+      "Perkecil ukuran PDF di browser dengan tiga tingkat kompresi. Cocok untuk hasil scan dan PDF berisi banyak foto.",
+    howTitle: "Cara mengompres PDF",
+    how: [
+      "Letakkan file PDF.",
+      "Pilih kompresi Ringan, Seimbang, atau Kuat.",
+      "Unduh atau bagikan PDF yang lebih kecil.",
+    ],
+    bestTitle: "Cocok untuk",
+    best: [
+      "Dokumen scan yang terlalu besar untuk email",
+      "Laporan dan portofolio penuh foto",
+      "Memenuhi batas upload di formulir",
+    ],
+    faqTitle: "FAQ kompres PDF",
+    faqs: [
+      {
+        q: "Apakah PDF saya diunggah ke server?",
+        a: "Tidak. Kompresi berjalan di browser, jadi file tidak pernah meninggalkan perangkat Anda.",
+      },
+      {
+        q: "Apakah teks masih bisa dipilih?",
+        a: "Halaman diubah menjadi gambar, jadi teks tidak bisa dipilih. Simpan file asli jika perlu menyalin teks.",
+      },
+      {
+        q: "Tingkat mana yang harus dipilih?",
+        a: "Seimbang cocok untuk sebagian besar file. Gunakan Kuat untuk ukuran terkecil atau Ringan jika kualitas utama.",
+      },
+    ],
+  },
   mergeSplitPdf: {
     title: "Gabung dan pisahkan halaman PDF di browser",
     intro:
@@ -1343,6 +1482,38 @@ const vietnameseToolSeoCopy: Record<ToolSeoKey, ToolSeoCopy> = {
       },
     ],
   },
+  compressPdf: {
+    title: "Nén PDF online không cần upload",
+    intro:
+      "Giảm dung lượng PDF ngay trên trình duyệt với 3 mức nén. Phù hợp cho file scan và PDF nhiều ảnh cần gửi email hoặc nộp hồ sơ.",
+    howTitle: "Cách nén PDF",
+    how: [
+      "Thả file PDF vào.",
+      "Chọn mức Nhẹ, Cân bằng hoặc Mạnh.",
+      "Tải xuống hoặc chia sẻ file PDF đã nén.",
+    ],
+    bestTitle: "Phù hợp cho",
+    best: [
+      "Tài liệu scan quá nặng để gửi email",
+      "Báo cáo, hồ sơ năng lực nhiều hình ảnh",
+      "Nộp hồ sơ có giới hạn dung lượng",
+    ],
+    faqTitle: "Câu hỏi về nén PDF",
+    faqs: [
+      {
+        q: "PDF có bị tải lên server không?",
+        a: "Không. Việc nén chạy hoàn toàn trên trình duyệt nên file không rời khỏi thiết bị của bạn.",
+      },
+      {
+        q: "Chữ trong PDF còn copy được không?",
+        a: "Các trang được chuyển thành ảnh nên chữ không copy được. Hãy giữ file gốc nếu cần lấy chữ.",
+      },
+      {
+        q: "Nên chọn mức nén nào?",
+        a: "Cân bằng phù hợp với hầu hết file. Chọn Mạnh để nhỏ nhất, Nhẹ khi cần giữ chất lượng.",
+      },
+    ],
+  },
   mergeSplitPdf: {
     title: "Ghép và tách trang PDF trong trình duyệt",
     intro:
@@ -1391,6 +1562,7 @@ export const toolSeoUiCopy: Record<
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
       mergeSplitPdf: "Merge & Split PDF",
+      compressPdf: "Compress PDF",
     },
   },
   "en-IN": {
@@ -1403,6 +1575,7 @@ export const toolSeoUiCopy: Record<
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
       mergeSplitPdf: "Merge & Split PDF",
+      compressPdf: "Compress PDF",
     },
   },
   "pt-BR": {
@@ -1415,6 +1588,7 @@ export const toolSeoUiCopy: Record<
       imageToPdf: "Imagem para PDF",
       pdfToImage: "PDF para Imagem",
       mergeSplitPdf: "Mesclar e Dividir PDF",
+      compressPdf: "Comprimir PDF",
     },
   },
   "fil-PH": {
@@ -1427,6 +1601,7 @@ export const toolSeoUiCopy: Record<
       imageToPdf: "Image to PDF",
       pdfToImage: "PDF to Image",
       mergeSplitPdf: "Merge at Split PDF",
+      compressPdf: "I-compress ang PDF",
     },
   },
   "id-ID": {
@@ -1439,6 +1614,7 @@ export const toolSeoUiCopy: Record<
       imageToPdf: "Gambar ke PDF",
       pdfToImage: "PDF ke Gambar",
       mergeSplitPdf: "Gabung & Pisah PDF",
+      compressPdf: "Kompres PDF",
     },
   },
   "vi-VN": {
@@ -1451,6 +1627,7 @@ export const toolSeoUiCopy: Record<
       imageToPdf: "Ảnh sang PDF",
       pdfToImage: "PDF sang Ảnh",
       mergeSplitPdf: "Ghép & Tách PDF",
+      compressPdf: "Nén PDF",
     },
   },
 };

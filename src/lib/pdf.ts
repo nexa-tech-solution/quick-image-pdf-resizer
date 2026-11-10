@@ -1,4 +1,4 @@
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, degrees } from "pdf-lib";
 
 type PdfJsPage = {
   getViewport: (options: { scale: number }) => { width: number; height: number };
@@ -19,6 +19,8 @@ type PdfJsDocument = {
 export type PdfPageReference = {
   bytes: Uint8Array;
   pageIndex: number;
+  /** Extra clockwise rotation in degrees (0/90/180/270) applied on export. */
+  rotation?: number;
 };
 
 export async function loadPdfWithThumbnails(file: File, scale = 0.22) {
@@ -55,7 +57,13 @@ export async function buildPdfFromPages(pages: PdfPageReference[]) {
     }
 
     const [copiedPage] = await output.copyPages(sourceDoc, [page.pageIndex]);
-    if (copiedPage) output.addPage(copiedPage);
+    if (copiedPage) {
+      if (page.rotation) {
+        const current = copiedPage.getRotation().angle;
+        copiedPage.setRotation(degrees((current + page.rotation) % 360));
+      }
+      output.addPage(copiedPage);
+    }
   }
 
   return output.save();
@@ -103,4 +111,78 @@ async function renderPdfPageThumbnail(page: PdfJsPage, scale: number) {
       0.78,
     );
   });
+}
+
+export type PdfCompressionLevel = "low" | "medium" | "high";
+
+/** Render scale (relative to 72dpi points) and JPEG quality per level. */
+const compressionSettings: Record<PdfCompressionLevel, { scale: number; quality: number }> = {
+  low: { scale: 2, quality: 0.82 },
+  medium: { scale: 1.5, quality: 0.62 },
+  high: { scale: 1.1, quality: 0.42 },
+};
+
+/**
+ * Compress a PDF by re-rendering each page to a JPEG and rebuilding the document.
+ * Works for scans/photo-heavy PDFs; text becomes part of the image (not selectable).
+ */
+export async function compressPdf(
+  file: File,
+  level: PdfCompressionLevel,
+  onProgress?: (current: number, total: number) => void,
+) {
+  const { scale, quality } = compressionSettings[level];
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const doc = await openPdfDocument(bytes);
+  const output = await PDFDocument.create();
+
+  try {
+    for (let index = 0; index < doc.numPages; index++) {
+      onProgress?.(index + 1, doc.numPages);
+      const page = await doc.getPage(index + 1);
+      const base = page.getViewport({ scale: 1 });
+      const jpeg = await renderPdfPageToJpeg(page, scale, quality);
+      page.cleanup?.();
+
+      const image = await output.embedJpg(await jpeg.arrayBuffer());
+      const pdfPage = output.addPage([base.width, base.height]);
+      pdfPage.drawImage(image, { x: 0, y: 0, width: base.width, height: base.height });
+    }
+  } finally {
+    await doc.destroy();
+  }
+
+  const saved = await output.save({ useObjectStreams: true });
+  return {
+    blob: new Blob([saved as BlobPart], { type: "application/pdf" }),
+    pageCount: output.getPageCount(),
+  };
+}
+
+export function compressedPdfFilename(filename: string) {
+  return `${filename.replace(/\.[^.]+$/, "")}-compressed.pdf`;
+}
+
+async function renderPdfPageToJpeg(page: PdfJsPage, scale: number, quality: number) {
+  const viewport = page.getViewport({ scale });
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.ceil(viewport.width);
+  canvas.height = Math.ceil(viewport.height);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas is not available");
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  await page.render({ canvasContext: ctx, viewport, canvas }).promise;
+
+  const blob = await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (b) => (b ? resolve(b) : reject(new Error("Could not render PDF page"))),
+      "image/jpeg",
+      quality,
+    );
+  });
+  canvas.width = 0;
+  canvas.height = 0;
+  return blob;
 }

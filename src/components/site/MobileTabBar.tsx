@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+  FileArchive,
   FileImage,
   FileStack,
   FileText,
@@ -25,6 +26,7 @@ const allTools: Tool[] = [
   { to: "/remove-background", key: "removeBackground", icon: Scissors },
   { to: "/image-to-pdf", key: "imageToPdf", icon: FileText },
   { to: "/pdf-to-image", key: "pdfToImage", icon: FileImage },
+  { to: "/compress-pdf", key: "compressPdf", icon: FileArchive },
   { to: "/merge-split-pdf", key: "mergeSplitPdf", icon: FileStack },
 ];
 

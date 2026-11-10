@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/site/ShareButton";
 import { useEffect, useRef, useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
@@ -235,6 +236,10 @@ function PdfToImage() {
               >
                 {page.newButton}
               </button>
+              <ShareButton
+                disabled={pages.length === 0}
+                getFiles={() => pages.map(({ blob, filename }) => ({ blob, filename }))}
+              />
               <button
                 onClick={onRender}
                 disabled={busy}

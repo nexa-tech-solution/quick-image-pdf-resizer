@@ -4,6 +4,7 @@ import { PDFDocument, PageSizes } from "pdf-lib";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
 import { FileDropzone } from "@/components/site/FileDropzone";
+import { CameraCaptureButton } from "@/components/site/CameraCaptureButton";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { ToolSeoContent } from "@/components/site/ToolSeoContent";
 import { downloadBlob, formatBytes, loadImage, replaceExt } from "@/lib/image";
@@ -173,6 +174,12 @@ function ImageToPdf() {
         title={files.length === 0 ? page.dropTitleEmpty : page.dropTitleFilled}
         compact={files.length > 0}
         hint={page.hint}
+      />
+      <CameraCaptureButton
+        className="mt-3"
+        onCapture={(f) =>
+          setItems((prev) => [...prev, ...f.map((file) => createToolFileItem(file))])
+        }
       />
 
       {files.length > 0 && (

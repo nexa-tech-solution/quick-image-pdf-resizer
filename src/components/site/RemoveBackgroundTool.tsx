@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/site/ShareButton";
 import { useEffect, useMemo, useState } from "react";
 import { Download, Loader2, RefreshCw, Scissors, X } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
@@ -264,13 +265,26 @@ export function RemoveBackgroundTool() {
           <p className="mt-2 text-xs leading-5 text-muted-foreground">{page.bestResults}</p>
         </div>
 
-        <div className="mobile-cta grid grid-cols-2 gap-2">
-          <Button type="button" variant="outline" onClick={() => setFile(null)}>
+        <div className="mobile-cta flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={() => setFile(null)}
+          >
             <RefreshCw className="mr-2 h-4 w-4" />
             {page.newButton}
           </Button>
+          <ShareButton
+            className="h-10 w-10 rounded-md"
+            disabled={!processedBlob}
+            getFiles={() =>
+              processedBlob ? [{ blob: processedBlob, filename: downloadName }] : []
+            }
+          />
           <Button
             type="button"
+            className="flex-1"
             onClick={onDownload}
             disabled={!processedBlob || busy || Boolean(error)}
           >

@@ -1,5 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowUp, Download, FileStack, GripVertical, Loader2, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Download,
+  FileStack,
+  GripVertical,
+  Loader2,
+  RotateCw,
+  X,
+} from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { FileDropzone } from "@/components/site/FileDropzone";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
@@ -34,6 +43,8 @@ export type PdfPageItem = {
   pageIndex: number;
   thumbnailUrl?: string;
   status: PdfStatus;
+  /** Extra clockwise rotation applied on export (0/90/180/270). */
+  rotation?: number;
 };
 
 export const Route = createFileRoute("/merge-split-pdf")({
@@ -131,6 +142,14 @@ function MergeSplitPdf() {
     }
   };
 
+  const rotatePage = (id: string) => {
+    setPages((current) =>
+      current.map((item) =>
+        item.id === id ? { ...item, rotation: ((item.rotation ?? 0) + 90) % 360 } : item,
+      ),
+    );
+  };
+
   const removePage = (id: string) => {
     setPages((current) => {
       const target = current.find((item) => item.id === id);
@@ -177,7 +196,7 @@ function MergeSplitPdf() {
         pages.map((item) => {
           const source = sourceMap.get(item.sourceId);
           if (!source) throw new Error("Missing PDF source");
-          return { bytes: source.bytes, pageIndex: item.pageIndex };
+          return { bytes: source.bytes, pageIndex: item.pageIndex, rotation: item.rotation };
         }),
       );
       const filename =
@@ -281,7 +300,8 @@ function MergeSplitPdf() {
                         <img
                           src={item.thumbnailUrl}
                           alt={formatPdfPageLabel(item.fileName, item.pageIndex)}
-                          className="h-full w-full object-contain"
+                          className="h-full w-full object-contain transition-transform duration-200"
+                          style={{ transform: `rotate(${item.rotation ?? 0}deg)` }}
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-muted-foreground">
@@ -307,7 +327,7 @@ function MergeSplitPdf() {
                           <X className="h-4 w-4" />
                         </button>
                       </div>
-                      <div className="mt-3 grid grid-cols-2 gap-2">
+                      <div className="mt-3 grid grid-cols-[1fr_1fr_auto] gap-2">
                         <button
                           type="button"
                           onClick={() => movePage(index, index - 1)}
@@ -329,6 +349,16 @@ function MergeSplitPdf() {
                         >
                           <ArrowDown className="h-3.5 w-3.5" />
                           {page.down}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => rotatePage(item.id)}
+                          draggable={false}
+                          aria-label={t.header.rotate}
+                          title={t.header.rotate}
+                          className="inline-flex items-center justify-center rounded-md border border-border px-2 py-1.5 text-xs font-medium hover:bg-secondary"
+                        >
+                          <RotateCw className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     </div>

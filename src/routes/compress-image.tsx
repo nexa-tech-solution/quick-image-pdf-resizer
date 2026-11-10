@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/site/ShareButton";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, Loader2, X } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
@@ -426,7 +427,18 @@ function CompressImage() {
                   {page.pngHint}
                 </div>
               )}
-              <div className="mobile-cta">
+              <div className="mobile-cta flex gap-2">
+                <ShareButton
+                  disabled={!items.some((item) => item.outputBlob)}
+                  getFiles={() =>
+                    items.flatMap((item) =>
+                      item.outputBlob && item.outputFilename
+                        ? [{ blob: item.outputBlob, filename: item.outputFilename }]
+                        : [],
+                    )
+                  }
+                />
+
                 <button
                   type="button"
                   disabled={busy}
@@ -441,7 +453,7 @@ function CompressImage() {
                         }, index * 200);
                       })
                   }
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+                  className="flex min-h-12 w-full flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
                 >
                   {busy && <Loader2 className="h-4 w-4 animate-spin" />}
                   {copy.shared.downloadAll}

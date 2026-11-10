@@ -19,6 +19,8 @@ const routes = [
   { path: "/image-to-pdf", priority: "0.85", changefreq: "weekly" },
   { path: "/pdf-to-image", priority: "0.85", changefreq: "weekly" },
   { path: "/merge-split-pdf", priority: "0.85", changefreq: "weekly" },
+  { path: "/compress-pdf", priority: "0.9", changefreq: "weekly" },
+  { path: "/remove-background", priority: "0.85", changefreq: "weekly" },
   { path: "/about", priority: "0.4", changefreq: "monthly" },
 ];
 

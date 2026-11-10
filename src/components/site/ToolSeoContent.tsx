@@ -16,7 +16,8 @@ const relatedTools: Record<ToolSeoKey, ToolSeoKey[]> = {
   removeBackground: ["compress", "convert", "resize"],
   imageToPdf: ["mergeSplitPdf", "resize", "pdfToImage"],
   pdfToImage: ["mergeSplitPdf", "imageToPdf", "convert"],
-  mergeSplitPdf: ["imageToPdf", "pdfToImage", "convert"],
+  mergeSplitPdf: ["compressPdf", "imageToPdf", "pdfToImage"],
+  compressPdf: ["mergeSplitPdf", "imageToPdf", "pdfToImage"],
 };
 
 export function ToolSeoContent({ tool }: { tool: ToolSeoKey }) {

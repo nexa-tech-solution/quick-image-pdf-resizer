@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CompressImageRouteImport } from './routes/compress-image'
+import { Route as CompressPdfRouteImport } from './routes/compress-pdf'
 import { Route as ConvertImageRouteImport } from './routes/convert-image'
 import { Route as ImageToPdfRouteImport } from './routes/image-to-pdf'
 import { Route as MergeSplitPdfRouteImport } from './routes/merge-split-pdf'
@@ -32,6 +33,11 @@ const AboutRoute = AboutRouteImport.update({
 const CompressImageRoute = CompressImageRouteImport.update({
   id: '/compress-image',
   path: '/compress-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompressPdfRoute = CompressPdfRouteImport.update({
+  id: '/compress-pdf',
+  path: '/compress-pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConvertImageRoute = ConvertImageRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
+  '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/merge-split-pdf': typeof MergeSplitPdfRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
+  '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/merge-split-pdf': typeof MergeSplitPdfRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/compress-image': typeof CompressImageRoute
+  '/compress-pdf': typeof CompressPdfRoute
   '/convert-image': typeof ConvertImageRoute
   '/image-to-pdf': typeof ImageToPdfRoute
   '/merge-split-pdf': typeof MergeSplitPdfRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/compress-image'
+    | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
     | '/merge-split-pdf'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/compress-image'
+    | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
     | '/merge-split-pdf'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/compress-image'
+    | '/compress-pdf'
     | '/convert-image'
     | '/image-to-pdf'
     | '/merge-split-pdf'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   CompressImageRoute: typeof CompressImageRoute
+  CompressPdfRoute: typeof CompressPdfRoute
   ConvertImageRoute: typeof ConvertImageRoute
   ImageToPdfRoute: typeof ImageToPdfRoute
   MergeSplitPdfRoute: typeof MergeSplitPdfRoute
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/compress-image'
       fullPath: '/compress-image'
       preLoaderRoute: typeof CompressImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compress-pdf': {
+      id: '/compress-pdf'
+      path: '/compress-pdf'
+      fullPath: '/compress-pdf'
+      preLoaderRoute: typeof CompressPdfRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/convert-image': {
@@ -219,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   CompressImageRoute: CompressImageRoute,
+  CompressPdfRoute: CompressPdfRoute,
   ConvertImageRoute: ConvertImageRoute,
   ImageToPdfRoute: ImageToPdfRoute,
   MergeSplitPdfRoute: MergeSplitPdfRoute,

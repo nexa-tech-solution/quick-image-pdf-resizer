@@ -17,6 +17,7 @@ const tools: HeaderTool[] = [
   { to: "/convert-image", key: "convert" },
   { to: "/image-to-pdf", key: "imageToPdf" },
   { to: "/pdf-to-image", key: "pdfToImage" },
+  { to: "/compress-pdf", key: "compressPdf" },
   { to: "/merge-split-pdf", key: "mergeSplitPdf" },
 ] as const;
 

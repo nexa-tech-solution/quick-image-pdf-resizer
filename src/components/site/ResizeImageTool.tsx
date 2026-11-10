@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/site/ShareButton";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Crop, Download, Loader2, Lock, Maximize2, Move, RefreshCw, Unlock, X } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
@@ -755,6 +756,16 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 >
                   <RefreshCw className="h-5 w-5" />
                 </button>
+                <ShareButton
+                  disabled={!items.some((item) => item.outputBlob)}
+                  getFiles={() =>
+                    items.flatMap((item) =>
+                      item.outputBlob && item.outputFilename
+                        ? [{ blob: item.outputBlob, filename: item.outputFilename }]
+                        : [],
+                    )
+                  }
+                />
                 {items.length > 1 && (
                   <button
                     onClick={downloadAll}

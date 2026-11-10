@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/site/ShareButton";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, Loader2, X } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
@@ -384,6 +385,16 @@ function ConvertImage() {
                 >
                   {page.newButton}
                 </button>
+                <ShareButton
+                  disabled={!items.some((item) => item.outputBlob)}
+                  getFiles={() =>
+                    items.flatMap((item) =>
+                      item.outputBlob && item.outputFilename
+                        ? [{ blob: item.outputBlob, filename: item.outputFilename }]
+                        : [],
+                    )
+                  }
+                />
                 <button
                   onClick={downloadReady}
                   disabled={busy || items.every((item) => !item.outputBlob)}
