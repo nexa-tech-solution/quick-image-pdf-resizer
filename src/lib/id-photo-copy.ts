@@ -52,7 +52,7 @@ const en: IdPhotoCopy = {
   crown: "Top of head",
   chin: "Chin",
   savePhoto: "Save photo",
-  saveSheet: (n) => `Print sheet 10×15 (${n})`,
+  saveSheet: (n) => `Print 10×15 (${n})`,
   newPhoto: "New photo",
   specTags: {
     "3x4": "ID card",
@@ -89,7 +89,7 @@ const copy: Record<Locale, IdPhotoCopy> = {
     crown: "Đỉnh đầu",
     chin: "Cằm",
     savePhoto: "Lưu ảnh",
-    saveSheet: (n) => `Bản in 10×15 (${n} ảnh)`,
+    saveSheet: (n) => `In 10×15 (${n})`,
     newPhoto: "Ảnh mới",
     specTags: {
       "3x4": "Ảnh thẻ",
@@ -126,7 +126,7 @@ const copy: Record<Locale, IdPhotoCopy> = {
     crown: "Topo da cabeça",
     chin: "Queixo",
     savePhoto: "Salvar foto",
-    saveSheet: (n) => `Folha 10×15 (${n})`,
+    saveSheet: (n) => `Imprimir 10×15 (${n})`,
     newPhoto: "Nova foto",
     specTags: {
       "3x4": "Documento 3×4",
@@ -169,7 +169,7 @@ const copy: Record<Locale, IdPhotoCopy> = {
     crown: "Tuktok ng ulo",
     chin: "Baba",
     savePhoto: "I-save ang litrato",
-    saveSheet: (n) => `4R print sheet (${n})`,
+    saveSheet: (n) => `I-print 4R (${n})`,
     newPhoto: "Bagong litrato",
     specTags: {
       "3x4": "ID",
@@ -206,7 +206,7 @@ const copy: Record<Locale, IdPhotoCopy> = {
     crown: "Puncak kepala",
     chin: "Dagu",
     savePhoto: "Simpan foto",
-    saveSheet: (n) => `Lembar cetak 10×15 (${n})`,
+    saveSheet: (n) => `Cetak 10×15 (${n})`,
     newPhoto: "Foto baru",
     specTags: {
       "3x4": "Pas foto",

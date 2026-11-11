@@ -200,7 +200,7 @@ export function analyzeSubject(cutout: HTMLCanvasElement): Subject | null {
   // No clear neck (e.g. head-only crop): a head is about 1.35× as tall as wide.
   const chin =
     neck > 0
-      ? Math.min(h - 1, neck + (neck - top) * 0.03)
+      ? Math.min(h - 1, neck + (neck - top) * 0.06)
       : Math.min(h - 1, top + headWidth * 1.35);
 
   let sum = 0;
