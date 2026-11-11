@@ -16,7 +16,8 @@
 
 @theme inline {
   --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Be Vietnam Pro", ui-sans-serif, system-ui, ui-monospace, "SF Mono", Menlo, monospace;
+  --font-mono:
+    "Be Vietnam Pro", ui-sans-serif, system-ui, ui-monospace, "SF Mono", Menlo, monospace;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -48,7 +49,8 @@
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
   --shadow-soft: 0 1px 2px 0 oklch(0.2 0.04 260 / 0.04), 0 1px 3px 0 oklch(0.2 0.04 260 / 0.06);
-  --shadow-elevated: 0 10px 30px -12px oklch(0.2 0.04 260 / 0.12), 0 4px 12px -4px oklch(0.2 0.04 260 / 0.06);
+  --shadow-elevated:
+    0 10px 30px -12px oklch(0.2 0.04 260 / 0.12), 0 4px 12px -4px oklch(0.2 0.04 260 / 0.06);
   --shadow-glow: 0 0 0 8px oklch(0.58 0.21 25 / 0.08);
   --gradient-hero: linear-gradient(135deg, oklch(0.985 0.005 250), oklch(0.96 0.012 250));
   --gradient-primary: linear-gradient(135deg, oklch(0.62 0.21 25), oklch(0.54 0.22 22));
@@ -126,7 +128,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, h4, .font-display {
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
     font-family: var(--font-sans);
     letter-spacing: -0.01em;
   }
@@ -136,7 +142,10 @@
 :root {
   --app-w: 30rem;
   /* inset from viewport edge to the column edge (0 on phones) */
-  --app-inset: max(0px, calc((100% - var(--app-w)) / 2)); /* % resolves per fixed element = viewport minus scrollbar */
+  --app-inset: max(
+    0px,
+    calc((100% - var(--app-w)) / 2)
+  ); /* % resolves per fixed element = viewport minus scrollbar */
 }
 
 html {
@@ -171,4 +180,98 @@ textarea {
 html,
 body {
   overflow-x: clip;
+}
+
+/* ---------- Motion: skeletons + entrance ---------- */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Shimmering placeholder. Usage: <div class="skeleton h-24 rounded-xl" /> */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in oklab, var(--color-muted-foreground) 10%, transparent);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, white 55%, transparent),
+    transparent
+  );
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* Soft rise-in for blocks that appear after an action. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise-in {
+  animation: rise-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* Opacity-only variant for containers that hold position:fixed children
+   (.mobile-cta) — a transform would re-anchor them mid-animation. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fade-in {
+  animation: fade-in 0.28s ease-out both;
+}
+/* Stagger direct children: <div class="rise-stagger"> … */
+.rise-stagger > * {
+  animation: rise-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.rise-stagger > *:nth-child(2) {
+  animation-delay: 40ms;
+}
+.rise-stagger > *:nth-child(3) {
+  animation-delay: 80ms;
+}
+.rise-stagger > *:nth-child(4) {
+  animation-delay: 120ms;
+}
+.rise-stagger > *:nth-child(5) {
+  animation-delay: 160ms;
+}
+.rise-stagger > *:nth-child(n + 6) {
+  animation-delay: 200ms;
+}
+
+/* Every tappable button gets a subtle press. */
+button:not(:disabled) {
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
+}
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after,
+  .rise-in,
+  .fade-in,
+  .rise-stagger > * {
+    animation: none;
+  }
+  button:not(:disabled):active {
+    transform: none;
+  }
 }

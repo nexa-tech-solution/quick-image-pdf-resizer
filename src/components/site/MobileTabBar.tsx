@@ -16,6 +16,7 @@ import {
   Lock,
   LockOpen,
   ScanLine,
+  Eye,
   type LucideIcon,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -35,6 +36,7 @@ const allTools: Tool[] = [
   { to: "/pdf-to-image", key: "pdfToImage", icon: FileImage },
   { to: "/compress-pdf", key: "compressPdf", icon: FileArchive },
   { to: "/merge-split-pdf", key: "mergeSplitPdf", icon: FileStack },
+  { to: "/view", key: "viewFile", icon: Eye },
   { to: "/scan-document", key: "scanDocument", icon: ScanLine },
   { to: "/text-to-pdf", key: "textToPdf", icon: Type },
   { to: "/pdf-to-word", key: "pdfToWord", icon: FileType },

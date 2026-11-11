@@ -12,6 +12,9 @@ import {
 } from "@/lib/file-history";
 import { useLocale } from "@/lib/i18n";
 import { downloadBlob, formatBytes } from "@/lib/image";
+import { useLightbox } from "@/components/site/Lightbox";
+import { FileViewerOverlay } from "@/components/site/FileViewerOverlay";
+import { detectViewerKind } from "@/components/site/FileViewer";
 
 export const Route = createFileRoute("/files")({
   // Personal, device-local page: keep it out of search results.
@@ -107,6 +110,13 @@ function FileRow({ entry }: { entry: HistoryEntry }) {
   }, [entry.blob, isImage]);
 
   const Icon = entry.type === "application/zip" ? FileArchive : FileText;
+  const lightbox = useLightbox();
+  const [viewing, setViewing] = useState(false);
+  const viewable = detectViewerKind(entry.filename, entry.type) !== "unsupported";
+  const openViewer = () => {
+    if (isImage && thumb) lightbox.open([{ src: thumb, name: entry.filename, blob: entry.blob }]);
+    else if (viewable) setViewing(true);
+  };
   const time = new Date(entry.createdAt).toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
@@ -114,23 +124,30 @@ function FileRow({ entry }: { entry: HistoryEntry }) {
 
   return (
     <div className="flex items-center gap-3 rounded-2xl bg-surface p-2">
-      {thumb ? (
-        <img
-          src={thumb}
-          alt=""
-          className="h-12 w-12 shrink-0 rounded-xl bg-background object-cover"
-        />
-      ) : (
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-          <Icon className="h-6 w-6" />
-        </span>
-      )}
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium">{entry.filename}</div>
-        <div className="mt-0.5 text-xs text-muted-foreground">
-          {formatBytes(entry.size)} · {time}
+      <button
+        type="button"
+        disabled={!viewable}
+        onClick={openViewer}
+        className="flex min-w-0 flex-1 items-center gap-3 text-left disabled:cursor-default"
+      >
+        {thumb ? (
+          <img
+            src={thumb}
+            alt=""
+            className="h-12 w-12 shrink-0 rounded-xl bg-background object-cover"
+          />
+        ) : (
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+            <Icon className="h-6 w-6" />
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-medium">{entry.filename}</div>
+          <div className="mt-0.5 text-xs text-muted-foreground">
+            {formatBytes(entry.size)} · {time}
+          </div>
         </div>
-      </div>
+      </button>
       <ShareButton
         className="h-10 w-10 rounded-full border-0 bg-background shadow-soft"
         getFiles={() => [{ blob: entry.blob, filename: entry.filename }]}
@@ -151,6 +168,15 @@ function FileRow({ entry }: { entry: HistoryEntry }) {
       >
         <Trash2 className="h-4 w-4" />
       </button>
+      {lightbox.node}
+      {viewing && (
+        <FileViewerOverlay
+          blob={entry.blob}
+          name={entry.filename}
+          type={entry.type}
+          onClose={() => setViewing(false)}
+        />
+      )}
     </div>
   );
 }

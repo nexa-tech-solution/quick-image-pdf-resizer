@@ -83,7 +83,7 @@ function CompressPdfPage() {
           hint={page.hint}
         />
       ) : (
-        <div className="space-y-4">
+        <div className="fade-in space-y-4">
           {/* File + before/after sizes */}
           <div className="flex items-center gap-3 rounded-2xl bg-surface p-3">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">

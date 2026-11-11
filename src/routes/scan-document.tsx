@@ -11,6 +11,7 @@ import {
   Trash2,
   Wand2,
 } from "lucide-react";
+import { SmoothImage } from "@/components/site/SmoothImage";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { ToolPage } from "@/components/site/ToolPage";
 import { Notice, ProgressBox, Segmented } from "@/components/site/ToolBits";
@@ -269,7 +270,7 @@ function ScanDocumentPage() {
           {error && <Notice>{error}</Notice>}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="fade-in space-y-4">
           <section className="rounded-2xl bg-surface p-3">
             <Segmented
               label={page.filter}
@@ -287,17 +288,11 @@ function ScanDocumentPage() {
           {busy && <ProgressBox label={busy} />}
           {error && <Notice>{error}</Notice>}
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="rise-stagger grid grid-cols-2 gap-3 sm:grid-cols-3">
             {pages.map((p, i) => (
               <figure key={p.id} className="overflow-hidden rounded-xl bg-surface">
                 <div className="relative flex aspect-[3/4] items-center justify-center bg-secondary p-2">
-                  {p.outputUrl && (
-                    <img
-                      src={p.outputUrl}
-                      alt=""
-                      className="max-h-full max-w-full rounded object-contain shadow-soft"
-                    />
-                  )}
+                  <SmoothImage src={p.outputUrl} busy={!!busy} className="h-full w-full rounded" />
                   <span className="absolute left-2 top-2 rounded-full bg-background/90 px-2 py-0.5 text-[11px] font-bold">
                     {i + 1}
                   </span>

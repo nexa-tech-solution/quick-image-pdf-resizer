@@ -88,7 +88,7 @@ function PdfToWordPage() {
           <Notice tone="info">{page.limits}</Notice>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="fade-in space-y-4">
           <FileCard
             name={file.name}
             size={file.size}
@@ -99,11 +99,18 @@ function PdfToWordPage() {
             }
           />
           {busy && <ProgressBox label={page.converting} progress={progress} />}
+          {busy && (
+            <div className="space-y-2 rounded-2xl bg-surface p-3">
+              {["w-2/3", "w-full", "w-11/12", "w-full", "w-4/5", "w-1/2"].map((w, i) => (
+                <div key={i} className={`skeleton h-3 rounded ${w}`} />
+              ))}
+            </div>
+          )}
           {error && <Notice>{error}</Notice>}
           {empty && <Notice tone="warn">{page.noText}</Notice>}
 
           {result && (
-            <section className="rounded-2xl bg-surface p-3">
+            <section className="rise-in rounded-2xl bg-surface p-3">
               <h2 className="mb-2 px-0.5 text-sm font-semibold">{page.preview}</h2>
               <div className="max-h-80 space-y-2 overflow-y-auto rounded-xl bg-background p-3 text-sm leading-6 shadow-soft">
                 {result.paragraphs.slice(0, 40).map((p, i) => (

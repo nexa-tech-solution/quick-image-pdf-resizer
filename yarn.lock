@@ -2780,6 +2780,13 @@ diff@^9.0.0:
   resolved "https://registry.yarnpkg.com/diff/-/diff-9.0.0.tgz#297c31cd7c280f13dfe335791ec2063bd4a73a6f"
   integrity sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==
 
+docx-preview@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/docx-preview/-/docx-preview-0.4.1.tgz#257f03a118fef747d35967a0b79cc4ea98605bf4"
+  integrity sha512-Dv4g+LeE0swHpPvNC0lAT0YsR5Zq5pAxw7d3vHQ8EChBLgIrqqe9VPL5nVt2HBJap8bEZbXUI0TJob7kBeNU9w==
+  dependencies:
+    jszip ">=3.0.0"
+
 docx@9.14.0:
   version "9.14.0"
   resolved "https://registry.yarnpkg.com/docx/-/docx-9.14.0.tgz#8d0f1290a3e9ef8c4e0413c64b22d8d74fa63a81"
@@ -3318,7 +3325,7 @@ json5@^2.2.3:
   resolved "https://registry.npmjs.org/json5/-/json5-2.2.3.tgz"
   integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
 
-jszip@^3.10.1:
+jszip@>=3.0.0, jszip@^3.10.1:
   version "3.10.2"
   resolved "https://registry.yarnpkg.com/jszip/-/jszip-3.10.2.tgz#9fee8cfaaffb601f6c8796ecc522e4f81cbe88bf"
   integrity sha512-3l+rb15IOWtUhU0H5MFqES/T6Kh7abYwjosBey/vD6hDt8zoEffkSC5Ws5SGtgVw3gBx2NEbhTeSW1+kWkpyTQ==

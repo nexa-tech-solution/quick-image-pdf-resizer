@@ -109,6 +109,12 @@ export const seoRouteRegistry: Record<
     changefreq: "weekly",
     schemaType: "SoftwareApplication",
   },
+  viewFile: {
+    path: "/view",
+    priority: 0.85,
+    changefreq: "weekly",
+    schemaType: "SoftwareApplication",
+  },
   scanDocument: {
     path: "/scan-document",
     priority: 0.85,
@@ -136,6 +142,7 @@ const v3Keys = new Set<string>([
   "protectPdf",
   "unlockPdf",
   "scanDocument",
+  "viewFile",
 ]);
 function isV3Key(key: SeoRouteKey): key is V3ToolKey {
   return v3Keys.has(key);

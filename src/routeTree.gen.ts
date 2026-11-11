@@ -26,6 +26,7 @@ import { Route as RemoveBackgroundRouteImport } from './routes/remove-background
 import { Route as ScanDocumentRouteImport } from './routes/scan-document'
 import { Route as TextToPdfRouteImport } from './routes/text-to-pdf'
 import { Route as UnlockPdfRouteImport } from './routes/unlock-pdf'
+import { Route as ViewRouteImport } from './routes/view'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -112,6 +113,11 @@ const UnlockPdfRoute = UnlockPdfRouteImport.update({
   path: '/unlock-pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ViewRoute = ViewRouteImport.update({
+  id: '/view',
+  path: '/view',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/scan-document': typeof ScanDocumentRoute
   '/text-to-pdf': typeof TextToPdfRoute
   '/unlock-pdf': typeof UnlockPdfRoute
+  '/view': typeof ViewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/scan-document': typeof ScanDocumentRoute
   '/text-to-pdf': typeof TextToPdfRoute
   '/unlock-pdf': typeof UnlockPdfRoute
+  '/view': typeof ViewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/scan-document': typeof ScanDocumentRoute
   '/text-to-pdf': typeof TextToPdfRoute
   '/unlock-pdf': typeof UnlockPdfRoute
+  '/view': typeof ViewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/scan-document'
     | '/text-to-pdf'
     | '/unlock-pdf'
+    | '/view'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/scan-document'
     | '/text-to-pdf'
     | '/unlock-pdf'
+    | '/view'
   id:
     | '__root__'
     | '/'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/scan-document'
     | '/text-to-pdf'
     | '/unlock-pdf'
+    | '/view'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -249,6 +261,7 @@ export interface RootRouteChildren {
   ScanDocumentRoute: typeof ScanDocumentRoute
   TextToPdfRoute: typeof TextToPdfRoute
   UnlockPdfRoute: typeof UnlockPdfRoute
+  ViewRoute: typeof ViewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnlockPdfRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/view': {
+      id: '/view'
+      path: '/view'
+      fullPath: '/view'
+      preLoaderRoute: typeof ViewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -393,6 +413,7 @@ const rootRouteChildren: RootRouteChildren = {
   ScanDocumentRoute: ScanDocumentRoute,
   TextToPdfRoute: TextToPdfRoute,
   UnlockPdfRoute: UnlockPdfRoute,
+  ViewRoute: ViewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

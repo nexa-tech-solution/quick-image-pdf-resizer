@@ -1,3 +1,5 @@
+import { SmoothImage } from "@/components/site/SmoothImage";
+import { useLightbox } from "@/components/site/Lightbox";
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Download, Images } from "lucide-react";
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/extract-pdf-images")({
 
 function ExtractPdfImagesPage() {
   const c = useV3Copy();
+  const lightbox = useLightbox();
   const page = c.extractPdfImages;
   const [file, setFile] = useState<File | null>(null);
   const [skipSmall, setSkipSmall] = useState(true);
@@ -86,7 +89,7 @@ function ExtractPdfImagesPage() {
           hint={c.common.pdfHint}
         />
       ) : (
-        <div className="space-y-4">
+        <div className="fade-in space-y-4">
           <FileCard
             name={file.name}
             size={file.size}
@@ -105,16 +108,35 @@ function ExtractPdfImagesPage() {
           </label>
 
           {busy && <ProgressBox label={page.scanning} progress={progress} />}
+          {busy && images.length === 0 && (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="skeleton aspect-square rounded-xl" />
+              ))}
+            </div>
+          )}
           {error && <Notice>{error}</Notice>}
           {!busy && !error && images.length === 0 && <Notice tone="warn">{page.none}</Notice>}
 
           {images.length > 0 && (
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {images.map((img) => (
+            <div className="rise-stagger grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {images.map((img, i) => (
                 <figure key={img.url} className="overflow-hidden rounded-xl bg-surface">
-                  <div className="flex aspect-square items-center justify-center bg-[repeating-conic-gradient(#f1f1f1_0%_25%,#fff_0%_50%)] bg-[length:16px_16px]">
-                    <img src={img.url} alt="" className="max-h-full max-w-full object-contain" />
-                  </div>
+                  <button
+                    type="button"
+                    className="block w-full"
+                    onClick={() =>
+                      lightbox.open(
+                        images.map((x) => ({ src: x.url, name: x.filename, blob: x.blob })),
+                        i,
+                      )
+                    }
+                  >
+                    <SmoothImage
+                      src={img.url}
+                      className="aspect-square bg-[repeating-conic-gradient(#f1f1f1_0%_25%,#fff_0%_50%)] bg-[length:16px_16px]"
+                    />
+                  </button>
                   <figcaption className="flex items-center gap-1 p-2">
                     <span className="min-w-0 flex-1 truncate text-[11px] text-muted-foreground">
                       {page.page} {img.page} · {img.width}×{img.height}
@@ -143,6 +165,7 @@ function ExtractPdfImagesPage() {
           />
         </div>
       )}
+      {lightbox.node}
     </ToolPage>
   );
 }

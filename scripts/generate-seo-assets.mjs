@@ -27,6 +27,7 @@ const routes = [
   { path: "/protect-pdf", priority: "0.85", changefreq: "weekly" },
   { path: "/unlock-pdf", priority: "0.85", changefreq: "weekly" },
   { path: "/scan-document", priority: "0.85", changefreq: "weekly" },
+  { path: "/view", priority: "0.85", changefreq: "weekly" },
   { path: "/about", priority: "0.4", changefreq: "monthly" },
 ];
 

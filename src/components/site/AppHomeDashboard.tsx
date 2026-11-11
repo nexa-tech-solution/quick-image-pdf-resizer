@@ -18,6 +18,7 @@ import {
   Lock,
   LockOpen,
   ScanLine,
+  Eye,
   type LucideIcon,
 } from "lucide-react";
 import type { TranslationSet } from "@/lib/i18n";
@@ -50,6 +51,7 @@ const gridTools: { to: string; key: HeaderKey; icon: LucideIcon; tile: string }[
     icon: FileStack,
     tile: "bg-teal-100 text-teal-600",
   },
+  { to: "/view", key: "viewFile", icon: Eye, tile: "bg-cyan-100 text-cyan-700" },
   {
     to: "/scan-document",
     key: "scanDocument",
@@ -125,7 +127,7 @@ export function AppHomeDashboard() {
 
       <section>
         <h2 className="mb-3 text-base font-bold">{t.toolsGrid.toolset}</h2>
-        <div className="grid grid-cols-4 gap-x-2 gap-y-4">
+        <div className="rise-stagger grid grid-cols-4 gap-x-2 gap-y-4">
           {gridTools.map(({ to, key, icon: Icon, tile }) => (
             <Link key={to} to={to} className="group flex flex-col items-center gap-1.5 text-center">
               <span

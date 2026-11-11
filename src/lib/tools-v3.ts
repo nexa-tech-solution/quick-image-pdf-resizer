@@ -16,7 +16,8 @@ export type V3ToolKey =
   | "pdfToWord"
   | "protectPdf"
   | "unlockPdf"
-  | "scanDocument";
+  | "scanDocument"
+  | "viewFile";
 
 const en = {
   common: {
@@ -138,6 +139,23 @@ const en = {
     savePdf: "Save PDF",
     saveJpg: "Save JPG",
     pagesLabel: "Pages",
+  },
+  viewFile: {
+    eyebrow: "Viewer",
+    titleText: "View files",
+    title: "Open PDF, Word (DOCX) and image files online — free viewer",
+    description:
+      "Open and read PDF, Word .docx, images and text files right on your phone. Zoom pages and photos full screen. Nothing is uploaded.",
+    intro:
+      "Open PDF, Word (.docx), images or text files. Tap a page or photo to view it full screen.",
+    dropTitle: "Drop a file to open it",
+    dropHint: "PDF, DOCX, JPG, PNG, WebP, TXT…",
+    openAnother: "Open another file",
+  },
+  viewer: {
+    unsupported: "This file type can't be previewed. Supported: PDF, DOCX, images, text.",
+    docxError: "Could not open this Word file. Only .docx is supported (not the old .doc).",
+    view: "View",
   },
 };
 
@@ -262,6 +280,23 @@ const vi: V3Copy = {
     saveJpg: "Lưu JPG",
     pagesLabel: "Trang",
   },
+  viewFile: {
+    eyebrow: "Trình xem",
+    titleText: "Xem file",
+    title: "Mở file PDF, Word (DOCX), ảnh online miễn phí",
+    description:
+      "Mở và đọc file PDF, Word .docx, ảnh và file văn bản ngay trên điện thoại. Phóng to trang và ảnh toàn màn hình. Không tải lên mạng.",
+    intro:
+      "Mở PDF, Word (.docx), ảnh hoặc file văn bản. Chạm vào trang hoặc ảnh để xem toàn màn hình.",
+    dropTitle: "Thả file vào để mở",
+    dropHint: "PDF, DOCX, JPG, PNG, WebP, TXT…",
+    openAnother: "Mở file khác",
+  },
+  viewer: {
+    unsupported: "Không xem trước được loại file này. Hỗ trợ: PDF, DOCX, ảnh, văn bản.",
+    docxError: "Không mở được file Word này. Chỉ hỗ trợ .docx (không hỗ trợ .doc cũ).",
+    view: "Xem",
+  },
 };
 
 const copyByLocale: Record<Locale, V3Copy> = {
@@ -295,4 +330,5 @@ export const v3RouteKeys: V3ToolKey[] = [
   "protectPdf",
   "unlockPdf",
   "scanDocument",
+  "viewFile",
 ];

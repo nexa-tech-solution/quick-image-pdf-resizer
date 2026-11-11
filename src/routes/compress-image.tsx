@@ -1,3 +1,4 @@
+import { SmoothImage } from "@/components/site/SmoothImage";
 import { ShareButton } from "@/components/site/ShareButton";
 import { useExportableFormats } from "@/hooks/use-exportable-formats";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -500,17 +501,20 @@ function PreviewPanel({
         <span>{label}</span>
         {loading && <Loader2 className="h-3 w-3 animate-spin" />}
       </div>
-      {url && !failed ? (
-        <img
+      {failed ? (
+        <div className="flex aspect-square items-center justify-center rounded-lg border border-border bg-background text-xs text-muted-foreground">
+          {unavailableText}
+        </div>
+      ) : (
+        <SmoothImage
           src={url}
           alt={label}
-          className="aspect-square w-full rounded-lg object-cover"
+          busy={loading}
+          zoomable
           onError={() => setFailed(true)}
+          className="aspect-square w-full rounded-lg bg-background"
+          imgClassName="object-cover"
         />
-      ) : (
-        <div className="flex aspect-square items-center justify-center rounded-lg border border-border bg-background text-xs text-muted-foreground">
-          {failed ? unavailableText : footer}
-        </div>
       )}
       <div className="mt-2 text-xs text-muted-foreground">{footer}</div>
     </div>

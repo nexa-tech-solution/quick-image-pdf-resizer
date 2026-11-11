@@ -1,5 +1,13 @@
+import { installNativeOpenHandler } from "@/lib/native-open";
 import { useEffect } from "react";
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  createRootRoute,
+  HeadContent,
+  Scripts,
+  useRouter,
+} from "@tanstack/react-router";
 import { Analytics } from "@vercel/analytics/react";
 import appCss from "../styles.css?url";
 import faviconUrl from "@/assets/favicon.svg?url";
@@ -96,6 +104,16 @@ function RootComponent() {
       navigator.serviceWorker.register("/app-sw.js").catch(() => {});
     }
   }, []);
+
+  // Files opened from the OS via the native app → show them in the viewer.
+  const router = useRouter();
+  useEffect(
+    () =>
+      installNativeOpenHandler(() => {
+        if (router.state.location.pathname !== "/view") void router.navigate({ to: "/view" });
+      }),
+    [router],
+  );
 
   return <Outlet />;
 }

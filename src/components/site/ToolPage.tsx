@@ -27,7 +27,7 @@ export function ToolPage({
           </p>
         </div>
       </div>
-      <div className="mx-auto max-w-4xl px-4 py-3 sm:px-6 sm:py-10 lg:px-8">{children}</div>
+      <div className="fade-in mx-auto max-w-4xl px-4 py-3 sm:px-6 sm:py-10 lg:px-8">{children}</div>
     </PageShell>
   );
 }

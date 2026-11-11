@@ -13,6 +13,7 @@ import {
   Lock,
   LockOpen,
   ScanLine,
+  Eye,
 } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 import { useV3Copy } from "@/lib/tools-v3";
@@ -63,6 +64,7 @@ export function ToolsGrid() {
       desc: t.toolsGrid.mergeSplitPdf.desc,
       icon: FileStack,
     },
+    { to: "/view", title: t.header.viewFile, desc: v3.viewFile.intro, icon: Eye },
     {
       to: "/scan-document",
       title: t.header.scanDocument,

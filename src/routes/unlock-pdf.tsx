@@ -78,7 +78,7 @@ function UnlockPdfPage() {
           hint={c.common.pdfHint}
         />
       ) : (
-        <div className="space-y-4">
+        <div className="fade-in space-y-4">
           <FileCard name={file.name} size={file.size} icon={<LockOpen className="h-6 w-6" />} />
 
           {state === "user" && !result && (

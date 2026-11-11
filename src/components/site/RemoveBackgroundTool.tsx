@@ -1,3 +1,4 @@
+import { SmoothImage } from "@/components/site/SmoothImage";
 import { ShareButton } from "@/components/site/ShareButton";
 import { useExportableFormats } from "@/hooks/use-exportable-formats";
 import { useEffect, useMemo, useState } from "react";
@@ -33,15 +34,14 @@ function PreviewPanel({
       </div>
       <div className="flex min-h-[280px] items-center justify-center bg-[conic-gradient(at_50%_50%,_#f5f6f8_25%,_#eceef2_25%_50%,_#f5f6f8_50%_75%,_#eceef2_75%)] [background-size:20px_20px] p-4">
         <div className="relative flex min-h-[220px] min-w-0 items-center justify-center">
-          {url ? (
-            <img
-              src={url}
-              alt={label}
-              className="max-h-[420px] max-w-full rounded-xl object-contain shadow-elevated"
-            />
-          ) : (
-            <div className="text-sm text-muted-foreground">Waiting for output</div>
-          )}
+          <SmoothImage
+            src={url}
+            alt={label}
+            busy={loading}
+            zoomable
+            className="h-[260px] w-[260px] max-w-full rounded-xl"
+            imgClassName="object-contain drop-shadow-lg"
+          />
           {loading ? (
             <div className="absolute right-2 top-2 rounded-full border border-border bg-background/85 px-2 py-1 text-[11px] font-medium text-muted-foreground shadow-sm backdrop-blur">
               Processing

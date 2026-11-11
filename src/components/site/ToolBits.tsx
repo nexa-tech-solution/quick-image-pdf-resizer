@@ -18,7 +18,7 @@ export function FileCard({
   icon?: ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-surface p-3">
+    <div className="rise-in flex items-center gap-3 rounded-2xl bg-surface p-3">
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
         {icon ?? <FileText className="h-6 w-6" />}
       </span>
@@ -41,17 +41,21 @@ export function ProgressBox({
   progress?: { current: number; total: number } | null;
 }) {
   return (
-    <div className="rounded-2xl bg-surface p-3">
+    <div className="rise-in rounded-2xl bg-surface p-3">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Loader2 className="h-4 w-4 animate-spin text-primary" />
         {label}
         {progress && ` ${progress.current}/${progress.total}`}
       </div>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-border">
-        <div
-          className="h-full rounded-full bg-primary transition-all"
-          style={{ width: progress ? `${(progress.current / progress.total) * 100}%` : "15%" }}
-        />
+        {progress ? (
+          <div
+            className="h-full rounded-full bg-primary transition-[width] duration-300 ease-out"
+            style={{ width: `${(progress.current / progress.total) * 100}%` }}
+          />
+        ) : (
+          <div className="skeleton h-full w-full rounded-full !bg-primary/30" />
+        )}
       </div>
     </div>
   );
@@ -67,7 +71,7 @@ export function Notice({
   return (
     <p
       className={cn(
-        "rounded-xl px-3 py-2 text-sm",
+        "rise-in rounded-xl px-3 py-2 text-sm",
         tone === "error" && "bg-destructive/10 text-destructive",
         tone === "warn" && "bg-amber-50 text-xs text-amber-800",
         tone === "ok" && "bg-success/15 text-success",

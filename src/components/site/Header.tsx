@@ -19,6 +19,7 @@ const tools: HeaderTool[] = [
   { to: "/pdf-to-image", key: "pdfToImage" },
   { to: "/compress-pdf", key: "compressPdf" },
   { to: "/merge-split-pdf", key: "mergeSplitPdf" },
+  { to: "/view", key: "viewFile" },
   { to: "/scan-document", key: "scanDocument" },
   { to: "/text-to-pdf", key: "textToPdf" },
   { to: "/pdf-to-word", key: "pdfToWord" },
