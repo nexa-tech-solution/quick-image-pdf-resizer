@@ -28,12 +28,18 @@ const MILESTONES = [3, 10, 25, 50];
 export type ProFeature = "pdf-strong" | "hd-size";
 
 /** Pro-only tools; free users get one trial use of each. */
-export type ProTool = "pdf-to-word" | "protect-pdf" | "unlock-pdf" | "extract-pdf-images";
+export type ProTool =
+  | "pdf-to-word"
+  | "protect-pdf"
+  | "unlock-pdf"
+  | "extract-pdf-images"
+  | "id-photo";
 export const PRO_TOOLS: ProTool[] = [
   "pdf-to-word",
   "protect-pdf",
   "unlock-pdf",
   "extract-pdf-images",
+  "id-photo",
 ];
 /** Route paths of Pro-only tools, for the 👑 badge in tool lists. */
 export const PRO_TOOL_PATHS = new Set(PRO_TOOLS.map((t) => `/${t}`));

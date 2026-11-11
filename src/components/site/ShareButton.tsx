@@ -15,7 +15,7 @@ export function ShareButton({
   disabled,
   className,
 }: {
-  getFiles: () => ShareItem[];
+  getFiles: () => ShareItem[] | Promise<ShareItem[]>;
   disabled?: boolean;
   className?: string;
 }) {
@@ -32,7 +32,7 @@ export function ShareButton({
       type="button"
       aria-label={t.header.share}
       disabled={disabled}
-      onClick={() => void shareFiles(getFiles())}
+      onClick={() => void (async () => shareFiles(await getFiles()))()}
       className={cn(
         "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border text-foreground transition hover:bg-secondary disabled:opacity-50",
         className,

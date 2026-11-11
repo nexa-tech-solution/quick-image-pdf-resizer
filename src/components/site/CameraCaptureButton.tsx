@@ -10,9 +10,14 @@ import { cn } from "@/lib/utils";
 export function CameraCaptureButton({
   onCapture,
   className,
+  facing = "environment",
+  label,
 }: {
   onCapture: (files: File[]) => void;
   className?: string;
+  /** "user" opens the front camera (selfies). */
+  facing?: "environment" | "user";
+  label?: string;
 }) {
   const { t } = useLocale();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -28,13 +33,13 @@ export function CameraCaptureButton({
         )}
       >
         <Camera className="h-5 w-5 text-primary" />
-        {t.header.takePhoto}
+        {label ?? t.header.takePhoto}
       </button>
       <input
         ref={inputRef}
         type="file"
         accept="image/*"
-        capture="environment"
+        capture={facing}
         className="hidden"
         onChange={(event) => {
           const files = Array.from(event.target.files ?? []);

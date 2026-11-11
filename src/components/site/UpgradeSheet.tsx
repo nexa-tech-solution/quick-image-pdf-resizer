@@ -51,6 +51,7 @@ const en: Copy = {
     "protect-pdf": "Protect PDF",
     "unlock-pdf": "Unlock PDF",
     "extract-pdf-images": "Extract images",
+    "id-photo": "ID photo",
   },
 };
 
@@ -81,6 +82,7 @@ const copy: Record<Locale, Copy> = {
       "protect-pdf": "Đặt mật khẩu PDF",
       "unlock-pdf": "Gỡ mật khẩu PDF",
       "extract-pdf-images": "Trích ảnh PDF",
+      "id-photo": "Ảnh thẻ",
     },
   },
   "pt-BR": {
@@ -107,6 +109,7 @@ const copy: Record<Locale, Copy> = {
       "protect-pdf": "Proteger PDF",
       "unlock-pdf": "Desbloquear PDF",
       "extract-pdf-images": "Extrair imagens",
+      "id-photo": "Foto 3×4",
     },
   },
   "fil-PH": {
@@ -133,6 +136,7 @@ const copy: Record<Locale, Copy> = {
       "protect-pdf": "Protect PDF",
       "unlock-pdf": "Unlock PDF",
       "extract-pdf-images": "Extract images",
+      "id-photo": "ID photo",
     },
   },
   "id-ID": {
@@ -159,6 +163,7 @@ const copy: Record<Locale, Copy> = {
       "protect-pdf": "Kunci PDF",
       "unlock-pdf": "Buka kunci PDF",
       "extract-pdf-images": "Ekstrak gambar",
+      "id-photo": "Pas foto",
     },
   },
 };

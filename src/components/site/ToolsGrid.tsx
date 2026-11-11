@@ -14,13 +14,16 @@ import {
   LockOpen,
   ScanLine,
   Eye,
+  IdCard,
 } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 import { useV3Copy } from "@/lib/tools-v3";
+import { useIdPhotoCopy } from "@/lib/id-photo-copy";
 
 export function ToolsGrid() {
   const { t } = useLocale();
   const v3 = useV3Copy();
+  const idPhotoCopy = useIdPhotoCopy();
   const items = [
     {
       to: "/",
@@ -46,6 +49,7 @@ export function ToolsGrid() {
       desc: t.routes.removeBackground.ogDescription,
       icon: Scissors,
     },
+    { to: "/id-photo", title: t.header.idPhoto, desc: idPhotoCopy.intro, icon: IdCard },
     {
       to: "/image-to-pdf",
       title: t.toolsGrid.imageToPdf.title,

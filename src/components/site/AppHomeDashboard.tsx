@@ -20,6 +20,7 @@ import {
   ScanLine,
   Eye,
   type LucideIcon,
+  IdCard,
 } from "lucide-react";
 import type { TranslationSet } from "@/lib/i18n";
 import { useLocale } from "@/lib/i18n";
@@ -38,6 +39,7 @@ const gridTools: { to: string; key: HeaderKey; icon: LucideIcon; tile: string }[
     icon: Scissors,
     tile: "bg-violet-100 text-violet-600",
   },
+  { to: "/id-photo", key: "idPhoto", icon: IdCard, tile: "bg-sky-100 text-sky-700" },
   {
     to: "/compress-pdf",
     key: "compressPdf",
@@ -70,6 +72,21 @@ const gridTools: { to: string; key: HeaderKey; icon: LucideIcon; tile: string }[
   { to: "/protect-pdf", key: "protectPdf", icon: Lock, tile: "bg-slate-200 text-slate-700" },
   { to: "/unlock-pdf", key: "unlockPdf", icon: LockOpen, tile: "bg-yellow-100 text-yellow-700" },
 ];
+
+/**
+ * The dashboard lives on "/", right above the resize tool — so a link to "/" would do
+ * nothing. Scroll down to the tool instead and briefly highlight it.
+ */
+function goToResizeTool(e: { preventDefault: () => void }, to: string) {
+  if (to !== "/") return;
+  e.preventDefault();
+  const tool = document.getElementById("tool");
+  if (!tool) return;
+  tool.scrollIntoView({ behavior: "smooth", block: "start" });
+  tool.classList.remove("tool-flash");
+  void tool.offsetWidth; // restart the animation
+  tool.classList.add("tool-flash");
+}
 
 /** App-style home: two featured cards + an icon grid of every tool. */
 export function AppHomeDashboard() {
@@ -114,6 +131,7 @@ export function AppHomeDashboard() {
               <Link
                 key={to}
                 to={to}
+                onClick={(e) => goToResizeTool(e, to)}
                 className="flex shrink-0 items-center gap-2 rounded-full bg-surface py-1.5 pl-1.5 pr-3.5 text-sm font-medium transition hover:bg-secondary active:scale-[0.98]"
               >
                 <span className={`flex h-8 w-8 items-center justify-center rounded-full ${tile}`}>
@@ -130,7 +148,12 @@ export function AppHomeDashboard() {
         <h2 className="mb-3 text-base font-bold">{t.toolsGrid.toolset}</h2>
         <div className="rise-stagger grid grid-cols-4 gap-x-2 gap-y-4">
           {gridTools.map(({ to, key, icon: Icon, tile }) => (
-            <Link key={to} to={to} className="group flex flex-col items-center gap-1.5 text-center">
+            <Link
+              key={to}
+              to={to}
+              onClick={(e) => goToResizeTool(e, to)}
+              className="group flex flex-col items-center gap-1.5 text-center"
+            >
               <span
                 className={`relative flex h-14 w-14 items-center justify-center rounded-full transition group-active:scale-95 ${tile}`}
               >
@@ -190,7 +213,7 @@ function FeatureCard({
   );
 
   return to ? (
-    <Link to={to} className={className}>
+    <Link to={to} onClick={(e) => to && goToResizeTool(e, to)} className={className}>
       {body}
     </Link>
   ) : (

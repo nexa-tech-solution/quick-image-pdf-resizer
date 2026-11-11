@@ -18,6 +18,7 @@ import {
   ScanLine,
   Eye,
   type LucideIcon,
+  IdCard,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { TranslationSet } from "@/lib/i18n";
@@ -33,6 +34,7 @@ const allTools: Tool[] = [
   { to: "/compress-image", key: "compress", icon: Layers },
   { to: "/convert-image", key: "convert", icon: FileImage },
   { to: "/remove-background", key: "removeBackground", icon: Scissors },
+  { to: "/id-photo", key: "idPhoto", icon: IdCard },
   { to: "/image-to-pdf", key: "imageToPdf", icon: FileText },
   { to: "/pdf-to-image", key: "pdfToImage", icon: FileImage },
   { to: "/compress-pdf", key: "compressPdf", icon: FileArchive },
@@ -119,7 +121,7 @@ export function MobileTabBar() {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="bottom"
-          className="left-[var(--app-inset)] right-[var(--app-inset)] rounded-t-3xl px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))]"
+          className="left-[var(--app-inset)] right-[var(--app-inset)] flex max-h-[85dvh] flex-col rounded-t-3xl px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
         >
           <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-border" aria-hidden="true" />
           <SheetHeader className="text-left">
@@ -127,7 +129,7 @@ export function MobileTabBar() {
               {t.toolsGrid.title}
             </SheetTitle>
           </SheetHeader>
-          <div className="mt-4 grid grid-cols-3 gap-3">
+          <div className="-mx-4 mt-4 grid min-h-0 flex-1 grid-cols-3 content-start gap-3 overflow-y-auto overscroll-contain px-4 pb-2">
             {allTools.map(({ to, key, icon: Icon }) => {
               const active = pathname === to;
               return (

@@ -264,6 +264,21 @@ button:not(:disabled):active {
   transform: scale(0.97);
 }
 
+/* Highlight the resize tool after jumping to it from the dashboard. */
+@keyframes tool-flash {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  30% {
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary) 35%, transparent);
+  }
+}
+.tool-flash {
+  border-radius: 1rem;
+  animation: tool-flash 1.2s ease-out 0.35s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .skeleton::after,
   .rise-in,

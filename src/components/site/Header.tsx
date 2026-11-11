@@ -16,6 +16,7 @@ type HeaderTool = { to: string; key: HeaderKey } | { href: string; key: HeaderKe
 const tools: HeaderTool[] = [
   { to: "/", key: "resizeImage" },
   { to: "/remove-background", key: "removeBackground" },
+  { to: "/id-photo", key: "idPhoto" },
   { to: "/compress-image", key: "compress" },
   { to: "/convert-image", key: "convert" },
   { to: "/image-to-pdf", key: "imageToPdf" },
