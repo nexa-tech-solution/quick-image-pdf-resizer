@@ -157,7 +157,10 @@ function ScanDocumentPage() {
     setBusy(c.common.working);
     try {
       const blob = await scansToPdf(pages.map((p) => p.output!).filter(Boolean));
-      const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "");
+      const d = new Date();
+      const p2 = (n: number) => String(n).padStart(2, "0");
+      // Local time, so the name matches the clock on the user's phone.
+      const stamp = `${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}${p2(d.getHours())}${p2(d.getMinutes())}`;
       const next = { blob, filename: `scan-${stamp}.pdf` };
       setPdf(next);
       downloadBlob(next.blob, next.filename);

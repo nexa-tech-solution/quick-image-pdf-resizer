@@ -1,5 +1,7 @@
 import { ShareButton } from "@/components/site/ShareButton";
+import { useExportableFormats } from "@/hooks/use-exportable-formats";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { Download, Loader2, X } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ToolPage } from "@/components/site/ToolPage";
@@ -55,7 +57,13 @@ function CompressImage() {
   const [items, setItems] = useState<ToolFileItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [quality, setQuality] = useState(0.7);
+  const debouncedQuality = useDebouncedValue(quality);
   const [format, setFormat] = useState<ImageFormat>("jpeg");
+  const formatOptions = useExportableFormats(
+    ["jpeg", "webp", "avif", "png"] as ImageFormat[],
+    format,
+    setFormat,
+  );
   const [busy, setBusy] = useState(false);
   const itemsRef = useRef<ToolFileItem[]>([]);
 
@@ -97,40 +105,39 @@ function CompressImage() {
         setItems((current) =>
           current.map((candidate) => {
             if (candidate.id !== item.id) return candidate;
-            revokeUrl(candidate.outputUrl);
             return {
               ...candidate,
               status: "processing",
               error: undefined,
-              outputBlob: undefined,
-              outputUrl: undefined,
               outputFilename: undefined,
               dimensions: undefined,
-              sizes: { original: candidate.file.size },
             };
           }),
         );
 
         try {
-          const { blob, width, height } = await processImage(item.file, { format, quality });
+          const { blob, width, height } = await processImage(item.file, {
+            format,
+            quality: debouncedQuality,
+          });
           if (cancelled) break;
           if (!itemsRef.current.some((candidate) => candidate.id === item.id)) continue;
 
           const outputUrl = URL.createObjectURL(blob);
           setItems((current) =>
-            current.map((candidate) =>
-              candidate.id === item.id
-                ? {
-                    ...candidate,
-                    status: "ready",
-                    outputBlob: blob,
-                    outputUrl,
-                    outputFilename: replaceExt(candidate.file.name, formatExt[format]),
-                    dimensions: { width, height },
-                    sizes: { original: candidate.file.size, output: blob.size },
-                  }
-                : candidate,
-            ),
+            current.map((candidate) => {
+              if (candidate.id !== item.id) return candidate;
+              if (candidate.outputUrl !== outputUrl) revokeUrl(candidate.outputUrl);
+              return {
+                ...candidate,
+                status: "ready",
+                outputBlob: blob,
+                outputUrl,
+                outputFilename: replaceExt(candidate.file.name, formatExt[format]),
+                dimensions: { width, height },
+                sizes: { original: candidate.file.size, output: blob.size },
+              };
+            }),
           );
         } catch {
           setItems((current) =>
@@ -157,7 +164,7 @@ function CompressImage() {
     fileKey,
     format,
     items.length,
-    quality,
+    debouncedQuality,
   ]);
 
   const addFiles = (files: File[]) => {
@@ -198,7 +205,7 @@ function CompressImage() {
           }
           onFiles={addFiles}
           title={page.dropTitle}
-          hint="JPG, PNG, WebP or AVIF - up to 250 MB"
+          hint={t.resizeTool.dropHint}
         />
       ) : (
         <div className="space-y-6">
@@ -211,11 +218,11 @@ function CompressImage() {
             onFiles={addFiles}
             title={copy.batch.addMore}
             compact
-            hint="JPG, PNG, WebP or AVIF - up to 250 MB"
+            hint={t.resizeTool.dropHint}
             className="py-6"
           />
 
-          <div className="grid gap-6 md:grid-cols-[1fr_280px]">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-[minmax(0,1fr)_280px]">
             <div className="space-y-4">
               <div className="rounded-2xl border border-border bg-surface-elevated p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
@@ -370,7 +377,7 @@ function CompressImage() {
                   {page.format}
                 </label>
                 <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-2">
-                  {(["jpeg", "webp", "avif", "png"] as ImageFormat[]).map((item) => (
+                  {formatOptions.map((item) => (
                     <button
                       key={item}
                       type="button"

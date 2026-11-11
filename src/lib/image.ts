@@ -15,6 +15,31 @@ export const formatExt: Record<ImageFormat, string> = {
   avif: "avif",
 };
 
+const encodeSupport = new Map<ImageFormat, boolean>();
+
+/** True when this browser's canvas can export the format (AVIF/WebP vary by browser). */
+export function canEncodeFormat(format: ImageFormat): boolean {
+  if (format === "jpeg" || format === "png") return true;
+  if (typeof document === "undefined") return true;
+  const cached = encodeSupport.get(format);
+  if (cached !== undefined) return cached;
+  let ok = false;
+  try {
+    const c = document.createElement("canvas");
+    c.width = c.height = 1;
+    ok = c.toDataURL(formatMime[format]).startsWith(`data:${formatMime[format]}`);
+  } catch {
+    ok = false;
+  }
+  encodeSupport.set(format, ok);
+  return ok;
+}
+
+/** Filters a format list down to what the browser can export. */
+export function exportableFormats<T extends ImageFormat>(formats: T[]): T[] {
+  return formats.filter((f) => canEncodeFormat(f));
+}
+
 export interface ProcessOptions {
   width?: number;
   height?: number;
@@ -264,8 +289,31 @@ export function downloadBlob(
       }
     };
 
-    if (await saveViaPicker()) return;
-    if (await saveViaShare()) return;
+    // Inside the mobile app the native bridge intercepts the <a download> click
+    // below (Android saves to Downloads, iOS opens the save/share sheet).
+    const nativeApp =
+      typeof window !== "undefined"
+        ? (
+            window as unknown as {
+              NativeApp?: {
+                isNative?: boolean;
+                saveFile?: (blob: Blob, name: string) => Promise<void>;
+              };
+            }
+          ).NativeApp
+        : undefined;
+    if (nativeApp?.saveFile) {
+      try {
+        await nativeApp.saveFile(blob, filename);
+        return;
+      } catch {
+        // fall through to the <a download> path
+      }
+    }
+    if (!nativeApp?.isNative) {
+      if (await saveViaPicker()) return;
+      if (await saveViaShare()) return;
+    }
 
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -276,7 +324,8 @@ export function downloadBlob(
     document.body.appendChild(a);
     a.click();
     a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    // Give slow consumers (large files, WebView download handlers) time to read it.
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
   })();
 }
 

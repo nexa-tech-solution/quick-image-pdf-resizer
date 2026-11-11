@@ -1,5 +1,7 @@
 import { ShareButton } from "@/components/site/ShareButton";
+import { useExportableFormats } from "@/hooks/use-exportable-formats";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { Crop, Download, Loader2, Lock, Maximize2, Move, RefreshCw, Unlock, X } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -64,8 +66,17 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
   const [lockRatio, setLockRatio] = useState(true);
   const [fit, setFit] = useState<"contain" | "cover" | "stretch">("contain");
   const [format, setFormat] = useState<ImageFormat>("jpeg");
+  const formatOptions = useExportableFormats(
+    ["jpeg", "png", "webp", "avif"] as ImageFormat[],
+    format,
+    setFormat,
+  );
   const [quality, setQuality] = useState(0.85);
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
+  const debouncedQuality = useDebouncedValue(quality);
+  const debouncedWidth = useDebouncedValue(width);
+  const debouncedHeight = useDebouncedValue(height);
+  const debouncedBackgroundColor = useDebouncedValue(backgroundColor);
   const [busy, setBusy] = useState(false);
   const [zipping, setZipping] = useState(false);
   const itemsRef = useRef<ToolFileItem[]>([]);
@@ -97,13 +108,23 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
   const totalOutput = items.reduce((sum, item) => sum + (item.outputBlob?.size ?? 0), 0);
   const readyCount = items.filter((item) => item.status === "ready").length;
   const errorCount = items.filter((item) => item.status === "error").length;
-  const downloadableItems = useMemo(
-    () =>
-      items.filter((item): item is ToolFileItem & { outputBlob: Blob; outputFilename: string } =>
+  // Unique names across the batch (photo.jpg + photo.webp both become photo_WxH.jpg).
+  const downloadableItems = useMemo(() => {
+    const nameCounts = new Map<string, number>();
+    return items
+      .filter((item): item is ToolFileItem & { outputBlob: Blob; outputFilename: string } =>
         Boolean(item.outputBlob && item.outputFilename),
-      ),
-    [items],
-  );
+      )
+      .map((item) => {
+        const count = nameCounts.get(item.outputFilename) ?? 0;
+        nameCounts.set(item.outputFilename, count + 1);
+        if (count === 0) return item;
+        const dot = item.outputFilename.lastIndexOf(".");
+        const base = dot >= 0 ? item.outputFilename.slice(0, dot) : item.outputFilename;
+        const ext = dot >= 0 ? item.outputFilename.slice(dot) : "";
+        return { ...item, outputFilename: `${base} (${count})${ext}` };
+      });
+  }, [items]);
 
   useEffect(() => {
     if (items.length === 0) {
@@ -139,17 +160,13 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
         setItems((current) =>
           current.map((candidate) => {
             if (candidate.id !== item.id) return candidate;
-            revokeUrl(candidate.outputUrl);
             return {
               ...candidate,
               status: "processing",
               error: undefined,
-              outputBlob: undefined,
-              outputUrl: undefined,
               outputFilename: undefined,
               dimensions: undefined,
               sourceDimensions: undefined,
-              sizes: { original: candidate.file.size },
             };
           }),
         );
@@ -162,32 +179,35 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
             sourceWidth,
             sourceHeight,
           } = await processImage(item.file, {
-            width,
-            height,
+            width: debouncedWidth,
+            height: debouncedHeight,
             fit,
             format,
-            quality,
-            backgroundColor: fit === "contain" ? backgroundColor : undefined,
+            quality: debouncedQuality,
+            backgroundColor: fit === "contain" ? debouncedBackgroundColor : undefined,
           });
           if (cancelled) break;
           if (!itemsRef.current.some((candidate) => candidate.id === item.id)) continue;
 
           const outputUrl = URL.createObjectURL(blob);
           setItems((current) =>
-            current.map((candidate) =>
-              candidate.id === item.id
-                ? {
-                    ...candidate,
-                    status: "ready",
-                    outputBlob: blob,
-                    outputUrl,
-                    outputFilename: replaceExt(candidate.file.name, formatExt[format]),
-                    dimensions: { width: outW, height: outH },
-                    sourceDimensions: { width: sourceWidth, height: sourceHeight },
-                    sizes: { original: candidate.file.size, output: blob.size },
-                  }
-                : candidate,
-            ),
+            current.map((candidate) => {
+              if (candidate.id !== item.id) return candidate;
+              if (candidate.outputUrl !== outputUrl) revokeUrl(candidate.outputUrl);
+              return {
+                ...candidate,
+                status: "ready",
+                outputBlob: blob,
+                outputUrl,
+                outputFilename: replaceExt(
+                  candidate.file.name,
+                  `${outW}x${outH}.${formatExt[format]}`,
+                ).replace(/\.(\d+x\d+\.)/, "_$1"),
+                dimensions: { width: outW, height: outH },
+                sourceDimensions: { width: sourceWidth, height: sourceHeight },
+                sizes: { original: candidate.file.size, output: blob.size },
+              };
+            }),
           );
         } catch (err) {
           setItems((current) =>
@@ -216,17 +236,17 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
       cancelled = true;
     };
   }, [
-    backgroundColor,
+    debouncedBackgroundColor,
     copy.shared.processingError,
     copy.shared.unsupportedOutput,
     fileKey,
     fit,
     format,
-    height,
+    debouncedHeight,
     items.length,
-    quality,
+    debouncedQuality,
     validDimensions,
-    width,
+    debouncedWidth,
   ]);
 
   useEffect(() => {
@@ -308,25 +328,10 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
 
     setZipping(true);
     try {
-      const nameCounts = new Map<string, number>();
-      const zipEntries = downloadableItems.map((item) => {
-        const currentCount = nameCounts.get(item.outputFilename) ?? 0;
-        nameCounts.set(item.outputFilename, currentCount + 1);
-
-        if (currentCount === 0) {
-          return { name: item.outputFilename, blob: item.outputBlob };
-        }
-
-        const dotIndex = item.outputFilename.lastIndexOf(".");
-        const baseName =
-          dotIndex >= 0 ? item.outputFilename.slice(0, dotIndex) : item.outputFilename;
-        const extension = dotIndex >= 0 ? item.outputFilename.slice(dotIndex) : "";
-
-        return {
-          name: `${baseName} (${currentCount})${extension}`,
-          blob: item.outputBlob,
-        };
-      });
+      const zipEntries = downloadableItems.map((item) => ({
+        name: item.outputFilename,
+        blob: item.outputBlob,
+      }));
 
       const zipBlob = await makeZipBlob(zipEntries);
 
@@ -408,7 +413,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
           hint={t.resizeTool.dropHint}
         />
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_420px]">
           <div className="space-y-4">
             {selected && (
               <div className="grid grid-cols-2 gap-3">
@@ -517,7 +522,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                     </button>
                     <button
                       type="button"
-                      aria-label={copy.shared.removeAll}
+                      aria-label={`${t.resizeTool.remove} ${item.file.name}`}
                       onClick={(event) => {
                         event.stopPropagation();
                         removeItem(item.id);
@@ -668,7 +673,7 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
                 </AccordionTrigger>
                 <AccordionContent className="px-3 pb-3.5 pt-0">
                   <div className="-mx-2.5 grid grid-flow-col auto-cols-[calc((100%-0.5rem)/2)] snap-x snap-mandatory gap-2 overflow-x-auto px-2.5 pb-1 pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-3 sm:flex sm:auto-cols-auto sm:px-3">
-                    {(["jpeg", "png", "webp", "avif"] as ImageFormat[]).map((f) => (
+                    {formatOptions.map((f) => (
                       <button
                         key={f}
                         onClick={() => setFormat(f)}

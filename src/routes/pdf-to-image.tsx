@@ -140,7 +140,7 @@ function PdfToImage() {
           accept={pdfAccept}
           onFiles={(f) => setFile(f[0])}
           title={page.dropTitle}
-          hint="PDF - up to 250 MB"
+          hint={t.resizeTool.dropHint.replace(/^[^—]*/, "PDF ")}
         />
       ) : (
         <div className="space-y-6">

@@ -1,4 +1,5 @@
 import { ShareButton } from "@/components/site/ShareButton";
+import { useExportableFormats } from "@/hooks/use-exportable-formats";
 import { useEffect, useMemo, useState } from "react";
 import { Download, Loader2, RefreshCw, Scissors, X } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
@@ -64,6 +65,11 @@ export function RemoveBackgroundTool() {
   const [processedPreviewUrl, setProcessedPreviewUrl] = useState<string | null>(null);
   const [processedBlob, setProcessedBlob] = useState<Blob | null>(null);
   const [outputFormat, setOutputFormat] = useState<(typeof backgroundOutputFormats)[number]>("png");
+  const outputFormatOptions = useExportableFormats(
+    backgroundOutputFormats,
+    outputFormat,
+    setOutputFormat,
+  );
   const [status, setStatus] = useState<"idle" | "loading" | "encoding" | "ready" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -166,7 +172,10 @@ export function RemoveBackgroundTool() {
 
   const downloadName = useMemo(() => {
     if (!file) return "background-removed.png";
-    return replaceExt(file.name, formatExt[outputFormat]);
+    return replaceExt(file.name, `no-bg.${formatExt[outputFormat]}`).replace(
+      /\.no-bg\./,
+      "-no-bg.",
+    );
   }, [file, outputFormat]);
 
   const busy = status === "loading" || status === "encoding";
@@ -186,7 +195,7 @@ export function RemoveBackgroundTool() {
       className="py-12 sm:py-16"
     />
   ) : (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="min-w-0 space-y-6">
         <div className="rounded-2xl border border-border bg-surface px-4 py-3">
           <div className="flex items-start justify-between gap-4">
@@ -209,7 +218,7 @@ export function RemoveBackgroundTool() {
           {error ? <div className="mt-2 text-xs text-destructive">{error}</div> : null}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <PreviewPanel label={page.original} sublabel={page.originalSub} url={previewUrl} />
           <PreviewPanel
             label={page.result}
@@ -230,7 +239,7 @@ export function RemoveBackgroundTool() {
             {page.outputFormat}
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {backgroundOutputFormats.map((format) => (
+            {outputFormatOptions.map((format) => (
               <button
                 key={format}
                 type="button"

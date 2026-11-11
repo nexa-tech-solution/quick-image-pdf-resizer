@@ -82,9 +82,17 @@ export async function addToHistory(blob: Blob, filename: string) {
 
     // Evict oldest entries so we stay within count and size budgets.
     const existing = await listHistory();
+    // Downloading the same result again (same name/size/type, recently) replaces
+    // the old entry instead of piling up duplicates.
+    const isSameRecent = (item: HistoryEntry) =>
+      item.filename === entry.filename &&
+      item.size === entry.size &&
+      item.type === entry.type &&
+      entry.createdAt - item.createdAt < 10 * 60 * 1000;
     const keep: HistoryEntry[] = [];
     let total = entry.size;
     for (const item of existing) {
+      if (isSameRecent(item)) continue;
       if (keep.length + 1 >= MAX_ENTRIES || total + item.size > MAX_TOTAL_BYTES) break;
       keep.push(item);
       total += item.size;
