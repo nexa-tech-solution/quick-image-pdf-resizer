@@ -34,6 +34,7 @@ import { createRouteHead } from "@/lib/seo";
 import { useV3Copy } from "@/lib/tools-v3";
 import { makeZipBlob } from "@/lib/zip";
 import { cn } from "@/lib/utils";
+import { FREE_LIMITS, limitFiles } from "@/lib/pro";
 
 export const Route = createFileRoute("/scan-document")({
   head: () => {
@@ -93,7 +94,9 @@ function ScanDocumentPage() {
     return { ...p, flat, output, outputUrl: URL.createObjectURL(output) };
   }
 
-  async function addFiles(files: File[]) {
+  async function addFiles(incoming: File[]) {
+    const files = limitFiles(pages.length, incoming, FREE_LIMITS.scanPages, "pages");
+    if (files.length === 0) return;
     setError(null);
     setPdf(null);
     setBusy(page.detecting);

@@ -30,6 +30,7 @@ import {
   type ToolFileItem,
 } from "@/lib/tool-files";
 import { createRouteHead } from "@/lib/seo";
+import { FREE_LIMITS, limitFiles } from "@/lib/pro";
 
 const qualityPresets = [
   { labelKey: "high", value: 0.85 },
@@ -168,7 +169,9 @@ function CompressImage() {
     debouncedQuality,
   ]);
 
-  const addFiles = (files: File[]) => {
+  const addFiles = (incoming: File[]) => {
+    const files = limitFiles(items.length, incoming, FREE_LIMITS.batchFiles);
+    if (files.length === 0) return;
     const next = files.map((file) => createToolFileItem(file, "idle"));
     setItems((current) => [...current, ...next]);
     setSelectedId((current) => current ?? next[0]?.id ?? null);

@@ -18,6 +18,7 @@ import {
   type ToolFileItem,
 } from "@/lib/tool-files";
 import { createRouteHead } from "@/lib/seo";
+import { FREE_LIMITS, limitFiles } from "@/lib/pro";
 
 export const Route = createFileRoute("/image-to-pdf")({
   head: () => {
@@ -170,20 +171,24 @@ function ImageToPdf() {
         validateFile={(file) =>
           supportedImageTypes.has(file.type) ? null : copy.shared.unsupportedImageFormat
         }
-        onFiles={(f) => setItems((prev) => [...prev, ...f.map((file) => createToolFileItem(file))])}
+        onFiles={(incoming) => {
+          const f = limitFiles(itemsRef.current.length, incoming, FREE_LIMITS.imagesToPdf);
+          if (f.length) setItems((prev) => [...prev, ...f.map((file) => createToolFileItem(file))]);
+        }}
         title={files.length === 0 ? page.dropTitleEmpty : page.dropTitleFilled}
         compact={files.length > 0}
         hint={page.hint}
       />
       <CameraCaptureButton
         className="mt-3"
-        onCapture={(f) =>
-          setItems((prev) => [...prev, ...f.map((file) => createToolFileItem(file))])
-        }
+        onCapture={(incoming) => {
+          const f = limitFiles(itemsRef.current.length, incoming, FREE_LIMITS.imagesToPdf);
+          if (f.length) setItems((prev) => [...prev, ...f.map((file) => createToolFileItem(file))]);
+        }}
       />
 
       {files.length > 0 && (
-        <div className="mt-6 grid gap-6 md:grid-cols-[1fr_280px]">
+        <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-[minmax(0,1fr)_280px]">
           <div className="space-y-2 rounded-2xl border border-border bg-surface-elevated p-3">
             <div className="flex items-center justify-between gap-3 px-1 pb-2 text-sm text-muted-foreground">
               <div>

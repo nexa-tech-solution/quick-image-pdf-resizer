@@ -10,6 +10,7 @@ import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, Download, X, ZoomIn, ZoomOut } from "lucide-react";
 import { downloadBlob } from "@/lib/image";
 import { cn } from "@/lib/utils";
+import { useUiCopy } from "@/lib/ui-copy";
 
 export type LightboxImage = { src: string; name?: string; blob?: Blob };
 
@@ -31,6 +32,7 @@ export function Lightbox({
   index?: number;
   onClose: () => void;
 }) {
+  const ui = useUiCopy();
   const [index, setIndex] = useState(startIndex);
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -202,7 +204,7 @@ export function Lightbox({
       >
         <button
           type="button"
-          aria-label="Close"
+          aria-label={ui.close}
           onClick={onClose}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
         >
@@ -219,7 +221,7 @@ export function Lightbox({
         {image.blob ? (
           <button
             type="button"
-            aria-label="Download"
+            aria-label={ui.download}
             onClick={() =>
               downloadBlob(image.blob!, image.name ?? "image", { saveToHistory: false })
             }
@@ -261,7 +263,7 @@ export function Lightbox({
           <>
             <button
               type="button"
-              aria-label="Previous"
+              aria-label={ui.previous}
               onPointerDown={(e) => e.stopPropagation()}
               onClick={() => go(-1)}
               className="absolute left-2 hidden h-11 w-11 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 sm:flex"
@@ -270,7 +272,7 @@ export function Lightbox({
             </button>
             <button
               type="button"
-              aria-label="Next"
+              aria-label={ui.next}
               onPointerDown={(e) => e.stopPropagation()}
               onClick={() => go(1)}
               className="absolute right-2 hidden h-11 w-11 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 sm:flex"
@@ -288,7 +290,7 @@ export function Lightbox({
       >
         <button
           type="button"
-          aria-label="Zoom out"
+          aria-label={ui.zoomOut}
           onClick={() => zoomAt(scale / 1.5)}
           disabled={scale <= MIN}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-40"
@@ -304,7 +306,7 @@ export function Lightbox({
         </button>
         <button
           type="button"
-          aria-label="Zoom in"
+          aria-label={ui.zoomIn}
           onClick={() => zoomAt(scale * 1.5)}
           disabled={scale >= MAX}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 disabled:opacity-40"

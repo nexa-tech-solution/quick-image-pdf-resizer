@@ -12,6 +12,7 @@ import { encryptPdf, pdfPasswordState } from "@/lib/qpdf";
 import { createRouteHead } from "@/lib/seo";
 import { pdfAccept } from "@/lib/tool-files";
 import { useV3Copy } from "@/lib/tools-v3";
+import { consumeProToolTrial } from "@/lib/pro";
 
 export const Route = createFileRoute("/protect-pdf")({
   head: () => {
@@ -79,7 +80,7 @@ function ProtectPdfPage() {
       {!file ? (
         <FileDropzone
           accept={pdfAccept}
-          onFiles={([next]) => next && setFile(next)}
+          onFiles={([next]) => next && consumeProToolTrial("protect-pdf") && setFile(next)}
           title={c.common.dropPdf}
           hint={c.common.pdfHint}
         />

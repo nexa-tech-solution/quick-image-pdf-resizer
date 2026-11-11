@@ -1,4 +1,5 @@
 import { addToHistory } from "@/lib/file-history";
+import { noteSuccessfulExport } from "@/lib/pro";
 export type ImageFormat = "jpeg" | "png" | "webp" | "avif";
 
 export const formatMime: Record<ImageFormat, string> = {
@@ -243,7 +244,10 @@ export function downloadBlob(
   options: { saveToHistory?: boolean } = {},
 ) {
   // Every tool downloads through here, so this is the single place that feeds "My files".
-  if (options.saveToHistory !== false) void addToHistory(blob, filename);
+  if (options.saveToHistory !== false) {
+    void addToHistory(blob, filename);
+    noteSuccessfulExport();
+  }
 
   void (async () => {
     const file = new File([blob], filename, {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileText, Loader2, RefreshCw } from "lucide-react";
+import { Download, FileText, Loader2, RefreshCw, Crown } from "lucide-react";
 import { FileDropzone } from "@/components/site/FileDropzone";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { ShareButton } from "@/components/site/ShareButton";
@@ -12,6 +12,8 @@ import { compressPdf, compressedPdfFilename, type PdfCompressionLevel } from "@/
 import { createRouteHead } from "@/lib/seo";
 import { pdfAccept } from "@/lib/tool-files";
 import { cn } from "@/lib/utils";
+import { requireProFeature } from "@/lib/pro";
+import { useNativeApp } from "@/hooks/use-native-app";
 
 export const Route = createFileRoute("/compress-pdf")({
   head: () => {
@@ -29,6 +31,7 @@ function CompressPdfPage() {
   const page = t.routes.compressPdf;
   const [file, setFile] = useState<File | null>(null);
   const [level, setLevel] = useState<PdfCompressionLevel>("medium");
+  const nativeApp = useNativeApp();
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null);
   const [result, setResult] = useState<Result | null>(null);
@@ -158,7 +161,10 @@ function CompressPdfPage() {
                     key={item.id}
                     type="button"
                     disabled={busy}
-                    onClick={() => setLevel(item.id)}
+                    onClick={() => {
+                      if (item.id === "high" && !requireProFeature("pdf-strong")) return;
+                      setLevel(item.id);
+                    }}
                     className={cn(
                       "rounded-xl px-2 py-3 text-center transition disabled:opacity-60",
                       active
@@ -166,7 +172,12 @@ function CompressPdfPage() {
                         : "bg-background shadow-soft hover:bg-primary-soft",
                     )}
                   >
-                    <div className="text-sm font-semibold">{item.label}</div>
+                    <div className="flex items-center justify-center gap-1 text-sm font-semibold">
+                      {item.label}
+                      {item.id === "high" && nativeApp.isNative && !nativeApp.isPro && (
+                        <Crown className="h-3.5 w-3.5" aria-label="Pro" />
+                      )}
+                    </div>
                     <div
                       className={cn(
                         "mt-0.5 text-[11px]",

@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import type { TranslationSet } from "@/lib/i18n";
 import { useLocale } from "@/lib/i18n";
+import { ProBadge } from "./ProBadge";
 
 type HeaderKey = keyof TranslationSet["header"];
 
@@ -131,9 +132,10 @@ export function AppHomeDashboard() {
           {gridTools.map(({ to, key, icon: Icon, tile }) => (
             <Link key={to} to={to} className="group flex flex-col items-center gap-1.5 text-center">
               <span
-                className={`flex h-14 w-14 items-center justify-center rounded-full transition group-active:scale-95 ${tile}`}
+                className={`relative flex h-14 w-14 items-center justify-center rounded-full transition group-active:scale-95 ${tile}`}
               >
                 <Icon className="h-6 w-6" />
+                <ProBadge path={to} />
               </span>
               <span className="line-clamp-2 text-[11px] font-medium leading-tight text-foreground">
                 {t.header[key]}

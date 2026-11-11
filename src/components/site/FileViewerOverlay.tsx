@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Download, X } from "lucide-react";
 import { FileViewer } from "@/components/site/FileViewer";
 import { downloadBlob } from "@/lib/image";
+import { useUiCopy } from "@/lib/ui-copy";
 
 /** Full-screen sheet that shows any supported file (PDF, DOCX, text, image). */
 export function FileViewerOverlay({
@@ -16,6 +17,7 @@ export function FileViewerOverlay({
   type?: string;
   onClose: () => void;
 }) {
+  const ui = useUiCopy();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
@@ -41,7 +43,7 @@ export function FileViewerOverlay({
       >
         <button
           type="button"
-          aria-label="Close"
+          aria-label={ui.close}
           onClick={onClose}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface hover:bg-secondary"
         >
@@ -50,7 +52,7 @@ export function FileViewerOverlay({
         <div className="min-w-0 flex-1 truncate text-sm font-semibold">{name}</div>
         <button
           type="button"
-          aria-label="Download"
+          aria-label={ui.download}
           onClick={() => downloadBlob(blob, name, { saveToHistory: false })}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface text-primary hover:bg-secondary"
         >

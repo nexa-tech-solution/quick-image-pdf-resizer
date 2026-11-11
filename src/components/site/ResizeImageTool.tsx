@@ -35,6 +35,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { FREE_LIMITS, limitFiles, requireProFeature } from "@/lib/pro";
 
 const presets = [
   { group: "store", labelKey: "appIcon", size: "1024×1024", w: 1024, h: 1024 },
@@ -261,7 +262,8 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
     }
   }, [items, selectedId]);
 
-  const addFiles = async (files: File[]) => {
+  const addFiles = async (incoming: File[]) => {
+    const files = limitFiles(itemsRef.current.length, incoming, FREE_LIMITS.batchFiles);
     if (files.length === 0) return;
 
     if (itemsRef.current.length === 0) {
@@ -304,14 +306,24 @@ export function ResizeImageTool({ onHasFilesChange }: ResizeImageToolProps = {})
     setHeight(selected.sourceDimensions.height);
   };
 
-  const onWidth = (value: number) => {
+  // Free users can't type sizes above FREE_LIMITS.maxDimension.
+  const capDimension = (value: number) => {
+    if (value > FREE_LIMITS.maxDimension && !requireProFeature("hd-size")) {
+      return FREE_LIMITS.maxDimension;
+    }
+    return value;
+  };
+
+  const onWidth = (raw: number) => {
+    const value = capDimension(raw);
     setWidth(value);
     if (lockRatio && selected?.sourceDimensions) {
       setHeight(Math.round(value / ratio));
     }
   };
 
-  const onHeight = (value: number) => {
+  const onHeight = (raw: number) => {
+    const value = capDimension(raw);
     setHeight(value);
     if (lockRatio && selected?.sourceDimensions) {
       setWidth(Math.round(value * ratio));

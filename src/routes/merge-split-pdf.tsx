@@ -24,6 +24,7 @@ import {
 } from "@/lib/pdf";
 import { createRouteHead } from "@/lib/seo";
 import { pdfAccept, revokeUrl } from "@/lib/tool-files";
+import { FREE_LIMITS, limitFiles } from "@/lib/pro";
 
 type PdfStatus = "reading" | "ready" | "error";
 
@@ -83,7 +84,9 @@ function MergeSplitPdf() {
   const totalBytes = sources.reduce((sum, source) => sum + source.file.size, 0);
   const totalSourcePages = readySources.reduce((sum, source) => sum + (source.pageCount ?? 0), 0);
 
-  const addFiles = async (files: File[]) => {
+  const addFiles = async (incoming: File[]) => {
+    const files = limitFiles(sources.length, incoming, FREE_LIMITS.mergePdfs);
+    if (files.length === 0) return;
     setExportError(null);
     const loadVersion = loadVersionRef.current;
 
@@ -223,7 +226,7 @@ function MergeSplitPdf() {
       />
 
       {sources.length > 0 && (
-        <div className="mt-6 grid gap-6 md:grid-cols-[1fr_280px]">
+        <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-[minmax(0,1fr)_280px]">
           <div className="space-y-4">
             <div className="rounded-2xl border border-border bg-surface-elevated p-4">
               <div className="flex items-center justify-between gap-3">

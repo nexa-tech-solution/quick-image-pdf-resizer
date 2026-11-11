@@ -43,7 +43,7 @@ export function ToolsGrid() {
     {
       to: "/remove-background",
       title: t.header.removeBackground,
-      desc: "Remove image backgrounds locally in your browser.",
+      desc: t.routes.removeBackground.ogDescription,
       icon: Scissors,
     },
     {

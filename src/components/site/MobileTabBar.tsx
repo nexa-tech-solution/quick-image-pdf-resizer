@@ -23,6 +23,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import type { TranslationSet } from "@/lib/i18n";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { ProBadge } from "./ProBadge";
 
 type HeaderKey = keyof TranslationSet["header"];
 type Tool = { to: string; key: HeaderKey; icon: LucideIcon };
@@ -143,13 +144,14 @@ export function MobileTabBar() {
                 >
                   <span
                     className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-xl",
+                      "relative flex h-10 w-10 items-center justify-center rounded-xl",
                       active
                         ? "bg-primary text-primary-foreground"
                         : "bg-primary-soft text-primary",
                     )}
                   >
                     <Icon className="h-5 w-5" />
+                    <ProBadge path={to} />
                   </span>
                   <span className="line-clamp-2 leading-tight">{t.header[key]}</span>
                 </Link>

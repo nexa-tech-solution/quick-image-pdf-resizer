@@ -4,6 +4,7 @@ import { recordRecentTool } from "@/lib/recent-tools";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { MobileTabBar } from "./MobileTabBar";
+import { UpgradeSheet } from "./UpgradeSheet";
 
 /** Phone-width app column, centered on larger screens. */
 const nonToolPaths = new Set(["/", "/files", "/about", "/pricing"]);
@@ -21,6 +22,7 @@ export function PageShell({ children }: { children: React.ReactNode }) {
       <main className="flex-1">{children}</main>
       <Footer />
       <MobileTabBar />
+      <UpgradeSheet />
     </div>
   );
 }

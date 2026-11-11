@@ -1,7 +1,7 @@
 import { SmoothImage } from "@/components/site/SmoothImage";
 import { ShareButton } from "@/components/site/ShareButton";
 import { useExportableFormats } from "@/hooks/use-exportable-formats";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, Loader2, RefreshCw, Scissors, X } from "lucide-react";
 import { FileDropzone } from "./FileDropzone";
 import { Button } from "@/components/ui/button";
@@ -11,9 +11,10 @@ import {
   encodeBackgroundRemovalOutput,
   removeBackground,
 } from "@/lib/background-removal";
-import { useLocale } from "@/lib/i18n";
+import { toolEnhancementCopy, useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { canEncodeImageFormat, imageAccept, supportedImageTypes } from "@/lib/tool-files";
+import { FREE_LIMITS, takeDailyQuota } from "@/lib/pro";
 
 function PreviewPanel({
   label,
@@ -56,7 +57,11 @@ function PreviewPanel({
 type RemovedBackgroundImage = Awaited<ReturnType<typeof removeBackground>>;
 
 export function RemoveBackgroundTool() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const enhanceCopy = toolEnhancementCopy[locale];
+  // Read inside effects without re-running background removal on language change.
+  const processingErrorRef = useRef(enhanceCopy.shared.processingError);
+  processingErrorRef.current = enhanceCopy.shared.processingError;
   const page = t.routes.removeBackground;
   const [file, setFile] = useState<File | null>(null);
   const [originalDims, setOriginalDims] = useState<{ w: number; h: number } | null>(null);
@@ -104,7 +109,7 @@ export function RemoveBackgroundTool() {
         setOriginalDims({ w: img.naturalWidth, h: img.naturalHeight });
       })
       .catch(() => {
-        setError("Could not read image dimensions.");
+        setError(processingErrorRef.current);
         setStatus("error");
       });
 
@@ -117,7 +122,8 @@ export function RemoveBackgroundTool() {
         setRemovedImage(output);
       } catch (err) {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : "Could not remove the background.");
+        console.warn("Background removal failed", err);
+        setError(processingErrorRef.current);
         setStatus("error");
       }
     })();
@@ -154,7 +160,8 @@ export function RemoveBackgroundTool() {
           if (current) URL.revokeObjectURL(current);
           return null;
         });
-        setError(err instanceof Error ? err.message : "Could not encode the output.");
+        console.warn("Background encode failed", err);
+        setError(processingErrorRef.current);
         setStatus("error");
       }
     })();
@@ -189,7 +196,10 @@ export function RemoveBackgroundTool() {
     <FileDropzone
       accept={imageAccept}
       validateFile={(item) => (supportedImageTypes.has(item.type) ? null : page.hint)}
-      onFiles={(files) => setFile(files[0])}
+      onFiles={(files) => {
+        if (files[0] && takeDailyQuota("bg-removal", FREE_LIMITS.bgRemovalsPerDay))
+          setFile(files[0]);
+      }}
       title={page.dropTitle}
       hint={page.hint}
       className="py-12 sm:py-16"

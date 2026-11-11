@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Check, Menu } from "lucide-react";
+import { ArrowRight, Check, Crown, Menu } from "lucide-react";
 import faviconUrl from "@/assets/favicon.svg?url";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import type { TranslationSet } from "@/lib/i18n";
 import { localeMeta, supportedLocales, useLocale } from "@/lib/i18n";
+import { useNativeApp } from "@/hooks/use-native-app";
+import { openPaywall } from "@/lib/pro";
+import { useUiCopy } from "@/lib/ui-copy";
 
 type HeaderKey = keyof TranslationSet["header"];
 type HeaderTool = { to: string; key: HeaderKey } | { href: string; key: HeaderKey };
@@ -33,6 +36,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const nativeApp = useNativeApp();
+  const ui = useUiCopy();
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
@@ -58,8 +63,8 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex min-h-14 max-w-7xl flex-wrap items-center gap-3 px-4 py-2 md:min-h-16 md:py-3 sm:px-6 lg:flex-nowrap lg:px-8">
-        <Link to="/" className="flex min-w-0 shrink-0 items-center gap-2">
+      <div className="mx-auto flex min-h-14 max-w-7xl flex-nowrap items-center gap-3 px-4 py-2 md:min-h-16 md:flex-wrap md:py-3 sm:px-6 lg:flex-nowrap lg:px-8">
+        <Link to="/" className="flex min-w-0 shrink items-center gap-2 md:shrink-0">
           <img src={faviconUrl} alt={t.header.resizeImage} className="h-8 w-8 shrink-0" />
           <span className="truncate font-display text-lg font-bold tracking-tight">
             {t.header.resizeImage}
@@ -98,6 +103,28 @@ export function Header() {
           ))}
         </nav>
         <div className="order-2 ml-auto flex shrink-0 items-center gap-2 md:order-none md:ml-0">
+          {nativeApp.isNative &&
+            (nativeApp.isPro ? (
+              <button
+                type="button"
+                onClick={nativeApp.openCustomerCenter}
+                aria-label={ui.manageSubscription}
+                className="flex h-10 items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft px-3 text-sm font-bold text-primary transition hover:bg-primary-soft/70"
+              >
+                <Crown className="h-4 w-4" />
+                PRO
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => openPaywall("header")}
+                aria-label={ui.upgradePro}
+                className="flex h-10 items-center gap-1.5 rounded-full bg-gradient-to-br from-[#F43F5E] to-[#DC2626] px-3.5 text-sm font-bold text-white shadow-sm transition active:scale-95"
+              >
+                <Crown className="h-4 w-4" />
+                PRO
+              </button>
+            ))}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
