@@ -2,6 +2,7 @@ import { useCallback, useRef, useState, type DragEvent } from "react";
 import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MAX_TOOL_FILE_SIZE, describeFileValidation } from "@/lib/tool-files";
+import { normalizePickedFiles } from "@/lib/picked-file";
 
 interface FileDropzoneProps {
   accept: string;
@@ -49,10 +50,13 @@ export function FileDropzone({
   );
 
   const handleFiles = useCallback(
-    (list: FileList | null) => {
+    async (list: FileList | null) => {
       if (disabled || !list || list.length === 0) return;
 
-      const selected = Array.from(list);
+      // Copy bytes into memory + fix type/extension + convert HEIC where needed (see picked-file.ts).
+      const raw = Array.from(list);
+      const { files: selected, errors } = await normalizePickedFiles(raw);
+      if (errors.length) setError(errors[0]);
       const valid: File[] = [];
 
       for (const file of selected) {
@@ -67,7 +71,7 @@ export function FileDropzone({
       }
 
       if (valid.length === 0) return;
-      setError(null);
+      if (!errors.length) setError(null);
       onFiles(valid);
     },
     [accept, disabled, maxSizeBytes, multiple, onFiles, setError, validateFile],
@@ -77,7 +81,7 @@ export function FileDropzone({
     (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       setDrag(false);
-      handleFiles(e.dataTransfer.files);
+      void handleFiles(e.dataTransfer.files);
     },
     [handleFiles],
   );
@@ -147,7 +151,7 @@ export function FileDropzone({
         className="hidden"
         disabled={disabled}
         onChange={(e) => {
-          handleFiles(e.target.files);
+          void handleFiles(e.target.files);
           e.currentTarget.value = "";
         }}
       />

@@ -11,6 +11,7 @@ import {
   Trash2,
   Wand2,
 } from "lucide-react";
+import { normalizePickedFiles } from "@/lib/picked-file";
 import { SmoothImage } from "@/components/site/SmoothImage";
 import { SeoJsonLd } from "@/components/site/SeoJsonLd";
 import { ToolPage } from "@/components/site/ToolPage";
@@ -101,8 +102,11 @@ function ScanDocumentPage() {
     setPdf(null);
     setBusy(page.detecting);
     try {
+      // Read bytes now + convert HEIC (Android gallery / camera) — see picked-file.ts.
+      const normalized = await normalizePickedFiles(files);
+      if (normalized.errors.length) setError(normalized.errors[0]);
       let lastId: string | null = null;
-      for (const file of files) {
+      for (const file of normalized.files) {
         const source = await loadScanSource(file);
         const autoQuad = detectDocumentQuad(source);
         const sourceBlob = await canvasToBlob(source, "image/jpeg", 0.85);

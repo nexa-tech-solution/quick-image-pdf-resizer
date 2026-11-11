@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Camera } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { normalizePickedFiles } from "@/lib/picked-file";
 
 /**
  * Opens the rear camera directly on phones (`capture="environment"`).
@@ -43,8 +44,9 @@ export function CameraCaptureButton({
         className="hidden"
         onChange={(event) => {
           const files = Array.from(event.target.files ?? []);
-          if (files.length) onCapture(files);
           event.currentTarget.value = "";
+          if (files.length)
+            void normalizePickedFiles(files).then(({ files: ok }) => ok.length && onCapture(ok));
         }}
       />
     </>
