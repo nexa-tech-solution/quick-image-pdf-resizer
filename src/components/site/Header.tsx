@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Check, Crown, Menu } from "lucide-react";
-import faviconUrl from "@/assets/favicon.svg?url";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import type { TranslationSet } from "@/lib/i18n";
@@ -66,10 +65,8 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex min-h-14 max-w-7xl flex-nowrap items-center gap-3 px-4 py-2 md:min-h-16 md:flex-wrap md:py-3 sm:px-6 lg:flex-nowrap lg:px-8">
         <Link to="/" className="flex min-w-0 shrink items-center gap-2 md:shrink-0">
-          <img src={faviconUrl} alt={t.header.resizeImage} className="h-8 w-8 shrink-0" />
-          <span className="truncate font-display text-lg font-bold tracking-tight">
-            {t.header.resizeImage}
-          </span>
+          <img src="/icons/icon-192.png" alt="PixPDF" className="h-8 w-8 shrink-0" />
+          <span className="truncate font-display text-lg font-bold tracking-tight">PixPDF</span>
         </Link>
         <nav
           className={[

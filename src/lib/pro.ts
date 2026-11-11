@@ -55,7 +55,10 @@ export type UpgradeReason =
 
 type NativeApp = {
   isNative?: boolean;
-  isPro?: boolean;
+  /** null/undefined until the native app has loaded the status. */
+  isPro?: boolean | null;
+  /** False when RevenueCat isn't running (no way to buy → don't limit). */
+  purchasesEnabled?: boolean;
   showPaywall?: (source?: string) => void;
 };
 const nativeApp = (): NativeApp | undefined =>
@@ -63,10 +66,14 @@ const nativeApp = (): NativeApp | undefined =>
     ? undefined
     : (window as unknown as { NativeApp?: NativeApp }).NativeApp;
 
-/** True when limits apply: inside the app and not Pro. */
+/**
+ * True when limits apply: inside the app, purchases are working and the app has
+ * confirmed the user is not Pro. While the status is unknown we don't limit, so
+ * a paying user is never blocked by a slow start.
+ */
 export function isGated(): boolean {
   const app = nativeApp();
-  return !!app?.isNative && !app.isPro;
+  return !!app?.isNative && app.purchasesEnabled === true && app.isPro === false;
 }
 
 /**
